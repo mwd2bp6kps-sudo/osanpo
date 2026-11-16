@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>おさんぽ日和</title>
+<meta name="apple-mobile-web-app-title" content="おさんぽ日和">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffd9e8">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23ffd9e8'/%3E%3Cellipse cx='90' cy='102' rx='52' ry='46' fill='%23fff'/%3E%3Cpath d='M48 74 L40 34 L74 52 Z' fill='%23fff'/%3E%3Cpath d='M132 74 L140 34 L106 52 Z' fill='%23fff'/%3E%3Cpath d='M52 68 L47 44 L68 54 Z' fill='%23ffb3cd'/%3E%3Cpath d='M128 68 L133 44 L112 54 Z' fill='%23ffb3cd'/%3E%3Ccircle cx='70' cy='98' r='6' fill='%235a3d4a'/%3E%3Ccircle cx='110' cy='98' r='6' fill='%235a3d4a'/%3E%3Cellipse cx='90' cy='112' rx='6' ry='4.5' fill='%23ff8fb8'/%3E%3Cpath d='M90 116 Q90 124 80 124 M90 116 Q90 124 100 124' stroke='%235a3d4a' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='56' cy='114' r='8' fill='%23ffc7da'/%3E%3Ccircle cx='124' cy='114' r='8' fill='%23ffc7da'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23ffd9e8'/%3E%3Cellipse cx='50' cy='58' rx='30' ry='26' fill='%23fff'/%3E%3Cpath d='M28 44 L23 20 L42 30 Z' fill='%23fff'/%3E%3Cpath d='M72 44 L77 20 L58 30 Z' fill='%23fff'/%3E%3Ccircle cx='39' cy='55' r='3.5' fill='%235a3d4a'/%3E%3Ccircle cx='61' cy='55' r='3.5' fill='%235a3d4a'/%3E%3Cellipse cx='50' cy='64' rx='3.5' ry='2.6' fill='%23ff8fb8'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--pink:#ff8fb8;--pink2:#ffd9e8;--pink3:#fff0f6;--cream:#fffafc;--text:#5a3d4a;--sub:#9a7a88;--card:#fff;--shadow:0 4px 18px rgba(255,143,184,.18)}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;background:var(--cream);color:var(--text);padding-bottom:86px}
+header{position:sticky;top:0;z-index:600;background:linear-gradient(135deg,#ffd9e8,#ffeef5);padding:calc(10px + env(safe-area-inset-top)) 16px 10px;box-shadow:var(--shadow)}
+header h1{margin:0;font-size:20px}
+.lvrow{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:13px;font-weight:700}
+.xpbar{flex:1;height:10px;background:#fff;border-radius:6px;overflow:hidden}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,#ff8fb8,#ffb3cd)}
+main{padding:14px 14px 4px;max-width:560px;margin:0 auto}
+.tab{display:none}.tab.on{display:block}
+.card{background:var(--card);border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 8px;font-size:16px}
+.big{font-size:40px;font-weight:800;color:#e5639a}
+.sub{color:var(--sub);font-size:12px}
+button{font-family:inherit;border:none;border-radius:999px;background:var(--pink);color:#fff;font-weight:700;padding:10px 16px;font-size:14px}
+button.ghost{background:#fff;color:#e5639a;border:2px solid var(--pink2)}
+button:disabled{background:#e8ccd6}
+button.sm{padding:6px 12px;font-size:12px}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:700;background:#fff;display:flex;box-shadow:0 -4px 18px rgba(255,143,184,.25);padding-bottom:env(safe-area-inset-bottom)}
+nav a{flex:1;text-align:center;padding:8px 2px 6px;font-size:11px;color:var(--sub);text-decoration:none}
+nav a.on{color:#e5639a;font-weight:800}
+nav a span{display:block;font-size:20px}
+#map{height:46vh;border-radius:18px;box-shadow:var(--shadow);z-index:1}
+.row{display:flex;align-items:center;gap:10px}.grow{flex:1}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.zcell{background:#fff;border-radius:14px;padding:8px 4px;text-align:center;box-shadow:var(--shadow);font-size:11px}
+.sil{filter:grayscale(1) brightness(.55);opacity:.45}
+.pill{display:inline-block;background:var(--pink3);border-radius:999px;padding:3px 10px;font-size:12px;margin:2px}
+.bar{height:12px;background:#ffe3ee;border-radius:7px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#ff8fb8,#ffc2d9)}
+select,input[type=text]{font-family:inherit;font-size:14px;padding:8px;border:2px solid var(--pink2);border-radius:10px;background:#fff;color:var(--text)}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:900;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -6px 30px rgba(0,0,0,.2);padding:18px 18px calc(18px + env(safe-area-inset-bottom));max-height:78vh;overflow:auto;display:none}
+.sheet.on{display:block}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:100px;z-index:999;background:#5a3d4a;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;display:none;max-width:88vw;text-align:center}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-size:11px;text-align:center}
+.cal div{background:#fff;border-radius:8px;padding:6px 2px;box-shadow:0 2px 6px rgba(255,143,184,.12)}
+.cal .today{background:var(--pink2);font-weight:800}
+.heart{color:#ff5c93}
+.leaflet-div-icon{background:transparent;border:none}
+.pin{font-size:26px;text-align:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
+</style>
+</head>
+<body>
+<header>
+<h1>🌸 おさんぽ日和</h1>
+<div class="lvrow"><span id="lvLabel">Lv.1</span><div class="xpbar"><i id="xpFill" style="width:0%"></i></div><span id="xpLabel" class="sub"></span></div>
+</header>
+<main>
+<section id="tab-home" class="tab on">
+<div class="card"><h2>きょうのおさんぽ</h2>
+<div class="row"><div class="grow"><div class="big"><span id="todaySteps">0</span><span style="font-size:16px"> 歩</span></div>
+<div class="sub">GPS推定 ・ 距離 <span id="todayDist">0</span> m ・ 累計 <span id="totalSteps">0</span> 歩</div></div>
+<div id="homeCat"></div></div>
+<div class="sub" id="gpsState">位置情報をまっています…「おさんぽ」タブで許可してね</div></div>
+<div class="card"><h2>🥚 ふか器</h2><div id="incubator"></div></div>
+<div class="card"><h2>🐾 いっしょに歩くねこ（最大5匹）</h2><div id="partyRow"></div></div>
+<div class="card"><h2>📅 こんしゅうのカレンダー</h2><div class="cal" id="weekCal"></div>
+<div class="sub" style="margin-top:8px">きろくは端末の中（このiPhone）に保存されます</div></div>
+<div class="card"><h2>ℹ️ ヘルプ</h2><div class="sub" style="font-size:13px;line-height:1.7">
+Webアプリのため、開いている間のみ記録されます。スマホを閉じた間の歩数・位置の反映と、iPhoneの歩数計（ヘルスケア）との連動はできません。散歩のときはアプリを開いたまま歩いてね。<br>
+フレンド・ランキングなどの対人要素はありません。一人でずっと遊べます。</div></div>
+</section>
+<section id="tab-map" class="tab">
+<div id="map"></div>
+<div class="card" style="margin-top:12px"><h2>📍 目的地</h2><div id="destCard"></div></div>
+<div class="card"><h2>🗺️ 地図の見かた</h2><div class="sub" style="font-size:13px;line-height:1.7">
+地図上の猫があなたと一緒に動きます。スポットのピンを押すと、徒歩の目安と、もらえるものが見られます。見つけた卵やフルーツのピンを押すと、おつかいの時間が見られます。</div></div>
+</section>
+<section id="tab-errand" class="tab">
+<div class="card"><h2>🔭 探索機（1日1回）</h2><div id="detectorBox"></div>
+<div class="sub">使った場所の近くのスポットの卵（1〜2種類）と、フルーツ（2〜3種類）が見つかります。近くにないスポットの卵は出ません。</div></div>
+<div class="card"><h2>🧺 見つけたもの</h2><div id="discList"></div></div>
+<div class="card"><h2>🐾 おつかい中・帰ってきた猫</h2><div id="errandList"></div></div>
+</section>
+<section id="tab-cats" class="tab">
+<div class="card"><h2>🐱 うちのねこ</h2><div id="catList"></div></div>
+<div class="card"><h2>📖 ねこずかん</h2><div class="sub">カテゴリごとに、毛色×デザインのねこが並びます。未収集はシルエットです。</div><div id="zukan"></div></div>
+</section>
+<section id="tab-bag" class="tab">
+<div class="card"><h2>🎒 もちもの</h2><div id="bagBox"></div></div>
+</section>
+<section id="tab-mission" class="tab">
+<div class="card"><h2>⭐ デイリーミッション</h2><div id="dailyM"></div></div>
+<div class="card"><h2>🌙 ウィークリーミッション</h2><div id="weeklyM"></div></div>
+<div class="sub">ミッション報酬の卵は、まだ持っていないデザインから優先して出ます（近所にないカテゴリも出ます）。</div>
+</section>
+</main>
+<div class="sheet" id="sheet"></div>
+<div class="toast" id="toast"></div>
+<nav>
+<a href="#" data-tab="home" class="on"><span>🏠</span>ホーム</a>
+<a href="#" data-tab="map"><span>🗺️</span>おさんぽ</a>
+<a href="#" data-tab="errand"><span>🧺</span>おつかい</a>
+<a href="#" data-tab="cats"><span>🐱</span>ねこ</a>
+<a href="#" data-tab="bag"><span>🎒</span>もちもの</a>
+<a href="#" data-tab="mission"><span>⭐</span>ミッション</a>
+</nav>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const COATS=[
+{id:"mike",name:"三毛",body:"#ffffff",patch:"#e8862e",patch2:"#4a3a32"},
+{id:"white",name:"白",body:"#ffffff",patch:null},
+{id:"black",name:"黒",body:"#4a4048",patch:null},
+{id:"chatora",name:"茶トラ",body:"#f2a54a",patch:"#d97f26",stripe:true},
+{id:"gray",name:"グレー",body:"#aab3bd",patch:null}];
+const DESIGNS=[
+{id:"normal",name:"みちばた",emoji:"🐾",acc:""},
+{id:"cafe",name:"カフェ",emoji:"☕",acc:"☕"},
+{id:"restaurant",name:"レストラン",emoji:"🍽️",acc:"🍽️"},
+{id:"sweets",name:"スイーツショップ",emoji:"🍰",acc:"🧁"},
+{id:"cinema",name:"映画館",emoji:"🎬",acc:"🍿"},
+{id:"pharmacy",name:"薬局",emoji:"💊",acc:"💊"},
+{id:"zoo",name:"動物園",emoji:"🦁",acc:"🦁"},
+{id:"aquarium",name:"水族館",emoji:"🐠",acc:"🐠"},
+{id:"forest",name:"森",emoji:"🌲",acc:"🍃"},
+{id:"waterside",name:"水辺",emoji:"🌊",acc:"💧"},
+{id:"post",name:"郵便局",emoji:"📮",acc:"✉️"},
+{id:"art",name:"美術館",emoji:"🖼️",acc:"🎨"},
+{id:"museum",name:"博物館",emoji:"🏛️",acc:"🦴"},
+{id:"airport",name:"空港",emoji:"✈️",acc:"✈️"},
+{id:"station",name:"駅",emoji:"🚃",acc:"🎫"},
+{id:"beach",name:"砂浜",emoji:"🏖️",acc:"🐚"},
+{id:"convenience",name:"コンビニ",emoji:"🏪",acc:"🍙"},
+{id:"supermarket",name:"スーパーマーケット",emoji:"🛒",acc:"🛒"},
+{id:"bakery",name:"ベーカリー",emoji:"🥐",acc:"🥖"},
+{id:"salon",name:"美容院・理容院",emoji:"💈",acc:"✂️"},
+{id:"fashion",name:"ファッション",emoji:"👗",acc:"🎀"},
+{id:"park",name:"公園",emoji:"🌳",acc:"🌼"},
+{id:"library",name:"図書館・本屋",emoji:"📚",acc:"📖"},
+{id:"mountain",name:"山",emoji:"⛰️",acc:"🎒"},
+{id:"stadium",name:"スタジアム",emoji:"🏟️",acc:"⚽"},
+{id:"rain",name:"雨の日",emoji:"☔",acc:"☔"},
+{id:"snow",name:"雪の日",emoji:"⛄",acc:"❄️"},
+{id:"themepark",name:"テーマパーク",emoji:"🎡",acc:"🎠"},
+{id:"busstop",name:"バス乗り場",emoji:"🚌",acc:"🚌"},
+{id:"ramen",name:"ラーメン屋さん",emoji:"🍜",acc:"🍜"},
+{id:"bridge",name:"橋",emoji:"🌉",acc:"🌉"},
+{id:"hotel",name:"ホテル",emoji:"🏨",acc:"🛎️"},
+{id:"shrine",name:"神社仏閣",emoji:"⛩️",acc:"⛩️"},
+{id:"electronics",name:"電気屋さん",emoji:"🔌",acc:"📺"},
+{id:"homecenter",name:"ホームセンター",emoji:"🔨",acc:"🪴"},
+{id:"school",name:"学校",emoji:"🏫",acc:"🎒"},
+{id:"laundry",name:"ランドリー・クリーニング",emoji:"🧺",acc:"👕"},
+{id:"sakura",name:"桜（春限定）",emoji:"🌸",acc:"🌸",season:"spring"},
+{id:"float",name:"浮き輪（夏限定）",emoji:"🛟",acc:"🛟",season:"summer"},
+{id:"yakiimo",name:"焼き芋（秋限定）",emoji:"🍠",acc:"🍠",season:"autumn"},
+{id:"gloves",name:"手袋（冬限定）",emoji:"🧤",acc:"🧤",season:"winter"},
+{id:"halloween",name:"ハロウィン",emoji:"🎃",acc:"🎃",event:"halloween"},
+{id:"valentine",name:"バレンタイン",emoji:"💝",acc:"💝",event:"valentine"},
+{id:"newyear",name:"お正月",emoji:"🎍",acc:"🎍",event:"newyear"}];
+const designById=id=>DESIGNS.find(d=>d.id===id)||DESIGNS[0];
+const coatById=id=>COATS.find(c=>c.id===id)||COATS[0];
+const FRUITS=[
+{id:"blueberry",name:"ブルーベリー",emoji:"🫐",color:"purple",kari:1},
+{id:"strawberry",name:"いちご",emoji:"🍓",color:"pink",kari:2},
+{id:"kiwi",name:"キウイフルーツ",emoji:"🥝",color:"green",kari:2},
+{id:"mikan",name:"みかん",emoji:"🍊",color:"orange",kari:3},
+{id:"kaki",name:"かき",emoji:"🟠",color:"orange",kari:3},
+{id:"lemon",name:"レモン",emoji:"🍋",color:"yellow",kari:3},
+{id:"banana",name:"バナナ",emoji:"🍌",color:"yellow",kari:3},
+{id:"pear",name:"なし",emoji:"🍐",color:"green",kari:4},
+{id:"peach",name:"もも",emoji:"🍑",color:"pink",kari:5},
+{id:"fig",name:"いちじく",emoji:"🟣",color:"purple",kari:5},
+{id:"apple",name:"りんご",emoji:"🍎",color:"pink",kari:6},
+{id:"grape",name:"ぶどう",emoji:"🍇",color:"purple",kari:7},
+{id:"mango",name:"マンゴー",emoji:"🥭",color:"orange",kari:7},
+{id:"pineapple",name:"パイナップル",emoji:"🍍",color:"yellow",kari:7},
+{id:"melon",name:"メロン",emoji:"🍈",color:"green",kari:7}];
+const fruitById=id=>FRUITS.find(f=>f.id===id);
+const KARINAME={pink:"ピンクのカリカリ",purple:"紫のカリカリ",orange:"オレンジのカリカリ",yellow:"黄色のカリカリ",green:"緑のカリカリ"};
+const KARIDOT={pink:"#ff8fb8",purple:"#b48ce0",orange:"#ffa04d",yellow:"#f5cf4d",green:"#7ed492"};
+function seasonNow(){const m=new Date().getMonth()+1;if(m>=3&&m<=5)return"spring";if(m>=6&&m<=8)return"summer";if(m>=9&&m<=11)return"autumn";return"winter";}
+function eventNow(){const d=new Date(),m=d.getMonth()+1,day=d.getDate();if(m===10)return"halloween";if(m===2&&day<=14)return"valentine";if(m===1&&day<=7)return"newyear";return null;}
+function designAvailable(d){if(d.season)return d.season===seasonNow();if(d.event)return d.event===eventNow();return true;}
+function catSVG(coatId,designId,size){
+ const c=coatById(coatId),d=designById(designId),s=size||72;
+ let extra="";
+ if(c.id==="mike")extra='<path d="M30 34 Q44 22 56 32 Q46 40 34 40 Z" fill="'+c.patch+'"/><path d="M64 30 Q76 34 74 46 Q64 44 62 36 Z" fill="'+c.patch2+'"/>';
+ if(c.stripe)extra='<path d="M38 26 L40 36 M50 24 L50 34 M62 26 L60 36" stroke="'+c.patch+'" stroke-width="3" stroke-linecap="round"/>';
+ const acc=d.acc?'<text x="76" y="88" font-size="26" text-anchor="middle">'+d.acc+'</text><circle cx="76" cy="76" r="15" fill="#fff0f6" opacity="0.85"/>':'';
+ const acc2=d.acc?'<text x="76" y="84" font-size="24" text-anchor="middle">'+d.acc+'</text>':'';
+ return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 100 100">'
+ +'<path d="M26 40 L20 12 L44 24 Z" fill="'+c.body+'" stroke="#e8b7c9" stroke-width="1.5"/>'
+ +'<path d="M74 40 L80 12 L56 24 Z" fill="'+c.body+'" stroke="#e8b7c9" stroke-width="1.5"/>'
+ +'<path d="M29 36 L25 20 L40 27 Z" fill="#ffb3cd"/><path d="M71 36 L75 20 L60 27 Z" fill="#ffb3cd"/>'
+ +'<ellipse cx="50" cy="56" rx="34" ry="30" fill="'+c.body+'" stroke="#e8b7c9" stroke-width="1.5"/>'
+ +extra
+ +'<circle cx="38" cy="54" r="3.6" fill="#5a3d4a"/><circle cx="62" cy="54" r="3.6" fill="#5a3d4a"/>'
+ +'<ellipse cx="50" cy="63" rx="3.6" ry="2.7" fill="#ff8fb8"/>'
+ +'<path d="M50 66 Q50 71 44 71 M50 66 Q50 71 56 71" stroke="#5a3d4a" stroke-width="2" fill="none" stroke-linecap="round"/>'
+ +'<circle cx="28" cy="64" r="5" fill="#ffc7da"/><circle cx="72" cy="64" r="5" fill="#ffc7da"/>'
+ +acc+acc2+'</svg>';}
+function eggSVG(designId,size){const d=designById(designId),s=size||54;
+ return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 100 100"><ellipse cx="50" cy="56" rx="32" ry="38" fill="#fff" stroke="#ffb3cd" stroke-width="3"/><path d="M22 50 Q36 40 50 50 Q64 60 78 50 L78 62 Q64 72 50 62 Q36 52 22 62 Z" fill="#ffd9e8"/><text x="50" y="46" font-size="24" text-anchor="middle">'+d.emoji+'</text></svg>';}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function todayKey(){const d=new Date();return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
+function weekKey(){const d=new Date(),onejan=new Date(d.getFullYear(),0,1);const w=Math.ceil((((d-onejan)/86400000)+onejan.getDay()+1)/7);return d.getFullYear()+"-W"+w;}
+function hav(a,b,c,d){const R=6371000,t=Math.PI/180;const x=(c-a)*t,y=(d-b)*t;const h=Math.sin(x/2)**2+Math.cos(a*t)*Math.cos(c*t)*Math.sin(y/2)**2;return 2*R*Math.asin(Math.sqrt(h));}
+function rnd(a,b){return a+Math.random()*(b-a);}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function toast(msg){const t=$("toast");t.textContent=msg;t.style.display="block";clearTimeout(t._h);t._h=setTimeout(()=>t.style.display="none",3400);}
+function errandMinutes(distM,W,P){const roundTrip=(distM/80)*2;return Math.max(1,Math.round(roundTrip*(11*W-8*P+3)/36));}
+function xpNeed(lv){return Math.round(80*Math.pow(lv,1.6));}
+const KEY="osanpoBiyoriV2";
+let S=null;
+function defaultState(){
+ const starterCoat=pick(COATS).id;
+ const cat={id:uid(),coat:starterCoat,design:"normal",name:"",fp:0,feeds:0,feedDay:""};
+ return {v:2,level:1,xp:0,xpCarrySteps:0,totalSteps:0,totalDist:0,
+ today:{key:todayKey(),steps:0,dist:0,errands:0,feeds:0,dest:0,detector:0,hatch:0,spot:0},
+ week:{key:weekKey(),steps:0,dist:0,errands:0,feeds:0,dest:0,hatch:0,spot:0},
+ cats:[cat],party:[cat.id],eggs:[],incubating:null,
+ karikari:{pink:0,purple:0,orange:0,yellow:0,green:0},fruits:{},
+ discoveries:[],errands:[],destination:null,detectorDay:"",
+ dailyM:null,weeklyM:null,log:{},lastPos:null,path:[],spots:[],
+ lastMile:0,fruitMile:0,started:new Date().toISOString()};}
+function load(){try{const raw=localStorage.getItem(KEY);if(raw){S=JSON.parse(raw);if(S&&S.v===2)return;}}catch(e){}
+ S=defaultState();save();
+ setTimeout(()=>toast("はじめまして！ "+coatById(S.cats[0].coat).name+"のねこが仲間になったよ🐾"),600);}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function rollDay(){const tk=todayKey(),wk=weekKey();
+ if(S.today.key!==tk){S.today={key:tk,steps:0,dist:0,errands:0,feeds:0,dest:0,detector:0,hatch:0,spot:0};S.dailyM=null;}
+ if(S.week.key!==wk){S.week={key:wk,steps:0,dist:0,errands:0,feeds:0,dest:0,hatch:0,spot:0};S.weeklyM=null;}
+ S.log[tk]={steps:S.today.steps,dist:Math.round(S.today.dist)};}
+function gainXP(n){S.xp+=n;let need=xpNeed(S.level);
+ while(S.xp>=need){S.xp-=need;S.level++;need=xpNeed(S.level);toast("🎉 レベルアップ！ Lv."+S.level+" になったよ");}
+ renderHeader();}
+function renderHeader(){$("lvLabel").textContent="Lv."+S.level;
+ const need=xpNeed(S.level);$("xpFill").style.width=Math.min(100,S.xp/need*100)+"%";
+ $("xpLabel").textContent="XP "+S.xp+" / "+need;}
+function friendGain(cat,base){return base/(1+cat.fp/60);}
+function unownedDesignEgg(){
+ const owned=new Set(S.cats.map(c=>c.design));
+ const pool=DESIGNS.filter(d=>d.id!=="normal"&&designAvailable(d)&&!owned.has(d.id));
+ const d=pool.length?pick(pool):pick(DESIGNS.filter(x=>x.id!=="normal"&&designAvailable(x)));
+ return {id:uid(),design:d.id,need:3000};}
+function normalEgg(){return {id:uid(),design:"normal",need:1000};}
+function designEgg(id){const d=designById(id);return {id:uid(),design:d.id,need:d.id==="normal"?1000:3000};}
+function grantEgg(egg,why){S.eggs.push(egg);toast("🥚 "+designById(egg.design).name+"の卵をゲット！"+(why||""));save();}
+const DAILY_POOL=[
+{k:"steps",t:"今日 {n} 歩あるく",n:1000,xp:30,rw:"egg"},
+{k:"steps",t:"今日 {n} 歩あるく",n:2000,xp:40,rw:"eggFruit"},
+{k:"dist",t:"今日 {n} mあるく",n:800,xp:30,rw:"fruit"},
+{k:"feeds",t:"カリカリを {n} 回あげる",n:2,xp:25,rw:"fruit"},
+{k:"errands",t:"おつかいを {n} 回かんりょう",n:1,xp:35,rw:"egg"},
+{k:"dest",t:"目的地に {n} 回とうちゃく",n:1,xp:35,rw:"eggFruit"},
+{k:"detector",t:"探索機を {n} 回つかう",n:1,xp:25,rw:"fruit"},
+{k:"hatch",t:"卵を {n} 個ふかさせる",n:1,xp:45,rw:"eggFruit"}];
+const WEEKLY_POOL=[
+{k:"steps",t:"今週 {n} 歩あるく",n:10000,xp:120,rw:"eggFruit2"},
+{k:"steps",t:"今週 {n} 歩あるく",n:20000,xp:180,rw:"egg2"},
+{k:"dist",t:"今週 {n} mあるく",n:8000,xp:120,rw:"eggFruit"},
+{k:"errands",t:"今週おつかい {n} 回",n:5,xp:130,rw:"eggFruit2"},
+{k:"dest",t:"今週目的地 {n} 回とうちゃく",n:5,xp:130,rw:"eggFruit"},
+{k:"feeds",t:"今週カリカリ {n} 回",n:10,xp:110,rw:"eggFruit"},
+{k:"hatch",t:"今週卵を {n} 個ふか",n:3,xp:160,rw:"egg2"},
+{k:"spot",t:"今週スポット {n} 回チェックイン",n:5,xp:120,rw:"eggFruit"}];
+function makeMissions(pool,count,scope){return shuffle(pool).slice(0,count).map(p=>({k:p.k,t:p.t.replace("{n}",p.n.toLocaleString()),n:p.n,xp:p.xp,rw:p.rw,done:false,claimed:false,scope}));}
+function ensureMissions(){if(!S.dailyM)S.dailyM=makeMissions(DAILY_POOL,3,"today");if(!S.weeklyM)S.weeklyM=makeMissions(WEEKLY_POOL,5,"week");}
+function missionProgress(m){const src=m.scope==="today"?S.today:S.week;return Math.min(m.n,src[m.k]||0);}
+function rewardLabel(rw){return {egg:"未所持デザインの卵×1",fruit:"フルーツ×2",eggFruit:"未所持デザインの卵×1＋フルーツ×2",eggFruit2:"未所持デザインの卵×1＋フルーツ×4",egg2:"未所持デザインの卵×2"}[rw]||"";}
+function giveReward(rw){const eggsN={egg:1,eggFruit:1,eggFruit2:1,egg2:2}[rw]||0;const frN={fruit:2,eggFruit:2,eggFruit2:4}[rw]||0;
+ for(let i=0;i<eggsN;i++)S.eggs.push(unownedDesignEgg());
+ for(let i=0;i<frN;i++){const f=pick(FRUITS);S.fruits[f.id]=(S.fruits[f.id]||0)+1;}
+ toast("🎁 報酬ゲット！ "+rewardLabel(rw));}
+function claimMission(scope,idx){const list=scope==="today"?S.dailyM:S.weeklyM;const m=list[idx];
+ if(!m||m.claimed||missionProgress(m)<m.n)return;
+ m.claimed=true;m.done=true;giveReward(m.rw);gainXP(m.xp);save();renderMissions();renderBag();renderHome();}
+function renderMissions(){ensureMissions();
+ const html=(list,scope)=>list.map((m,i)=>{const p=missionProgress(m);const done=p>=m.n;
+  return '<div class="row" style="margin-bottom:10px"><div class="grow"><div>'+m.t+'</div>'
+  +'<div class="bar" style="margin:5px 0"><i style="width:'+(p/m.n*100)+'%"></i></div>'
+  +'<div class="sub">'+p.toLocaleString()+" / "+m.n.toLocaleString()+" ・ 報酬："+rewardLabel(m.rw)+" ・ XP+"+m.xp+'</div></div>'
+  +(m.claimed?'<span class="pill">受取済み✓</span>':done?'<button class="sm" onclick="claimMission(\''+scope+'\','+i+')">受け取る</button>':'<span class="pill">進行中</span>')+'</div>';}).join("");
+ $("dailyM").innerHTML=html(S.dailyM,"today");$("weeklyM").innerHTML=html(S.weeklyM,"week");}
+function renderHome(){rollDay();
+ $("todaySteps").textContent=S.today.steps.toLocaleString();
+ $("todayDist").textContent=Math.round(S.today.dist).toLocaleString();
+ $("totalSteps").textContent=S.totalSteps.toLocaleString();
+ const lead=S.cats.find(c=>c.id===S.party[0])||S.cats[0];
+ $("homeCat").innerHTML=lead?catSVG(lead.coat,lead.design,84):"";
+ $("partyRow").innerHTML=S.party.length?S.party.map(id=>{const c=S.cats.find(x=>x.id===id);return c?'<span class="pill">'+catSVG(c.coat,c.design,34)+" "+(c.name||coatById(c.coat).name)+'</span>':"";}).join(""):'<span class="sub">「ねこ」タブで同行メンバーを選んでね（最大5匹）</span>';
+ if(S.incubating){const e=S.incubating;const pct=Math.min(100,e.prog/e.need*100);
+  $("incubator").innerHTML='<div class="row"><div>'+eggSVG(e.design,60)+'</div><div class="grow"><div>'+designById(e.design).name+'の卵</div><div class="bar" style="margin:6px 0"><i style="width:'+pct+'%"></i></div><div class="sub">あと '+(e.need-e.prog)+' 歩でふか（'+e.prog+" / "+e.need+' 歩）</div></div></div>';}
+ else $("incubator").innerHTML='<div class="sub">卵は「もちもの」から ふか器にセットできるよ。ノーマル卵は1000歩、デザイン卵は3000歩でふかします。</div>';
+ const days=["日","月","火","水","木","金","土"];const now=new Date();
+ let cal="";for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);
+  const k=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();const log=S.log[k];
+  cal+='<div class="'+(i===0?"today":"")+'">'+days[d.getDay()]+'<br>'+(d.getMonth()+1)+"/"+d.getDate()+'<br>'+(log?log.steps.toLocaleString()+"歩":"-")+'</div>';}
+ $("weekCal").innerHTML=cal;}
+function hearts(fp){const n=Math.min(10,Math.floor(fp/10));return "♥".repeat(Math.max(1,n))||"♡";}
+function renderCats(){
+ $("catList").innerHTML=S.cats.map(c=>{const inParty=S.party.includes(c.id);const busy=S.errands.some(e=>e.catIds.includes(c.id)&&!e.collected);
+  return '<div class="row" style="margin-bottom:12px"><div>'+catSVG(c.coat,c.design,64)+'</div><div class="grow">'
+  +'<input type="text" placeholder="'+coatById(c.coat).name+"（"+designById(c.design).name+'）" value="'+(c.name||"").replace(/"/g,"&quot;")+'" onchange="renameCat(\''+c.id+'\',this.value)" style="width:150px">'
+  +'<div class="sub">'+coatById(c.coat).name+" ・ "+designById(c.design).name+' ・ なかよし <span class="heart">'+hearts(c.fp)+'</span> '+Math.floor(c.fp)
+  +(busy?" ・ おつかい中":"")+'</div>'
+  +'<div style="margin-top:5px"><button class="sm '+(inParty?"":"ghost")+'" onclick="toggleParty(\''+c.id+'\')">'+(inParty?"同行中 ✓":"同行させる")+'</button> '
+  +Object.keys(KARINAME).map(col=>'<button class="sm ghost" onclick="feedCat(\''+c.id+'\',\''+col+'\')" '+(S.karikari[col]>0?"":"disabled")+'>● '+col+'</button>').join(" ")
+  +'<div class="sub">カリカリをあげる（1匹1日2回まで）今日 '+(c.feedDay===todayKey()?c.feeds:0)+' / 2回</div></div></div></div>';}).join("");
+ let z="";DESIGNS.forEach(d=>{z+='<div style="margin-top:12px"><b>'+d.emoji+" "+d.name+'</b><div class="grid" style="margin-top:6px">'
+  +COATS.map(co=>{const own=S.cats.some(c=>c.design===d.id&&c.coat===co.id);
+   return '<div class="zcell"><div class="'+(own?"":"sil")+'">'+catSVG(co.id,d.id,52)+'</div>'+co.name+(own?"":" 未")+'</div>';}).join("")+"</div></div>";});
+ $("zukan").innerHTML=z;}
+function renameCat(id,v){const c=S.cats.find(x=>x.id===id);if(c){c.name=v.trim();save();toast("名前をつけたよ");}}
+function toggleParty(id){const i=S.party.indexOf(id);
+ if(i>=0)S.party.splice(i,1);else{if(S.party.length>=5){toast("一緒に歩けるのは最大5匹までだよ");return;}S.party.push(id);}
+ save();renderCats();renderHome();updateCatMarker();}
+function feedCat(id,col){const c=S.cats.find(x=>x.id===id);if(!c)return;
+ if(c.feedDay!==todayKey()){c.feedDay=todayKey();c.feeds=0;}
+ if(c.feeds>=2){toast("今日はもう2回あげたよ。また明日ね");return;}
+ if(S.karikari[col]<=0){toast(KARINAME[col]+"がないよ");return;}
+ S.karikari[col]--;c.feeds++;c.fp+=friendGain(c,6);S.today.feeds++;S.week.feeds++;
+ toast("😋 "+(c.name||coatById(c.coat).name)+" が "+KARINAME[col]+" を食べた！ なかよしアップ");
+ gainXP(3);save();renderCats();renderBag();}
+function renderBag(){
+ const eggCount=S.eggs.length+(S.incubating?1:0);
+ let h='<div class="row" style="flex-wrap:wrap">'+Object.keys(KARINAME).map(col=>'<span class="pill"><span style="color:'+KARIDOT[col]+'">●</span> '+KARINAME[col]+" × "+S.karikari[col]+'</span>').join("")+'<span class="pill">🥚 卵 × '+eggCount+'</span></div>';
+ h+='<h3 style="margin:14px 0 6px">🥚 卵</h3>';
+ h+=S.eggs.length?S.eggs.map(e=>'<div class="row" style="margin-bottom:8px"><div>'+eggSVG(e.design,44)+'</div><div class="grow">'+designById(e.design).name+'の卵<div class="sub">ふかまで '+e.need+' 歩</div></div>'+(S.incubating?'<span class="sub">ふか器は使用中</span>':'<button class="sm" onclick="setIncubator(\''+e.id+'\')">ふか器にセット</button>')+'</div>').join(""):'<div class="sub">卵はまだありません。歩いたり、探索機やミッションで見つかるよ。</div>';
+ if(S.incubating)h+='<div class="sub">ふか器の中： '+designById(S.incubating.design).name+'の卵（'+S.incubating.prog+" / "+S.incubating.need+' 歩）</div>';
+ h+='<h3 style="margin:14px 0 6px">🍓 フルーツ（カリカリに変換）</h3>';
+ const fids=Object.keys(S.fruits).filter(id=>S.fruits[id]>0);
+ h+=fids.length?fids.map(id=>{const f=fruitById(id);return '<div class="row" style="margin-bottom:8px"><div style="font-size:30px">'+f.emoji+'</div><div class="grow">'+f.name+' × '+S.fruits[id]+'<div class="sub">'+KARINAME[f.color]+" "+f.kari+' 個に変換できる</div></div><button class="sm" onclick="convertFruit(\''+id+'\')">変換する</button></div>';}).join(""):'<div class="sub">フルーツはまだありません。おつかいで持って帰ってこられるよ。</div>';
+ $("bagBox").innerHTML=h;}
+function setIncubator(id){if(S.incubating)return;const i=S.eggs.findIndex(e=>e.id===id);if(i<0)return;
+ const e=S.eggs.splice(i,1)[0];S.incubating={design:e.design,need:e.need,prog:0};save();renderBag();renderHome();toast("🥚 ふか器にセット！ 歩いてあたためよう");}
+function convertFruit(id){const f=fruitById(id);if(!f||!S.fruits[id])return;
+ S.fruits[id]--;S.karikari[f.color]+=f.kari;toast(f.emoji+" "+f.name+" → "+KARINAME[f.color]+" ×"+f.kari);save();renderBag();}
+function hatchEgg(){const e=S.incubating;S.incubating=null;
+ const coat=pick(COATS).id;const cat={id:uid(),coat,design:e.design,name:"",fp:0,feeds:0,feedDay:""};
+ S.cats.push(cat);S.today.hatch++;S.week.hatch++;gainXP(25);
+ toast("🐣 ふか！ "+coatById(coat).name+"（"+designById(e.design).name+"）が生まれたよ");save();}
+function discW(d){return d.type==="egg"?(d.design==="normal"?2:4):fruitById(d.fruit).kari;}
+function discTitle(d){return d.type==="egg"?designById(d.design).name+"の卵":fruitById(d.fruit).name;}
+function discIcon(d){return d.type==="egg"?"🥚":fruitById(d.fruit).emoji;}
+function freeCats(){const busy=new Set();S.errands.filter(e=>!e.collected).forEach(e=>e.catIds.forEach(id=>busy.add(id)));return S.cats.filter(c=>!busy.has(c.id));}
+function renderErrands(){
+ $("detectorBox").innerHTML=S.detectorDay===todayKey()?'<span class="sub">今日はもう使ったよ。また明日ね。</span>':'<button onclick="useDetector()">探索機を使う</button>';
+ if(!S.discoveries.length)$("discList").innerHTML='<div class="sub">まだ何も見つかっていません。歩いているとフルーツが見つかったり、探索機で卵やフルーツが見つかるよ。</div>';
+ else $("discList").innerHTML=S.discoveries.map(d=>{const W=discW(d);const mins=errandMinutes(d.dist,W,W);
+  return '<div class="row" style="margin-bottom:10px"><div style="font-size:32px">'+discIcon(d)+'</div><div class="grow"><b>'+discTitle(d)+'</b>'
+  +'<div class="sub">距離 約'+Math.round(d.dist)+'m ・ 見つけた日 '+d.found+' ・ 重さ '+W+'（最大'+W+'匹）</div>'
+  +'<div class="sub">いちばん速い帰宅：約'+mins+'分（'+W+'匹）</div></div>'
+  +'<button class="sm" onclick="openDiscSheet(\''+d.id+'\')">おつかい</button></div>';}).join("");
+ if(!S.errands.length)$("errandList").innerHTML='<div class="sub">おつかい中の猫はいません。</div>';
+ else $("errandList").innerHTML=S.errands.map(e=>{const back=Date.now()>=e.returnAt;const names=e.catIds.map(id=>{const c=S.cats.find(x=>x.id===id);return c?(c.name||coatById(c.coat).name):"";}).join("、");
+  return '<div class="row" style="margin-bottom:10px"><div style="font-size:30px">'+discIcon(e)+'</div><div class="grow"><b>'+discTitle(e)+'</b><div class="sub">'+names+(back?" ・ 帰ってきたよ！":" ・ あと "+Math.max(1,Math.ceil((e.returnAt-Date.now())/60000))+" 分")+'</div></div>'
+  +(back?'<button class="sm" onclick="collectErrand(\''+e.id+'\')">タップで受け取る</button>':'<span class="pill">おつかい中</span>')+'</div>';}).join("");}
+function useDetector(){if(S.detectorDay===todayKey()){toast("探索機は1日1回までだよ");return;}
+ S.detectorDay=todayKey();S.today.detector++;S.week.detector++;
+ const catsNear=[...new Set(S.spots.map(s=>s.design))].filter(id=>designAvailable(designById(id)));
+ const eggCats=shuffle(catsNear.length?catsNear:["normal"]).slice(0,Math.random()<0.5?1:2);
+ const base=S.lastPos||{lat:35.68,lng:139.69};
+ eggCats.forEach(cid=>{const a=rnd(0,Math.PI*2),dist=rnd(80,380);
+  S.discoveries.push({id:uid(),type:"egg",design:cid,lat:base.lat+Math.cos(a)*dist/111000,lng:base.lng+Math.sin(a)*dist/(111000*Math.cos(base.lat*Math.PI/180)),dist,found:todayKey()});});
+ const nf=2+Math.floor(Math.random()*2);
+ for(let i=0;i<nf;i++){const f=pick(FRUITS);const a=rnd(0,Math.PI*2),dist=rnd(60,350);
+  S.discoveries.push({id:uid(),type:"fruit",fruit:f.id,lat:base.lat+Math.cos(a)*dist/111000,lng:base.lng+Math.sin(a)*dist/(111000*Math.cos(base.lat*Math.PI/180)),dist,found:todayKey()});}
+ toast("🔭 探索機！ 卵"+eggCats.length+"種類とフルーツ"+nf+"種類が見つかったよ");gainXP(10);save();renderErrands();drawMapPins();}
+function openDiscSheet(id){const d=S.discoveries.find(x=>x.id===id);if(!d)return;
+ const W=discW(d);const free=freeCats();let opts="";
+ for(let p=1;p<=W;p++)opts+='<option value="'+p+'"'+(p===Math.min(W,Math.max(1,free.length))?" selected":"")+">"+p+"匹（約"+errandMinutes(d.dist,W,p)+"分）</option>";
+ showSheet('<h3 style="margin-top:0">'+discIcon(d)+" "+discTitle(d)+'</h3>'
+ +'<div class="sub" style="font-size:13px;line-height:1.8">距離 約'+Math.round(d.dist)+'m ・ 見つけた日 '+d.found+'<br>もらえるもの：'+(d.type==="egg"?"卵（ふか器で歩くと猫が生まれる）":"フルーツ（カリカリに変換できる）")+'<br>重さ '+W+' ・ 行かせられる猫は最大 '+W+'匹<br>帰宅時間 ＝ 往復時間 ×（11×重さ − 8×匹数 ＋ 3）÷ 36 で計算しています。匹数が多いほど速く帰ります。</div>'
+ +'<div class="row" style="margin-top:10px"><select id="pSel">'+opts+'</select><button onclick="sendErrand(\''+d.id+'\')">おつかいに行かせる</button></div>'
+ +(free.length?'<div class="sub" style="margin-top:6px">空いている猫：'+free.length+'匹</div>':'<div class="sub" style="margin-top:6px">空いている猫がいません</div>')
+ +'<div style="margin-top:10px"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+function sendErrand(id){const d=S.discoveries.find(x=>x.id===id);if(!d)return;
+ const W=discW(d);const P=parseInt(($("pSel")||{}).value||"1",10);
+ const free=freeCats();if(free.length<P){toast("空いている猫が足りないよ（"+P+"匹必要）");return;}
+ const chosen=free.slice(0,P).map(c=>c.id);const mins=errandMinutes(d.dist,W,P);
+ S.errands.push({id:uid(),type:d.type,design:d.design,fruit:d.fruit,catIds:chosen,returnAt:Date.now()+mins*60000,dist:d.dist});
+ S.discoveries=S.discoveries.filter(x=>x.id!==id);closeSheet();
+ toast("🐾 おつかいに出発！ 約"+mins+"分で帰ってくるよ");save();renderErrands();drawMapPins();}
+function collectErrand(id){const e=S.errands.find(x=>x.id===id);if(!e||Date.now()<e.returnAt)return;
+ S.errands=S.errands.filter(x=>x.id!==id);S.today.errands++;S.week.errands++;
+ if(e.type==="egg"){S.eggs.push(designEgg(e.design));toast("🥚 "+designById(e.design).name+"の卵を受け取ったよ");}
+ else{const f=fruitById(e.fruit);S.fruits[f.id]=(S.fruits[f.id]||0)+1;toast(f.emoji+" "+f.name+" を受け取ったよ");}
+ gainXP(15);save();renderErrands();renderBag();}
+function showSheet(h){$("sheet").innerHTML=h;$("sheet").classList.add("on");}
+function closeSheet(){$("sheet").classList.remove("on");}
+let map=null,catMarker=null,pathLine=null,pinLayer=null,spotsFetched=false;
+function initMap(){if(map||!window.L)return;
+ map=L.map("map").setView([35.68,139.69],16);
+ L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",{maxZoom:19,attribution:"© OpenStreetMap © CARTO"}).addTo(map);
+ pinLayer=L.layerGroup().addTo(map);pathLine=L.polyline([],{color:"#ff8fb8",weight:4}).addTo(map);
+ updateCatMarker();drawMapPins();}
+function updateCatMarker(){if(!map||!S.lastPos)return;
+ const lead=S.cats.find(c=>c.id===S.party[0])||S.cats[0];
+ const html='<div style="background:#fff;border:3px solid #ff8fb8;border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.25)">'+(lead?catSVG(lead.coat,lead.design,44):"🐱")+'</div>';
+ const icon=L.divIcon({html,className:"",iconSize:[52,52],iconAnchor:[26,26]});
+ if(!catMarker){catMarker=L.marker([S.lastPos.lat,S.lastPos.lng],{icon}).addTo(map);map.setView([S.lastPos.lat,S.lastPos.lng],16);}
+ else{catMarker.setLatLng([S.lastPos.lat,S.lastPos.lng]);catMarker.setIcon(icon);}}
+function drawMapPins(){if(!map||!pinLayer)return;pinLayer.clearLayers();
+ S.spots.forEach(sp=>{const d=designById(sp.design);
+  const m=L.marker([sp.lat,sp.lng],{icon:L.divIcon({html:'<div class="pin">'+d.emoji+'</div>',className:"",iconSize:[30,30],iconAnchor:[15,15]})}).addTo(pinLayer);
+  m.on("click",()=>openSpotSheet(sp));});
+ S.discoveries.forEach(dv=>{const m=L.marker([dv.lat,dv.lng],{icon:L.divIcon({html:'<div class="pin">'+discIcon(dv)+'</div>',className:"",iconSize:[30,30],iconAnchor:[15,15]})}).addTo(pinLayer);
+  m.on("click",()=>openDiscSheet(dv.id));});
+ if(S.destination){const dt=S.destination;
+  L.marker([dt.lat,dt.lng],{icon:L.divIcon({html:'<div class="pin">📍</div>',className:"",iconSize:[32,32],iconAnchor:[16,28]})}).addTo(pinLayer);}}
+function openSpotSheet(sp){const d=designById(sp.design);const dist=S.lastPos?hav(S.lastPos.lat,S.lastPos.lng,sp.lat,sp.lng):sp.dist||0;
+ const mins=Math.max(1,Math.round(dist/80));
+ showSheet('<h3 style="margin-top:0">'+d.emoji+" "+sp.name+'</h3><div class="sub" style="font-size:13px;line-height:1.8">カテゴリ：'+d.name+'<br>距離 約'+Math.round(dist)+'m ・ 徒歩約'+mins+'分<br>もらえるもの：'+d.name+'の卵（近づいてチェックイン）</div>'
+ +'<div style="margin-top:10px"><button onclick="checkinSpot(\''+sp.id+'\','+Math.round(dist)+')">チェックイン（100m以内）</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+function checkinSpot(id,dist){if(dist>100){toast("まだ遠いよ。100m以内に近づいてね（あと約"+(dist-100)+"m）");return;}
+ const sp=S.spots.find(s=>s.id===id);if(!sp)return;closeSheet();
+ grantEgg(designEgg(sp.design),"スポット到達！");S.today.spot++;S.week.spot++;gainXP(15);save();renderBag();}
+const OSM_MAP=[["cafe","cafe"],["cafe","cafe"],["restaurant","restaurant"],["fast_food","restaurant"],["ice_cream","sweets"],["confectionery","sweets"],["cinema","cinema"],["pharmacy","pharmacy"],["zoo","zoo"],["aquarium","aquarium"],["post_office","post"],["gallery","art"],["museum","museum"],["aerodrome","airport"],["station","station"],["halt","station"],["beach","beach"],["convenience","convenience"],["supermarket","supermarket"],["bakery","bakery"],["hairdresser","salon"],["clothes","fashion"],["library","library"],["books","library"],["place_of_worship","shrine"],["hotel","hotel"],["electronics","electronics"],["doityourself","homecenter"],["school","school"],["laundry","laundry"],["dry_cleaning","laundry"],["bus_station","busstop"],["stadium","stadium"],["park","park"]];
+function fetchSpots(lat,lng){if(spotsFetched)return;spotsFetched=true;
+ const q='[out:json][timeout:20];(node(around:1000,'+lat+","+lng+')[amenity];node(around:1000,'+lat+","+lng+')[shop];node(around:1000,'+lat+","+lng+')[tourism];node(around:1000,'+lat+","+lng+')[leisure];node(around:1000,'+lat+","+lng+')[railway=station];node(around:1000,'+lat+","+lng+')[natural=beach];);out 120;';
+ fetch("https://overpass-api.de/api/interpreter",{method:"POST",body:"data="+encodeURIComponent(q)})
+ .then(r=>r.json()).then(j=>{const out=[];
+  (j.elements||[]).forEach(el=>{const tags=el.tags||{};let des=null;
+   const vals=[tags.amenity,tags.shop,tags.tourism,tags.leisure];
+   for(const row of OSM_MAP){if(vals.includes(row[0])){des=row[1];break;}}
+   if(tags.railway==="station")des="station";if(tags.natural==="beach")des="beach";if(tags.leisure==="park")des="park";
+   if(!des||el.lat==null)return;
+   out.push({id:"sp"+el.id,lat:el.lat,lng:el.lon,name:tags.name||designById(des).name,design:des,dist:hav(lat,lng,el.lat,el.lon)});});
+  S.spots=out.slice(0,120);save();drawMapPins();renderDest();})
+ .catch(()=>{spotsFetched=false;});}
+function newDestination(fromPos){const a=rnd(0,Math.PI*2),dist=rnd(120,480);
+ const lat=fromPos.lat+Math.cos(a)*dist/111000;
+ const lng=fromPos.lng+Math.sin(a)*dist/(111000*Math.cos(fromPos.lat*Math.PI/180));
+ let name="目的地";const near=S.spots.map(s=>({s,d:hav(lat,lng,s.lat,s.lng)})).sort((x,y)=>x.d-y.d)[0];
+ if(near&&near.d<120)name=near.s.name+" の近く";
+ S.destination={lat,lng,name,dist:Math.round(hav(fromPos.lat,fromPos.lng,lat,lng))};save();drawMapPins();renderDest();}
+function renderDest(){const box=$("destCard");if(!box)return;
+ if(!S.lastPos){box.innerHTML='<div class="sub">位置情報が取れると、現在地から500m以内に目的地が出ます。</div>';return;}
+ if(!S.destination){box.innerHTML='<button onclick="newDestination(S.lastPos);renderDest()">目的地を決める</button>';return;}
+ const dt=S.destination;const dist=hav(S.lastPos.lat,S.lastPos.lng,dt.lat,dt.lng);
+ const mins=Math.max(1,Math.round(dist/80));
+ box.innerHTML='<div class="row"><div style="font-size:32px">📍</div><div class="grow"><b>'+dt.name+'</b><div class="sub">距離 約'+Math.round(dist)+'m ・ 徒歩約'+mins+'分 ・ 50m以内に着くと報酬（卵・フルーツ・XP）</div></div>'
+ +'<button class="sm ghost" onclick="newDestination(S.lastPos)">更新</button></div>'
+ +'<div class="sub" style="margin-top:6px">更新を押すと、いま居る地点から500m以内で引き直します。行きたくない方面のとき使ってね。</div>';}
+function arriveDestination(){S.today.dest++;S.week.dest++;
+ if(Math.random()<0.5)grantEgg(Math.random()<0.5?unownedDesignEgg():normalEgg(),"目的地とうちゃく！");
+ else{const f=pick(FRUITS);S.fruits[f.id]=(S.fruits[f.id]||0)+2;toast("🎁 目的地とうちゃく！ "+f.emoji+" "+f.name+" ×2 ゲット");}
+ gainXP(20);newDestination(S.lastPos);save();renderBag();renderHome();}
+let watchId=null;
+function startGPS(){if(!navigator.geolocation)return;
+ if(watchId!==null)return;
+ watchId=navigator.geolocation.watchPosition(onPos,err=>{$("gpsState").textContent="位置情報を許可すると、スポットや目的地が出ます";},{enableHighAccuracy:true,maximumAge:3000,timeout:15000});}
+function onPos(p){const lat=p.coords.latitude,lng=p.coords.longitude;
+ $("gpsState").textContent="📍 位置情報を取得中（GPS推定で歩数を数えています）";
+ const prev=S.lastPos;S.lastPos={lat,lng};
+ if(prev){const d=hav(prev.lat,prev.lng,lat,lng);
+  if(d>=3&&d<120){addWalk(d);}}
+ S.path.push([lat,lng]);if(S.path.length>600)S.path=S.path.slice(-600);
+ if(pathLine)pathLine.setLatLngs(S.path);
+ updateCatMarker();fetchSpots(lat,lng);
+ if(!S.destination)newDestination(S.lastPos);
+ if(S.destination&&hav(lat,lng,S.destination.lat,S.destination.lng)<=50)arriveDestination();
+ renderDest();save();}
+function addWalk(distM){const steps=Math.max(1,Math.round(distM/0.65));
+ S.today.steps+=steps;S.week.steps+=steps;S.totalSteps+=steps;
+ S.today.dist+=distM;S.week.dist+=distM;S.totalDist+=distM;
+ S.xpCarrySteps+=steps;const xpAdd=Math.floor(S.xpCarrySteps/100);if(xpAdd>0){S.xpCarrySteps-=xpAdd*100;gainXP(xpAdd);}
+ S.party.forEach(id=>{const c=S.cats.find(x=>x.id===id);if(c)c.fp+=friendGain(c,distM*0.004);});
+ if(S.incubating){S.incubating.prog+=steps;if(S.incubating.prog>=S.incubating.need)hatchEgg();}
+ const mile=Math.floor(S.totalSteps/3000);
+ if(mile>S.lastMile){S.lastMile=mile;const nearCats=[...new Set(S.spots.map(s=>s.design))];
+  const cid=nearCats.length&&Math.random()<0.75?pick(nearCats):"normal";
+  grantEgg(designEgg(cid),"歩いていたら見つけた！");}
+ const fmile=Math.floor(S.totalSteps/1000);
+ if(fmile>S.fruitMile){S.fruitMile=fmile;
+  if(Math.random()<0.6&&S.lastPos){const f=pick(FRUITS);const a=rnd(0,Math.PI*2),dist=rnd(60,300);
+   S.discoveries.push({id:uid(),type:"fruit",fruit:f.id,lat:S.lastPos.lat+Math.cos(a)*dist/111000,lng:S.lastPos.lng+Math.sin(a)*dist/(111000*Math.cos(S.lastPos.lat*Math.PI/180)),dist,found:todayKey()});
+   toast(f.emoji+" "+f.name+" を見つけた！ おつかいで持って帰れるよ");drawMapPins();}}
+ rollDay();save();renderHome();}
+function renderAll(){renderHeader();renderHome();renderErrands();renderCats();renderBag();renderMissions();renderDest();}
+document.querySelectorAll("nav a").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();
+ document.querySelectorAll("nav a").forEach(x=>x.classList.remove("on"));a.classList.add("on");
+ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));
+ $("tab-"+a.dataset.tab).classList.add("on");
+ if(a.dataset.tab==="map"){initMap();setTimeout(()=>{if(map)map.invalidateSize();},80);startGPS();}
+ renderAll();}));
+setInterval(()=>{renderErrands();},30000);
+load();rollDay();ensureMissions();save();renderAll();startGPS();
+</script>
+</body>
+</html>
