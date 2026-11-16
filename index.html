@@ -40,7 +40,7 @@ nav a span{display:block;font-size:20px}
 .row{display:flex;align-items:center;gap:10px}.grow{flex:1}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .zcell{background:#fff;border-radius:14px;padding:8px 4px;text-align:center;box-shadow:var(--shadow);font-size:11px}
-.sil{filter:grayscale(1) brightness(.55);opacity:.45}
+.sil{filter:grayscale(1);opacity:.68}
 .pill{display:inline-block;background:var(--pink3);border-radius:999px;padding:3px 10px;font-size:12px;margin:2px}
 .bar{height:12px;background:#ffe3ee;border-radius:7px;overflow:hidden}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,#ff8fb8,#ffc2d9)}
@@ -59,6 +59,8 @@ select,input[type=text]{font-family:inherit;font-size:14px;padding:8px;border:2p
 .maplibregl-ctrl-attrib a{color:#9a7a88}
 .map-pin{background:transparent;border:none}
 .bloom{animation:bloompop .45s ease-out;filter:drop-shadow(0 1px 1px rgba(90,61,74,.35))}
+.playerCat{animation:catbob 1.7s ease-in-out infinite}
+@keyframes catbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.5px)}}
 @keyframes bloompop{0%{transform:scale(.2);opacity:0}70%{transform:scale(1.25)}100%{transform:scale(1);opacity:1}}
 button{background:linear-gradient(135deg,#ff8fb8,#ffa8c8)}
 .map-pin{background:transparent;border:none;text-align:center}
@@ -104,7 +106,7 @@ Webアプリのため、開いている間のみ記録されます。スマホ�
 </section>
 <section id="tab-cats" class="tab">
 <div class="card"><h2>🐱 うちのねこ</h2><div id="catList"></div></div>
-<div class="card"><h2>📖 ねこずかん</h2><div class="sub">カテゴリごとに、毛色×デザインのねこが並びます。未収集はシルエットです。</div><div id="zukan"></div></div>
+<div class="card"><h2>📖 ねこずかん</h2><div class="sub">デザインごとに代表のねこが並びます。ゲット済みはカラー、まだのねこはモノクロ（形が分かるグレー）で表示されます。</div><div id="zukan"></div></div>
 </section>
 <section id="tab-bag" class="tab">
 <div class="card"><h2>🎒 もちもの</h2><div id="bagBox"></div></div>
@@ -202,6 +204,10 @@ const FRUITS=[
 const fruitById=id=>FRUITS.find(f=>f.id===id);
 const KARINAME={pink:"ピンクのカリカリ",purple:"紫のカリカリ",orange:"オレンジのカリカリ",yellow:"黄色のカリカリ",green:"緑のカリカリ"};
 const KARIDOT={pink:"#ff8fb8",purple:"#b48ce0",orange:"#ffa04d",yellow:"#f5cf4d",green:"#7ed492"};
+const CHECKIN_RANGE=30;
+const DEST_RANGE=30;
+const COAT_EGG_NAME={white:"白い卵",black:"黒い卵",mike:"三毛柄の卵",chatora:"茶トラ柄の卵",gray:"グレーの卵"};
+function eggColorName(coatId){return COAT_EGG_NAME[coatId]||"白い卵";}
 function seasonNow(){const m=new Date().getMonth()+1;if(m>=3&&m<=5)return"spring";if(m>=6&&m<=8)return"summer";if(m>=9&&m<=11)return"autumn";return"winter";}
 function eventNow(){const d=new Date(),m=d.getMonth()+1,day=d.getDate();if(m===10)return"halloween";if(m===2&&day<=14)return"valentine";if(m===1&&day<=7)return"newyear";return null;}
 function designAvailable(d){if(d.season)return d.season===seasonNow();if(d.event)return d.event===eventNow();return true;}
@@ -286,8 +292,19 @@ function catSVG(coatId,designId,size){
  +'<circle cx="27" cy="53" r="5" fill="#ffc7da" opacity=".85"/><circle cx="73" cy="53" r="5" fill="#ffc7da" opacity=".85"/>'
  +costumeSVG(designId)
  +'</svg>';}
-function eggSVG(designId,size){const col=DCOLOR[designId]||"#ff8fb8",s=size||54,h=Math.round(s*1.15);
- return '<svg width="'+s+'" height="'+h+'" viewBox="0 0 100 115"><ellipse cx="50" cy="60" rx="33" ry="42" fill="#fffafc" stroke="'+col+'" stroke-width="3.5"/><path d="M20 52 Q35 42 50 52 Q65 62 80 52 L80 68 Q65 78 50 68 Q35 58 20 68 Z" fill="'+col+'" opacity=".38"/><circle cx="36" cy="34" r="4.5" fill="'+col+'"/><circle cx="56" cy="26" r="3.4" fill="'+col+'" opacity=".7"/><circle cx="64" cy="84" r="4" fill="'+col+'" opacity=".8"/><circle cx="38" cy="90" r="3" fill="'+col+'" opacity=".6"/></svg>';}
+function eggSVG(designId,coatId,size){if(typeof coatId==="number"){size=coatId;coatId=null;}
+ const coat=coatById(coatId||"white"),col=DCOLOR[designId]||"#ff8fb8",s=size||54,h=Math.round(s*1.15);
+ let pat="";
+ if(coat.id==="mike")pat='<ellipse cx="35" cy="33" rx="11" ry="9" fill="#e8862e"/><ellipse cx="65" cy="76" rx="10" ry="9" fill="#4a3a32"/><ellipse cx="63" cy="31" rx="7" ry="6" fill="#4a3a32" opacity=".9"/><ellipse cx="33" cy="84" rx="7" ry="6" fill="#e8862e" opacity=".85"/>';
+ else if(coat.id==="chatora")pat='<path d="M25 40 Q50 31 75 40 M23 63 Q50 54 77 63 M27 85 Q50 76 73 85" fill="none" stroke="#d97f26" stroke-width="5" stroke-linecap="round" opacity=".75"/>';
+ else if(coat.id==="black")pat='<ellipse cx="36" cy="33" rx="9" ry="6" fill="#7a6f78" opacity=".8"/>';
+ else if(coat.id==="gray")pat='<ellipse cx="36" cy="33" rx="9" ry="6" fill="#ccd4db" opacity=".9"/>';
+ else pat='<ellipse cx="36" cy="33" rx="9" ry="6" fill="#ffffff" opacity=".95"/>';
+ const motif=designId==="normal"
+  ?'<path d="M20 52 Q35 42 50 52 Q65 62 80 52 L80 68 Q65 78 50 68 Q35 58 20 68 Z" fill="'+col+'" opacity=".30"/>'
+  :'<path d="M20 52 Q35 42 50 52 Q65 62 80 52 L80 68 Q65 78 50 68 Q35 58 20 68 Z" fill="'+col+'" opacity=".55"/><circle cx="50" cy="60" r="5.5" fill="'+col+'" stroke="#ffffff" stroke-width="1.6"/>';
+ return '<svg width="'+s+'" height="'+h+'" viewBox="0 0 100 115" role="img" aria-label="'+eggColorName(coat.id)+'"><ellipse cx="50" cy="60" rx="33" ry="42" fill="'+coat.body+'" stroke="'+col+'" stroke-width="3.5"/>'+pat+motif+'<circle cx="64" cy="88" r="3.4" fill="'+col+'" opacity=".75"/></svg>';}
+function eggLabel(e){return eggColorName(e&&e.coat?e.coat:"white");}
 function fruitSVG(fid,size){const s=size||36;const W='stroke="#ffffff" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"';let inner="";
 const leaf='<path d="M50 26 Q52 14 64 10 Q66 22 56 27 Q52 28 50 26 Z" fill="#7ec850"/>';
 switch(fid){
@@ -309,7 +326,7 @@ case "melon":inner='<circle cx="50" cy="56" r="31" fill="#a5d98a" '+W+'/><g fill
 default:inner='<circle cx="50" cy="56" r="30" fill="#ff9ec6" '+W+'/>'+leaf;break;
 }
 return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 100 100" role="img" aria-label="'+(fruitById(fid)?fruitById(fid).name:"フルーツ")+'">'+inner+'</svg>';}
-function discSVG(d,size){return d.type==="egg"?eggSVG(d.design,size||40):fruitSVG(d.fruit,size||40);}
+function discSVG(d,size){return d.type==="egg"?eggSVG(d.design,d.coat,size||40):fruitSVG(d.fruit,size||40);}
 function discIcon(d){return discSVG(d,38);}
 
 function pinGlyph(id){
@@ -389,7 +406,7 @@ function defaultState(){
  discoveries:[],errands:[],destination:null,detectorDay:"",flowers:[],flowerDay:"",
  dailyM:null,weeklyM:null,log:{},lastPos:null,path:[],spots:[],
  lastMile:0,fruitMile:0,started:new Date().toISOString()};}
-function load(){try{const raw=localStorage.getItem(KEY);if(raw){S=JSON.parse(raw);if(S&&S.v===2){if(!S.flowers)S.flowers=[];if(!S.flowerDay)S.flowerDay="";return;}}}catch(e){}
+function load(){try{const raw=localStorage.getItem(KEY);if(raw){S=JSON.parse(raw);if(S&&S.v===2){if(!S.flowers)S.flowers=[];if(!S.flowerDay)S.flowerDay="";migrateEggs();save();return;}}}catch(e){}
  S=defaultState();save();
  setTimeout(()=>toast("はじめまして！ "+coatById(S.cats[0].coat).name+"のねこが仲間になったよ🐾"),600);}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
@@ -408,10 +425,14 @@ function unownedDesignEgg(){
  const owned=new Set(S.cats.map(c=>c.design));
  const pool=DESIGNS.filter(d=>d.id!=="normal"&&designAvailable(d)&&!owned.has(d.id));
  const d=pool.length?pick(pool):pick(DESIGNS.filter(x=>x.id!=="normal"&&designAvailable(x)));
- return {id:uid(),design:d.id,need:3000};}
-function normalEgg(){return {id:uid(),design:"normal",need:1000};}
-function designEgg(id){const d=designById(id);return {id:uid(),design:d.id,need:d.id==="normal"?1000:3000};}
-function grantEgg(egg,why){S.eggs.push(egg);toast("🥚 "+designById(egg.design).name+"の卵をゲット！"+(why||""));save();}
+ return {id:uid(),design:d.id,need:3000,coat:pick(COATS).id};}
+function normalEgg(){return {id:uid(),design:"normal",need:1000,coat:pick(COATS).id};}
+function designEgg(id,coatId){const d=designById(id);return {id:uid(),design:d.id,need:d.id==="normal"?1000:3000,coat:coatId||pick(COATS).id};}
+function grantEgg(egg,why){if(!egg.coat)egg.coat=pick(COATS).id;S.eggs.push(egg);toast("🥚 "+eggColorName(egg.coat)+"（"+designById(egg.design).name+"）をゲット！"+(why||""));save();}
+function rollDestRewards(){const items=[];if(Math.random()<0.5){const egg=(Math.random()<0.5?unownedDesignEgg():normalEgg());items.push({kind:"egg",design:egg.design,coat:egg.coat,need:egg.need});}else{for(let i=0;i<2;i++){const f=pick(FRUITS);items.push({kind:"fruit",fruit:f.id});}}return {xp:20,items:items};}
+function ensureDestRewards(){if(!S||!S.destination)return null;const r=S.destination.rewards;if(!r||!Array.isArray(r.items)||!r.items.length){S.destination.rewards=rollDestRewards();}else{r.items.forEach(function(it){if(it.kind==="egg"){if(!it.coat)it.coat=pick(COATS).id;if(!it.design)it.design="normal";if(!it.need)it.need=it.design==="normal"?1000:3000;}});if(typeof r.xp!=="number")r.xp=20;}return S.destination.rewards;}
+function destRewardRowsHTML(rw){if(!rw)return "";let h=rw.items.map(function(it){if(it.kind==="egg")return '<div class="row" style="margin-bottom:6px"><div>'+eggSVG(it.design,it.coat,36)+'</div><div class="grow">'+eggColorName(it.coat)+' <span class="sub">（デザインはお楽しみ）</span></div></div>';const f=fruitById(it.fruit);return '<div class="row" style="margin-bottom:6px"><div>'+fruitSVG(it.fruit,36)+'</div><div class="grow">'+(f?f.name:it.fruit)+'</div></div>';}).join("");if(rw.xp)h+='<div class="row" style="margin-bottom:6px"><div style="width:36px;text-align:center;font-size:20px">⭐</div><div class="grow">XP +' + rw.xp + '</div></div>';return h;}
+function migrateEggs(){if(!S)return;const ensure=function(o){if(o&&!o.coat)o.coat=pick(COATS).id;};(S.eggs||[]).forEach(ensure);if(S.incubating)ensure(S.incubating);(S.discoveries||[]).forEach(function(d){if(d.type==="egg")ensure(d);});(S.errands||[]).forEach(function(d){if(d.type==="egg")ensure(d);});if(S.destination)ensureDestRewards();}
 const DAILY_POOL=[
 {k:"steps",t:"今日 {n} 歩あるく",n:1000,xp:30,rw:"egg"},
 {k:"steps",t:"今日 {n} 歩あるく",n:2000,xp:40,rw:"eggFruit"},
@@ -456,7 +477,7 @@ function renderHome(){rollDay();
  $("homeCat").innerHTML=lead?catSVG(lead.coat,lead.design,76):"";
  $("partyRow").innerHTML=S.party.length?'<div class="partyGrid">'+S.party.map(id=>{const c=S.cats.find(x=>x.id===id);return c?'<div class="partyCat">'+catSVG(c.coat,c.design,64)+'<div>'+(c.name||coatById(c.coat).name)+'<br><span class="sub">'+designById(c.design).name+'</span></div></div>':"";}).join("")+'</div>':'<span class="sub">「ねこ」タブで同行メンバーを選んでね（最大5匹）</span>';
  if(S.incubating){const e=S.incubating;const pct=Math.min(100,e.prog/e.need*100);
-  $("incubator").innerHTML='<div class="row"><div>'+eggSVG(e.design,60)+'</div><div class="grow"><div>'+designById(e.design).name+'の卵</div><div class="bar" style="margin:6px 0"><i style="width:'+pct+'%"></i></div><div class="sub">あと '+(e.need-e.prog)+' 歩でふか（'+e.prog+" / "+e.need+' 歩）</div></div></div>';}
+  $("incubator").innerHTML='<div class="row"><div>'+eggSVG(e.design,e.coat,60)+'</div><div class="grow"><div>'+designById(e.design).name+'の卵 ・ '+eggLabel(e)+'</div><div class="sub">中は '+coatById(e.coat||"white").name+' のねこだよ</div><div class="bar" style="margin:6px 0"><i style="width:'+pct+'%"></i></div><div class="sub">あと '+(e.need-e.prog)+' 歩でふか（'+e.prog+" / "+e.need+' 歩）</div></div></div>';}
  else $("incubator").innerHTML='<div class="sub">卵は「もちもの」から ふか器にセットできるよ。ノーマル卵は1000歩、デザイン卵は3000歩でふかします。</div>';
  const days=["日","月","火","水","木","金","土"];const now=new Date();
  let cal="";for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);
@@ -473,10 +494,9 @@ function renderCats(){
   +'<div style="margin-top:5px"><button class="sm '+(inParty?"":"ghost")+'" onclick="toggleParty(\''+c.id+'\')">'+(inParty?"同行中 ✓":"同行させる")+'</button> '
   +Object.keys(KARINAME).map(col=>'<button class="sm ghost" onclick="feedCat(\''+c.id+'\',\''+col+'\')" '+(S.karikari[col]>0?"":"disabled")+'>● '+col+'</button>').join(" ")
   +'<div class="sub">カリカリをあげる（1匹1日2回まで）今日 '+(c.feedDay===todayKey()?c.feeds:0)+' / 2回</div></div></div></div>';}).join("");
- let z="";DESIGNS.forEach(d=>{z+='<div style="margin-top:12px"><b>'+d.name+'</b><div class="grid" style="margin-top:6px">'
-  +COATS.map(co=>{const own=S.cats.some(c=>c.design===d.id&&c.coat===co.id);
-   return '<div class="zcell"><div class="'+(own?"":"sil")+'">'+catSVG(co.id,d.id,52)+'</div>'+co.name+(own?"":" 未")+'</div>';}).join("")+"</div></div>";});
- $("zukan").innerHTML=z;}
+ let z='<div class="grid" style="margin-top:8px">';DESIGNS.forEach(d=>{const ownedCats=S.cats.filter(c=>c.design===d.id);const own=ownedCats.length>0;const repCoat=own?ownedCats[0].coat:"white";
+  z+='<div class="zcell"><div class="'+(own?"":"sil")+'">'+catSVG(repCoat,d.id,60)+'</div><div>'+d.name+'</div><div class="sub">'+(own?coatById(repCoat).name+" ゲット済み ✓":"まだ")+'</div></div>';});
+ z+="</div>";$("zukan").innerHTML=z;}
 function renameCat(id,v){const c=S.cats.find(x=>x.id===id);if(c){c.name=v.trim();save();toast("名前をつけたよ");}}
 function toggleParty(id){const i=S.party.indexOf(id);
  if(i>=0)S.party.splice(i,1);else{if(S.party.length>=5){toast("一緒に歩けるのは最大5匹までだよ");return;}S.party.push(id);}
@@ -492,22 +512,22 @@ function renderBag(){
  const eggCount=S.eggs.length+(S.incubating?1:0);
  let h='<div class="row" style="flex-wrap:wrap">'+Object.keys(KARINAME).map(col=>'<span class="pill"><span style="color:'+KARIDOT[col]+'">●</span> '+KARINAME[col]+" × "+S.karikari[col]+'</span>').join("")+'<span class="pill">🥚 卵 × '+eggCount+'</span></div>';
  h+='<h3 style="margin:14px 0 6px">🥚 卵</h3>';
- h+=S.eggs.length?S.eggs.map(e=>'<div class="row" style="margin-bottom:8px"><div>'+eggSVG(e.design,44)+'</div><div class="grow">'+designById(e.design).name+'の卵<div class="sub">ふかまで '+e.need+' 歩</div></div>'+(S.incubating?'<span class="sub">ふか器は使用中</span>':'<button class="sm" onclick="setIncubator(\''+e.id+'\')">ふか器にセット</button>')+'</div>').join(""):'<div class="sub">卵はまだありません。歩いたり、探索機やミッションで見つかるよ。</div>';
- if(S.incubating)h+='<div class="sub">ふか器の中： '+designById(S.incubating.design).name+'の卵（'+S.incubating.prog+" / "+S.incubating.need+' 歩）</div>';
+ h+=S.eggs.length?S.eggs.map(e=>'<div class="row" style="margin-bottom:8px"><div>'+eggSVG(e.design,e.coat,44)+'</div><div class="grow">'+designById(e.design).name+'の卵 ・ '+eggLabel(e)+'<div class="sub">中は '+coatById(e.coat||"white").name+' のねこ ・ ふかまで '+e.need+' 歩</div></div>'+(S.incubating?'<span class="sub">ふか器は使用中</span>':'<button class="sm" onclick="setIncubator(\''+e.id+'\')">ふか器にセット</button>')+'</div>').join(""):'<div class="sub">卵はまだありません。歩いたり、探索機やミッションで見つかるよ。</div>';
+ if(S.incubating)h+='<div class="sub">ふか器の中： '+designById(S.incubating.design).name+'の卵 ・ '+eggLabel(S.incubating)+'（'+S.incubating.prog+" / "+S.incubating.need+' 歩）</div>';
  h+='<h3 style="margin:14px 0 6px">🍓 フルーツ（カリカリに変換）</h3>';
  const fids=Object.keys(S.fruits).filter(id=>S.fruits[id]>0);
  h+=fids.length?fids.map(id=>{const f=fruitById(id);return '<div class="row" style="margin-bottom:8px"><div>'+fruitSVG(f.id,38)+'</div><div class="grow">'+f.name+' × '+S.fruits[id]+'<div class="sub">'+KARINAME[f.color]+" "+f.kari+' 個に変換できる</div></div><button class="sm" onclick="convertFruit(\''+id+'\')">変換する</button></div>';}).join(""):'<div class="sub">フルーツはまだありません。おつかいで持って帰ってこられるよ。</div>';
  $("bagBox").innerHTML=h;}
 function setIncubator(id){if(S.incubating)return;const i=S.eggs.findIndex(e=>e.id===id);if(i<0)return;
- const e=S.eggs.splice(i,1)[0];S.incubating={design:e.design,need:e.need,prog:0};save();renderBag();renderHome();toast("🥚 ふか器にセット！ 歩いてあたためよう");}
+ const e=S.eggs.splice(i,1)[0];S.incubating={design:e.design,need:e.need,prog:0,coat:e.coat||pick(COATS).id};save();renderBag();renderHome();toast("🥚 ふか器にセット！ 歩いてあたためよう");}
 function convertFruit(id){const f=fruitById(id);if(!f||!S.fruits[id])return;
  S.fruits[id]--;S.karikari[f.color]+=f.kari;toast(f.name+" → "+KARINAME[f.color]+" ×"+f.kari);save();renderBag();}
 function hatchEgg(){const e=S.incubating;S.incubating=null;
- const coat=pick(COATS).id;const cat={id:uid(),coat,design:e.design,name:"",fp:0,feeds:0,feedDay:""};
+ const coat=e.coat||pick(COATS).id;const cat={id:uid(),coat,design:e.design,name:"",fp:0,feeds:0,feedDay:""};
  S.cats.push(cat);S.today.hatch++;S.week.hatch++;gainXP(25);
  toast("🐣 ふか！ "+coatById(coat).name+"（"+designById(e.design).name+"）が生まれたよ");save();}
 function discW(d){return d.type==="egg"?(d.design==="normal"?2:4):fruitById(d.fruit).kari;}
-function discTitle(d){return d.type==="egg"?designById(d.design).name+"の卵":fruitById(d.fruit).name;}
+function discTitle(d){return d.type==="egg"?designById(d.design).name+"の卵 ・ "+eggColorName(d.coat||"white"):fruitById(d.fruit).name;}
 
 function freeCats(){const busy=new Set();S.errands.filter(e=>!e.collected).forEach(e=>e.catIds.forEach(id=>busy.add(id)));return S.cats.filter(c=>!busy.has(c.id));}
 function renderErrands(){
@@ -528,7 +548,7 @@ function useDetector(){if(S.detectorDay===todayKey()){toast("探索機は1日1�
  const eggCats=shuffle(catsNear.length?catsNear:["normal"]).slice(0,Math.random()<0.5?1:2);
  const base=S.lastPos||{lat:35.68,lng:139.69};
  eggCats.forEach(cid=>{const a=rnd(0,Math.PI*2),dist=rnd(80,380);
-  S.discoveries.push({id:uid(),type:"egg",design:cid,lat:base.lat+Math.cos(a)*dist/111000,lng:base.lng+Math.sin(a)*dist/(111000*Math.cos(base.lat*Math.PI/180)),dist,found:todayKey()});});
+  S.discoveries.push({id:uid(),type:"egg",design:cid,coat:pick(COATS).id,lat:base.lat+Math.cos(a)*dist/111000,lng:base.lng+Math.sin(a)*dist/(111000*Math.cos(base.lat*Math.PI/180)),dist,found:todayKey()});});
  const nf=2+Math.floor(Math.random()*2);
  for(let i=0;i<nf;i++){const f=pick(FRUITS);const a=rnd(0,Math.PI*2),dist=rnd(60,350);
   S.discoveries.push({id:uid(),type:"fruit",fruit:f.id,lat:base.lat+Math.cos(a)*dist/111000,lng:base.lng+Math.sin(a)*dist/(111000*Math.cos(base.lat*Math.PI/180)),dist,found:todayKey()});}
@@ -537,7 +557,7 @@ function openDiscSheet(id){const d=S.discoveries.find(x=>x.id===id);if(!d)return
  const W=discW(d);const free=freeCats();let opts="";
  for(let p=1;p<=W;p++)opts+='<option value="'+p+'"'+(p===Math.min(W,Math.max(1,free.length))?" selected":"")+">"+p+"匹（約"+errandMinutes(d.dist,W,p)+"分）</option>";
  showSheet('<h3 style="margin-top:0">'+discIcon(d)+" "+discTitle(d)+'</h3>'
- +'<div class="sub" style="font-size:13px;line-height:1.8">距離 約'+Math.round(d.dist)+'m ・ 見つけた日 '+d.found+'<br>もらえるもの：'+(d.type==="egg"?"卵（ふか器で歩くと猫が生まれる）":"フルーツ（カリカリに変換できる）")+'<br>重さ '+W+' ・ 行かせられる猫は最大 '+W+'匹<br>帰宅時間 ＝ 往復時間 ×（11×重さ − 8×匹数 ＋ 3）÷ 36 で計算しています。匹数が多いほど速く帰ります。</div>'
+ +'<div class="sub" style="font-size:13px;line-height:1.8">距離 約'+Math.round(d.dist)+'m ・ 見つけた日 '+d.found+'<br>もらえるもの：'+(d.type==="egg"?eggColorName(d.coat||"white")+"（ふか器で歩くと "+coatById(d.coat||"white").name+" の猫が生まれる）":"フルーツ（カリカリに変換できる）")+'<br>重さ '+W+' ・ 行かせられる猫は最大 '+W+'匹<br>帰宅時間 ＝ 往復時間 ×（11×重さ − 8×匹数 ＋ 3）÷ 36 で計算しています。匹数が多いほど速く帰ります。</div>'
  +'<div class="row" style="margin-top:10px"><select id="pSel">'+opts+'</select><button onclick="sendErrand(\''+d.id+'\')">おつかいに行かせる</button></div>'
  +(free.length?'<div class="sub" style="margin-top:6px">空いている猫：'+free.length+'匹</div>':'<div class="sub" style="margin-top:6px">空いている猫がいません</div>')
  +'<div style="margin-top:10px"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
@@ -545,12 +565,12 @@ function sendErrand(id){const d=S.discoveries.find(x=>x.id===id);if(!d)return;
  const W=discW(d);const P=parseInt(($("pSel")||{}).value||"1",10);
  const free=freeCats();if(free.length<P){toast("空いている猫が足りないよ（"+P+"匹必要）");return;}
  const chosen=free.slice(0,P).map(c=>c.id);const mins=errandMinutes(d.dist,W,P);
- S.errands.push({id:uid(),type:d.type,design:d.design,fruit:d.fruit,catIds:chosen,returnAt:Date.now()+mins*60000,dist:d.dist});
+ S.errands.push({id:uid(),type:d.type,design:d.design,coat:d.coat,fruit:d.fruit,catIds:chosen,returnAt:Date.now()+mins*60000,dist:d.dist});
  S.discoveries=S.discoveries.filter(x=>x.id!==id);closeSheet();
  toast("🐾 おつかいに出発！ 約"+mins+"分で帰ってくるよ");save();renderErrands();drawMapPins();}
 function collectErrand(id){const e=S.errands.find(x=>x.id===id);if(!e||Date.now()<e.returnAt)return;
  S.errands=S.errands.filter(x=>x.id!==id);S.today.errands++;S.week.errands++;
- if(e.type==="egg"){S.eggs.push(designEgg(e.design));toast("🥚 "+designById(e.design).name+"の卵を受け取ったよ");}
+ if(e.type==="egg"){const eg=designEgg(e.design,e.coat);S.eggs.push(eg);toast("🥚 "+eggColorName(eg.coat)+"（"+designById(e.design).name+"）を受け取ったよ");}
  else{const f=fruitById(e.fruit);S.fruits[f.id]=(S.fruits[f.id]||0)+1;toast(f.name+" を受け取ったよ");}
  gainXP(15);save();renderErrands();renderBag();}
 function showSheet(h){$("sheet").innerHTML=h;$("sheet").classList.add("on");}
@@ -586,29 +606,35 @@ function updateTrail(){if(!map)return;
  if(mapGL){if(glReady&&map.getSource("osanpo-trail"))map.getSource("osanpo-trail").setData(trailGeoJSON());return;}
  if(pathLine)pathLine.setLatLngs(S.path);if(pathCasing)pathCasing.setLatLngs(S.path);}
 function recolorStyle(){const st=map.getStyle();if(!st||!st.layers)return;
- try{if(!map.hasImage("osanpo-flower")){const cv=document.createElement("canvas");cv.width=64;cv.height=64;const g=cv.getContext("2d");
-  const dots=[[10,12,"#ff8fb8"],[30,8,"#ffffff"],[52,14,"#ffdf6b"],[18,32,"#ffdf6b"],[42,30,"#ff8fb8"],[58,44,"#ffffff"],[8,52,"#ffffff"],[28,50,"#ff9ec6"],[48,58,"#ff8fb8"]];
-  dots.forEach(function(d){g.fillStyle=d[2];for(let i=0;i<5;i++){const a=-Math.PI/2+i*Math.PI*2/5;g.beginPath();g.arc(d[0]+Math.cos(a)*3.4,d[1]+Math.sin(a)*3.4,2.5,0,7);g.fill();}g.fillStyle="#ffcf4d";g.beginPath();g.arc(d[0],d[1],1.9,0,7);g.fill();});
-  map.addImage("osanpo-flower",g.getImageData(0,0,64,64));}}catch(e){}
+ try{if(!map.hasImage("osanpo-field")){const cv=document.createElement("canvas");cv.width=128;cv.height=128;const g=cv.getContext("2d");
+  g.fillStyle="#a6db8c";g.fillRect(0,0,128,128);
+  const gr=["#97cf7c","#b5e39c","#8fc873"];for(let i=0;i<70;i++){g.fillStyle=gr[i%3];g.beginPath();g.arc((i*37)%128,(i*53)%128,1.6,0,7);g.fill();}
+  const fl=[[8,14,"#ff8fb8"],[38,6,"#ffffff"],[66,16,"#ffdf6b"],[96,8,"#ffb3cd"],[118,26,"#ff9ec6"],[22,40,"#ffdf6b"],[52,34,"#ff8fb8"],[82,44,"#ffffff"],[110,58,"#ff8fb8"],[6,66,"#ffffff"],[34,62,"#ff9ec6"],[60,74,"#ffb3cd"],[90,82,"#ffdf6b"],[120,92,"#ffffff"],[16,94,"#ff8fb8"],[46,104,"#ffffff"],[74,112,"#ff9ec6"],[102,116,"#ffb3cd"],[126,120,"#ffdf6b"],[56,52,"#c9a8f2"]];
+  const drawF=function(x,y,c){g.fillStyle=c;for(let i=0;i<5;i++){const a=-Math.PI/2+i*Math.PI*2/5;g.beginPath();g.arc(x+Math.cos(a)*3.1,y+Math.sin(a)*3.1,2.3,0,7);g.fill();}g.fillStyle="#ffcf4d";g.beginPath();g.arc(x,y,1.7,0,7);g.fill();};
+  fl.forEach(function(d){[-128,0,128].forEach(function(dx){[-128,0,128].forEach(function(dy){drawF(d[0]+dx,d[1]+dy,d[2]);});});});
+  const img=g.getImageData(0,0,128,128);map.addImage("osanpo-field",img);if(!map.hasImage("osanpo-flower"))map.addImage("osanpo-flower",img);}}catch(e){}
  st.layers.forEach(function(ly){const id=ly.id||"",sl=ly["source-layer"]||"";
   try{
-   if(ly.type==="background"){map.setPaintProperty(id,"background-color","#b7e39b");return;}
-   if(id.indexOf("boundary")>=0||sl==="boundary"){map.setLayoutProperty(id,"visibility","none");return;}
+   if(ly.type==="background"){map.setPaintProperty(id,"background-color","#a6db8c");try{map.setPaintProperty(id,"background-pattern","osanpo-field");}catch(e){}return;}
+   if(ly.type==="raster"||ly.type==="fill-extrusion"||id.indexOf("boundary")>=0||sl==="boundary"){map.setLayoutProperty(id,"visibility","none");return;}
    if(ly.type==="fill"){
-    if(sl==="water"||id.indexOf("water")>=0)map.setPaintProperty(id,"fill-color","#a9ddf2");
-    else if(sl==="building"||id.indexOf("building")>=0){map.setPaintProperty(id,"fill-color","#ffd3e4");try{map.setPaintProperty(id,"fill-outline-color","#f2a4c4");}catch(e){}}
-    else if(sl==="park"||id.indexOf("park")>=0)map.setPaintProperty(id,"fill-color","#8fce7d");
-    else if(sl==="wood"||sl==="landcover"||id.indexOf("wood")>=0||id.indexOf("grass")>=0||id.indexOf("landcover")>=0||id.indexOf("forest")>=0)map.setPaintProperty(id,"fill-color","#a2dc8d");
-    else map.setPaintProperty(id,"fill-color","#b7e39b");}
+    if(sl==="water")map.setPaintProperty(id,"fill-color","#7ec8ee");
+    else if(sl==="building"){map.setPaintProperty(id,"fill-color","#ffe6f1");try{map.setPaintProperty(id,"fill-outline-color","#ffffff");map.setPaintProperty(id,"fill-opacity",0.95);}catch(e){}}
+    else if(id==="landcover_sand")map.setPaintProperty(id,"fill-color","#f6ead0");
+    else if(id==="landcover_ice")map.setPaintProperty(id,"fill-color","#ffffff");
+    else if(sl==="aeroway")map.setPaintProperty(id,"fill-color","#f3e2ea");
+    else if(sl==="transportation")map.setPaintProperty(id,"fill-color","#fff3d6");
+    else{try{map.setPaintProperty(id,"fill-pattern","osanpo-field");}catch(e){map.setPaintProperty(id,"fill-color","#a6db8c");}}}
    else if(ly.type==="line"){
-    if(sl==="waterway"||id.indexOf("water")>=0)map.setPaintProperty(id,"line-color","#a9ddf2");
-    else if(sl==="transportation"||id.indexOf("road")>=0||id.indexOf("highway")>=0||id.indexOf("transport")>=0||id.indexOf("street")>=0)map.setPaintProperty(id,"line-color","#fff3d6");}
-   else if(ly.type==="symbol"){try{map.setPaintProperty(id,"text-color","#8a5a6d");map.setPaintProperty(id,"text-halo-color","#ffffff");map.setPaintProperty(id,"text-halo-width",1.4);}catch(e){}}
+    if(id.indexOf("hatching")>=0){map.setLayoutProperty(id,"visibility","none");}
+    else if(sl==="waterway"){map.setPaintProperty(id,"line-color","#6fc3ec");try{map.setPaintProperty(id,"line-width",id==="waterway_river"?4:2.2);}catch(e){}}
+    else if(sl==="park"){map.setPaintProperty(id,"line-color","#eaf7df");}
+    else if(sl==="transportation"){const rail=id.indexOf("rail")>=0;map.setPaintProperty(id,"line-color",rail?"#d9c6b2":(id.indexOf("casing")>=0?"#fffdf6":"#fff1cf"));try{map.setLayoutProperty(id,"line-cap","round");map.setLayoutProperty(id,"line-join","round");}catch(e){}}}
+   else if(ly.type==="symbol"){const keep=id.indexOf("label_")===0||id==="highway-name-major";
+    if(!keep){map.setLayoutProperty(id,"visibility","none");}
+    else{try{map.setPaintProperty(id,"icon-opacity",0);}catch(e){}try{map.setPaintProperty(id,"text-color","#7d5568");map.setPaintProperty(id,"text-halo-color","#ffffff");map.setPaintProperty(id,"text-halo-width",1.6);}catch(e){}}}
   }catch(e){}});
- try{const srcName=st.sources?Object.keys(st.sources)[0]:null;
-  const firstSymbol=(st.layers.find(function(l){return l.type==="symbol";})||{}).id;
-  if(srcName&&map.hasImage("osanpo-flower")&&!map.getLayer("osanpo-park-flowers")){
-   map.addLayer({id:"osanpo-park-flowers",type:"fill",source:srcName,"source-layer":"park",paint:{"fill-pattern":"osanpo-flower","fill-opacity":0.5}},firstSymbol);}}catch(e){}}
+}
 function addTrailGL(){try{if(map.getSource("osanpo-trail"))return;
   map.addSource("osanpo-trail",{type:"geojson",data:trailGeoJSON()});
   const firstSymbol=((map.getStyle().layers||[]).find(function(l){return l.type==="symbol";})||{}).id;
@@ -619,7 +645,7 @@ function initMap(){if(map)return;
  initLeafletMap();}
 function initGLMap(){mapGL=true;glReady=false;
  map=new maplibregl.Map({container:"map",style:"https://tiles.openfreemap.org/styles/liberty",
-  center:S.lastPos?[S.lastPos.lng,S.lastPos.lat]:[139.69,35.68],zoom:16,pitch:48,bearing:0,maxPitch:60,
+  center:S.lastPos?[S.lastPos.lng,S.lastPos.lat]:[139.69,35.68],zoom:16,pitch:35,bearing:0,maxPitch:50,
   attributionControl:{compact:true}});
  map.on("load",function(){glReady=true;try{recolorStyle();}catch(e){} addTrailGL();updateTrail();drawFlowers();});
  map.on("error",function(){if(!glReady)fallbackLeaflet();});
@@ -636,24 +662,57 @@ function initLeafletMap(){if(map||!window.L)return;mapGL=false;
  pathLine=L.polyline([],{color:"#ffb9d2",weight:6,opacity:.9}).addTo(map);
  updateTrail();updateCatMarker();drawMapPins();drawFlowers();}
 function resizeMap(){if(!map)return;if(mapGL){try{map.resize();}catch(e){}}else if(map.invalidateSize){map.invalidateSize();}}
+function playerCatSVG(s){s=s||40;const h=Math.round(s*65/60);
+ return '<svg width="'+s+'" height="'+h+'" viewBox="0 0 60 65" role="img" aria-label="現在地の白ねこ">'
+ +'<ellipse cx="30" cy="60" rx="15" ry="4" fill="rgba(90,61,74,.20)"/>'
+ +'<path d="M43 45 Q55 43 53 32" fill="none" stroke="#eed3de" stroke-width="7.5" stroke-linecap="round"/>'
+ +'<path d="M43 45 Q55 43 53 32" fill="none" stroke="#ffffff" stroke-width="5.5" stroke-linecap="round"/>'
+ +'<ellipse cx="30" cy="47" rx="12" ry="11" fill="#ffffff" stroke="#eed3de" stroke-width="1.6"/>'
+ +'<ellipse cx="21" cy="57" rx="5.4" ry="2.8" fill="#ffffff" stroke="#eed3de" stroke-width="1.2"/>'
+ +'<ellipse cx="39" cy="57" rx="5.4" ry="2.8" fill="#ffffff" stroke="#eed3de" stroke-width="1.2"/>'
+ +'<path d="M14 19 L11 5 L25 11 Z" fill="#ffffff" stroke="#eed3de" stroke-width="1.5" stroke-linejoin="round"/>'
+ +'<path d="M46 19 L49 5 L35 11 Z" fill="#ffffff" stroke="#eed3de" stroke-width="1.5" stroke-linejoin="round"/>'
+ +'<path d="M15.5 16 L14 9 L21.5 12.5 Z" fill="#ffb3cd"/><path d="M44.5 16 L46 9 L38.5 12.5 Z" fill="#ffb3cd"/>'
+ +'<circle cx="30" cy="27" r="17.5" fill="#ffffff" stroke="#eed3de" stroke-width="1.6"/>'
+ +'<circle cx="23" cy="27" r="2.1" fill="#4a3542"/><circle cx="37" cy="27" r="2.1" fill="#4a3542"/>'
+ +'<circle cx="23.8" cy="26.2" r=".7" fill="#fff"/><circle cx="37.8" cy="26.2" r=".7" fill="#fff"/>'
+ +'<ellipse cx="30" cy="31.6" rx="2.2" ry="1.6" fill="#ff9ebb"/>'
+ +'<path d="M30 33.2 Q30 35.4 26.8 35.2 M30 33.2 Q30 35.4 33.2 35.2" stroke="#4a3542" stroke-width="1.3" fill="none" stroke-linecap="round"/>'
+ +'<circle cx="18.5" cy="32.5" r="3.4" fill="#ffc9da" opacity=".85"/><circle cx="41.5" cy="32.5" r="3.4" fill="#ffc9da" opacity=".85"/>'
+ +'</svg>';}
 function updateCatMarker(){if(!map||!S.lastPos)return;
- const lead=S.cats.find(function(c){return c.id===S.party[0];})||S.cats[0];
- const html='<div style="width:54px;height:70px;display:flex;align-items:flex-start;justify-content:center;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))">'+(lead?catSVG(lead.coat,lead.design,52):"")+'</div>';
+ const html='<div class="playerCat" style="width:42px;height:48px;display:flex;align-items:flex-start;justify-content:center">'+playerCatSVG(40)+'</div>';
  if(catMarker){if(mapGL){catMarker.setLngLat([S.lastPos.lng,S.lastPos.lat]);catMarker.getElement().innerHTML=html;}
-  else{catMarker.setLatLng([S.lastPos.lat,S.lastPos.lng]);catMarker.setIcon(L.divIcon({html:html,className:"",iconSize:[54,70],iconAnchor:[27,64]}));}
+  else{catMarker.setLatLng([S.lastPos.lat,S.lastPos.lng]);catMarker.setIcon(L.divIcon({html:html,className:"",iconSize:[42,48],iconAnchor:[21,44]}));}
   return;}
- catMarker=mkMarker(S.lastPos.lat,S.lastPos.lng,html,54,70,27,64,null,"bottom");
+ catMarker=mkMarker(S.lastPos.lat,S.lastPos.lng,html,42,48,21,44,null,"bottom");
  if(catMarker){if(mapGL)map.jumpTo({center:[S.lastPos.lng,S.lastPos.lat],zoom:16});else map.setView([S.lastPos.lat,S.lastPos.lng],16);}}
 function drawMapPins(){if(!map)return;
  pinMarkers.forEach(rmMarker);pinMarkers=[];
  S.spots.forEach(function(sp){const m=mkMarker(sp.lat,sp.lng,pinSVG(sp.design,42),42,46,21,23,function(){openSpotSheet(sp);},"center");if(m)pinMarkers.push(m);});
  S.discoveries.forEach(function(dv){const m=mkMarker(dv.lat,dv.lng,discPinSVG(dv,40),40,40,20,20,function(){openDiscSheet(dv.id);},"center");if(m)pinMarkers.push(m);});
- if(S.destination){const dt=S.destination;const m=mkMarker(dt.lat,dt.lng,destPinSVG(44),44,48,22,46,null,"bottom");if(m)pinMarkers.push(m);}}
+ if(S.destination){const dt=S.destination;const m=mkMarker(dt.lat,dt.lng,destPinSVG(44),44,48,22,46,function(){openDestSheet();},"bottom");if(m)pinMarkers.push(m);}}
+function spotCatZukanHTML(designId){const d=designById(designId);const cats=(S&&S.cats)?S.cats:[];
+ const has=function(co){return cats.some(function(c){return c.design===d.id&&c.coat===co.id;});};
+ const ownedCount=COATS.filter(has).length;
+ let h='<div style="margin-top:14px;border-top:2px solid #fff0f6;padding-top:10px">'
+ +'<b style="font-size:14px">'+d.name+'のねこ（'+ownedCount+'/5）</b>'
+ +'<div class="sub" style="margin-top:2px">このスポットでもらえるデザインねこです。ゲット済みはカラー、まだのねこはモノクロ（形が分かるグレー）で表示されます。</div>'
+ +'<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px">';
+ COATS.forEach(function(co){const own=has(co);
+  h+='<div class="zcell" style="padding:6px 2px"><div class="'+(own?"":"sil")+'">'+catSVG(co.id,d.id,44)+'</div><div>'+co.name+'</div><div class="sub">'+(own?"ゲット済み ✓":"まだ")+'</div></div>';});
+ return h+'</div></div>';}
 function openSpotSheet(sp){const d=designById(sp.design);const dist=S.lastPos?hav(S.lastPos.lat,S.lastPos.lng,sp.lat,sp.lng):sp.dist||0;
  const mins=Math.max(1,Math.round(dist/80));
- showSheet('<h3 style="margin-top:0"><span style="display:inline-block;vertical-align:-14px;margin-right:6px">'+pinSVG(sp.design,30)+'</span>'+sp.name+'</h3><div class="sub" style="font-size:13px;line-height:1.8">カテゴリ：'+d.name+'<br>距離 約'+Math.round(dist)+'m ・ 徒歩約'+mins+'分<br>もらえるもの：'+d.name+'の卵（近づいてチェックイン）</div>'
- +'<div style="margin-top:10px"><button onclick="checkinSpot(\''+sp.id+'\','+Math.round(dist)+')">チェックイン（100m以内）</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
-function checkinSpot(id,dist){if(dist>100){toast("まだ遠いよ。100m以内に近づいてね（あと約"+(dist-100)+"m）");return;}
+ const can=dist<=CHECKIN_RANGE;const left=Math.max(1,Math.round(dist-CHECKIN_RANGE));
+ showSheet('<h3 style="margin-top:0"><span style="display:inline-block;vertical-align:-14px;margin-right:6px">'+pinSVG(sp.design,30)+'</span>'+sp.name+'</h3><div class="sub" style="font-size:13px;line-height:1.8">カテゴリ：'+d.name+'<br>距離 約'+Math.round(dist)+'m ・ 徒歩約'+mins+'分<br>もらえるもの：'+d.name+'の卵（毛色は開けてのお楽しみ）<br>チェックインは、スポットの隣の道まで来たら（約'+CHECKIN_RANGE+'m以内）できます</div>'+spotCatZukanHTML(sp.design)
+ +'<div style="margin-top:10px">'+(can?'<button onclick="checkinSpot(\''+sp.id+'\','+Math.round(dist)+')">チェックインする</button>':'<button disabled>チェックイン（'+CHECKIN_RANGE+'m以内）</button><div class="sub" style="margin-top:6px">あと約'+left+'m 近づいてね。スポットの隣の道まで来たら押せます。</div>')+' <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+function openDestSheet(){if(!S.destination){toast("目的地はまだ決まっていません");return;}
+ const rw=ensureDestRewards();const dt=S.destination;const dist=S.lastPos?hav(S.lastPos.lat,S.lastPos.lng,dt.lat,dt.lng):(dt.dist||0);const mins=Math.max(1,Math.round(dist/80));const can=dist<=DEST_RANGE;const left=Math.max(1,Math.round(dist-DEST_RANGE));
+ showSheet('<h3 style="margin-top:0"><span style="display:inline-block;vertical-align:-14px;margin-right:6px">'+destPinSVG(30)+'</span>'+dt.name+'</h3><div class="sub" style="font-size:13px;line-height:1.8">距離 約'+Math.round(dist)+'m ・ 徒歩約'+mins+'分<br>到着は、目的地の隣の道まで来たら（約'+DEST_RANGE+'m以内）で自動判定されます</div><div style="margin-top:10px"><b>行ったらもらえるもの（全部）</b><div style="margin-top:6px">'+destRewardRowsHTML(rw)+'</div></div>'
+ +(can?'<div class="sub" style="margin-top:6px">もうすぐ！ 範囲内に入ると自動で受け取れます。</div>':'<div class="sub" style="margin-top:6px">あと約'+left+'m 近づくと受け取れます。</div>')
+ +'<div style="margin-top:10px"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+function checkinSpot(id,dist){if(dist>CHECKIN_RANGE){toast("まだ遠いよ。"+CHECKIN_RANGE+"m以内に近づいてね（あと約"+Math.max(1,Math.round(dist-CHECKIN_RANGE))+"m）");return;}
  const sp=S.spots.find(s=>s.id===id);if(!sp)return;closeSheet();
  grantEgg(designEgg(sp.design),"スポット到達！");S.today.spot++;S.week.spot++;gainXP(15);save();renderBag();}
 const OSM_MAP=[["cafe","cafe"],["cafe","cafe"],["restaurant","restaurant"],["fast_food","restaurant"],["ice_cream","sweets"],["confectionery","sweets"],["cinema","cinema"],["pharmacy","pharmacy"],["zoo","zoo"],["aquarium","aquarium"],["post_office","post"],["gallery","art"],["museum","museum"],["aerodrome","airport"],["station","station"],["halt","station"],["beach","beach"],["convenience","convenience"],["supermarket","supermarket"],["bakery","bakery"],["hairdresser","salon"],["clothes","fashion"],["library","library"],["books","library"],["place_of_worship","shrine"],["hotel","hotel"],["electronics","electronics"],["doityourself","homecenter"],["school","school"],["laundry","laundry"],["dry_cleaning","laundry"],["bus_station","busstop"],["stadium","stadium"],["park","park"]];
@@ -674,19 +733,23 @@ function newDestination(fromPos){const a=rnd(0,Math.PI*2),dist=rnd(120,480);
  const lng=fromPos.lng+Math.sin(a)*dist/(111000*Math.cos(fromPos.lat*Math.PI/180));
  let name="目的地";const near=S.spots.map(s=>({s,d:hav(lat,lng,s.lat,s.lng)})).sort((x,y)=>x.d-y.d)[0];
  if(near&&near.d<120)name=near.s.name+" の近く";
- S.destination={lat,lng,name,dist:Math.round(hav(fromPos.lat,fromPos.lng,lat,lng))};save();drawMapPins();renderDest();}
+ S.destination={lat,lng,name,dist:Math.round(hav(fromPos.lat,fromPos.lng,lat,lng)),rewards:rollDestRewards()};save();drawMapPins();renderDest();}
 function renderDest(){const box=$("destCard");if(!box)return;
  if(!S.lastPos){box.innerHTML='<div class="sub">位置情報が取れると、現在地から500m以内に目的地が出ます。</div>';return;}
  if(!S.destination){box.innerHTML='<button onclick="newDestination(S.lastPos);renderDest()">目的地を決める</button>';return;}
  const dt=S.destination;const dist=hav(S.lastPos.lat,S.lastPos.lng,dt.lat,dt.lng);
  const mins=Math.max(1,Math.round(dist/80));
- box.innerHTML='<div class="row"><div>'+destPinSVG(38)+'</div><div class="grow"><b>'+dt.name+'</b><div class="sub">距離 約'+Math.round(dist)+'m ・ 徒歩約'+mins+'分 ・ 50m以内に着くと報酬（卵・フルーツ・XP）</div></div>'
+ const rw=ensureDestRewards();
+ box.innerHTML='<div class="row"><div onclick="openDestSheet()" style="cursor:pointer">'+destPinSVG(38)+'</div><div class="grow"><b>'+dt.name+'</b><div class="sub">距離 約'+Math.round(dist)+'m ・ 徒歩約'+mins+'分 ・ '+DEST_RANGE+'m以内に着くと報酬がもらえます。旗を押すと詳細が見られます</div></div>'
  +'<button class="sm ghost" onclick="newDestination(S.lastPos)">更新</button></div>'
- +'<div class="sub" style="margin-top:6px">更新を押すと、いま居る地点から500m以内で引き直します。行きたくない方面のとき使ってね。</div>';}
-function arriveDestination(){S.today.dest++;S.week.dest++;
- if(Math.random()<0.5)grantEgg(Math.random()<0.5?unownedDesignEgg():normalEgg(),"目的地とうちゃく！");
- else{const f=pick(FRUITS);S.fruits[f.id]=(S.fruits[f.id]||0)+2;toast("🎁 目的地とうちゃく！ "+f.name+" ×2 ゲット");}
- gainXP(20);newDestination(S.lastPos);save();renderBag();renderHome();}
+ +'<div style="margin-top:8px"><b style="font-size:13px">行ったらもらえるもの（全部）</b><div style="margin-top:6px">'+destRewardRowsHTML(rw)+'</div></div>'
+ +'<div style="margin-top:6px"><button class="sm ghost" onclick="openDestSheet()">詳細を見る</button></div>'
+ +'<div class="sub" style="margin-top:6px">更新を押すと、いま居る地点から500m以内で引き直します（報酬も引き直されます）。行きたくない方面のとき使ってね。</div>';}
+function arriveDestination(){const rw=ensureDestRewards();S.today.dest++;S.week.dest++;
+ const msgs=[];(rw?rw.items:[]).forEach(function(it){if(it.kind==="egg"){S.eggs.push({id:uid(),design:it.design,coat:it.coat||pick(COATS).id,need:it.need||(it.design==="normal"?1000:3000)});msgs.push(eggColorName(it.coat||"white"));}else{const f=fruitById(it.fruit);if(f){S.fruits[f.id]=(S.fruits[f.id]||0)+1;msgs.push(f.name);}}});
+ toast("🎁 目的地とうちゃく！ "+(msgs.length?msgs.join("・"):"")+" ゲット");
+ if(rw&&rw.xp)gainXP(rw.xp);
+ newDestination(S.lastPos);save();renderBag();renderHome();}
 let watchId=null;
 function startGPS(){if(!navigator.geolocation)return;
  if(watchId!==null)return;
@@ -700,7 +763,7 @@ function onPos(p){const lat=p.coords.latitude,lng=p.coords.longitude;
  updateTrail();maybeBloom(lat,lng);
  updateCatMarker();fetchSpots(lat,lng);
  if(!S.destination)newDestination(S.lastPos);
- if(S.destination&&hav(lat,lng,S.destination.lat,S.destination.lng)<=50)arriveDestination();
+ if(S.destination&&hav(lat,lng,S.destination.lat,S.destination.lng)<=DEST_RANGE)arriveDestination();
  renderDest();save();}
 function addWalk(distM){const steps=Math.max(1,Math.round(distM/0.65));
  S.today.steps+=steps;S.week.steps+=steps;S.totalSteps+=steps;
