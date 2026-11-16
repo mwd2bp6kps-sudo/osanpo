@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<!--
+  おさんぽ日和 ～近所で見つける小さな宝物～
+  GitHub Pagesに index.html として置くためのファイルです。
+  このファイル1つを GitHub にアップロードして公開すれば、
+  iPhoneのSafariで開いて「ホーム画面に追加」するだけで、
+  アイコンから直接このゲームが全画面で開きます。
+  サーバーは不要で、記録はこのiPhoneの中（localStorage）に保存されます。
+-->
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>おさんぽ日和</title>
+<meta name="apple-mobile-web-app-title" content="おさんぽ日和">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffd9e8">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23ffd9e8'/%3E%3Ctext x='90' y='118' font-size='92' text-anchor='middle'%3E%F0%9F%90%B1%3C/text%3E%3Ccircle cx='138' cy='42' r='18' fill='%23ff8fb8'/%3E%3Ctext x='138' y='50' font-size='20' text-anchor='middle' fill='white'%3E%E2%99%A5%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%90%B1%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--pink:#ff8fb8;--pink2:#ffd9e8;--pink3:#fff0f6;--cream:#fffafc;--text:#5a3d4a;--sub:#9a7a88;--card:#fff;--shadow:0 4px 18px rgba(255,143,184,.18)}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN",sans-serif;background:linear-gradient(180deg,#ffeef6,#fffafc 40%);color:var(--text);padding-bottom:86px;min-height:100vh}
+header{position:sticky;top:0;z-index:500;background:rgba(255,240,246,.96);backdrop-filter:blur(8px);padding:14px 16px 10px;border-bottom:2px solid #ffe0ee;text-align:center}
+header h1{margin:0;font-size:22px;letter-spacing:.04em} header p{margin:3px 0 0;font-size:11px;color:var(--sub)}
+.wrap{max-width:520px;margin:0 auto;padding:14px}
+.card{background:var(--card);border:2px solid #ffe4f0;border-radius:22px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 10px;font-size:16px} .small{font-size:11px;color:var(--sub);line-height:1.6}
+.bigsteps{text-align:center;padding:8px 0 2px}.bigsteps .num{font-size:52px;font-weight:900;color:#e85d94;line-height:1}.bigsteps .unit{font-size:14px;color:var(--sub)}
+.week{display:flex;gap:6px;justify-content:space-between;margin-top:12px}.day{flex:1;text-align:center;background:var(--pink3);border-radius:12px;padding:7px 2px;font-size:11px}.day.today{background:var(--pink);color:#fff;font-weight:800}.day b{display:block;font-size:12px;margin-top:3px}
+button{border:none;cursor:pointer;font-family:inherit}
+.btn{background:var(--pink);color:#fff;font-weight:800;border-radius:999px;padding:11px 16px;font-size:14px;width:100%}.btn:disabled{background:#e8cdd9;color:#fff}.btn.sub{background:#fff;color:#e85d94;border:2px solid var(--pink2)}.btn.mini{width:auto;padding:8px 13px;font-size:12px}
+.row{display:flex;gap:10px;align-items:center}.grow{flex:1}
+.catsline{display:flex;gap:8px;overflow-x:auto;padding:6px 0}.catmini{min-width:72px;text-align:center;background:var(--pink3);border-radius:16px;padding:9px 4px;font-size:11px}.catmini .face{font-size:32px;line-height:1.1}
+.mission{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px dashed #ffd9e8}.mission:last-child{border:none}.check{width:26px;height:26px;border-radius:50%;background:#eafbea;border:2px solid #bfe8bf;display:grid;place-items:center;flex-shrink:0}.mission.done{opacity:.55}
+.slot{border:2px dashed #ffb9d2;border-radius:18px;padding:13px;text-align:center;margin-bottom:10px;background:#fffafc}.slot.full{border-style:solid;background:var(--pink3)}
+.bar{height:12px;background:#ffe4f0;border-radius:99px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:linear-gradient(90deg,#ffb9d2,#ff8fb8)}
+.spot{padding:12px 0;border-bottom:1px dashed #ffd9e8}.spot:last-child{border:none}.badge{display:inline-block;background:var(--pink3);border:1px solid var(--pink2);padding:3px 8px;border-radius:99px;font-size:11px;margin-right:5px}
+#map{height:270px;border-radius:18px;overflow:hidden;border:2px solid #ffe4f0;background:#ffeef6}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:600;background:rgba(255,255,255,.97);border-top:2px solid #ffe0ee;display:flex;max-width:520px;margin:0 auto;padding:8px 4px calc(8px + env(safe-area-inset-bottom))}
+nav button{flex:1;background:none;font-size:10px;color:var(--sub);display:flex;flex-direction:column;align-items:center;gap:2px}nav button span{font-size:22px}nav button.on{color:#e85d94;font-weight:800}
+.page{display:none}.page.on{display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.dex{background:var(--pink3);border-radius:18px;padding:14px;text-align:center}.dex .face{font-size:42px}.dex.locked{filter:grayscale(1);opacity:.55}
+.modal{position:fixed;inset:0;background:rgba(90,40,65,.55);display:none;place-items:center;z-index:900;padding:20px}.modal.on{display:grid}.modalbox{background:#fff;border-radius:26px;padding:24px;text-align:center;max-width:360px;width:100%;animation:pop .35s}@keyframes pop{from{transform:scale(.85);opacity:0}}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:100px;background:#5a3d4a;color:#fff;padding:11px 16px;border-radius:99px;font-size:13px;z-index:1000;display:none;max-width:90%;text-align:center}
+input[type=text]{width:100%;padding:11px;border:2px solid var(--pink2);border-radius:12px;font-size:15px}
+.hearts{color:#ff5d93;letter-spacing:2px}.pill{display:inline-block;background:#fff0f6;padding:5px 9px;border-radius:99px;font-size:12px;margin:2px}
+</style>
+</head>
+<body>
+<header><h1>🌸 おさんぽ日和 🐱</h1><p>～近所で見つける小さな宝物～　一人専用・フレンドなし</p></header>
+<div class="wrap">
+<section id="page-home" class="page on">
+ <div class="card"><h2>🐾 今日のおさんぽ</h2>
+  <div class="bigsteps"><div><span class="num" id="todaySteps">0</span> <span class="unit">歩</span></div>
+  <div class="small" id="todayDist">0 m ・ GPSの移動距離からの推定歩数です</div></div>
+  <div class="week" id="week"></div>
+  <p class="small">📍 歩数はiPhoneの歩数計ではなく、アプリを開いている間のGPS移動距離から計算した推定です。散歩のときはこの画面を開いたまま持って歩いてね。</p>
+  <button class="btn" id="gpsBtn" onclick="toggleWalk()">▶ おさんぽをはじめる（位置情報をON）</button>
+  <p class="small" id="gpsStatus">位置情報はまだOFFです。許可画面が出たら「許可」を押してね。</p>
+ </div>
+ <div class="card"><h2>🐱 ついてくるねこたち</h2><div class="catsline" id="followCats"></div><p class="small">お気に入り（★）にしたねこがここに並びます。まだいないときはタネを育ててみてね。</p></div>
+ <div class="card"><h2>🎀 今日のミッション（全て近所でOK）</h2><div id="missions"></div><p class="small">遠くに行くミッションはありません。家のまわりで全部できます。</p></div>
+</section>
+<section id="page-walk" class="page">
+ <div class="card"><h2>🗺️ 近くのスポット</h2><div id="map">地図を読み込み中…</div>
+ <p class="small">現在地から約1km以内・近い順。100m以内に近づくとチェックインできます。</p>
+ <button class="btn sub" onclick="loadSpots(true)">↻ スポットを更新する</button><div id="spots"></div></div>
+</section>
+<section id="page-cats" class="page">
+ <div class="card"><h2>🌱 にゃんこのタネ・プランター</h2><div id="planters"></div><div id="seedBag"></div></div>
+ <div class="card"><h2>🎁 もちもの</h2><p>🍓 フルーツ：<b id="fruitCount">0</b>　✨ エキス：<b id="essenceCount">0</b></p><p class="small">ねこにあげると なかよし度（ハート）が上がります。おつかいで集められます。</p></div>
+ <div class="card"><h2>🐱 わたしのねこたち</h2><div id="myCats"></div></div>
+ <div class="card"><h2>🧺 おつかい</h2><p class="small">ねこを近くのスポットへ送ると、少し待つだけでアイテムを持って帰ってきます。一人で完結します。</p><div id="errands"></div></div>
+</section>
+<section id="page-dex" class="page"><div class="card"><h2>📖 デコねこ図鑑 <span id="dexCount"></span></h2><div class="grid" id="dex"></div></div></section>
+<section id="page-log" class="page"><div class="card"><h2>📝 おさんぽきろく</h2><div id="logs"></div></div>
+<div class="card"><h2>ℹ️ このアプリについて</h2><p class="small">「おさんぽ日和」は一人専用です。フレンド・ランキング・協力バトル・課金・広告はありません。記録はこのiPhoneの中だけに保存されます。ホーム画面のアイコンを消すと記録も消えることがあるので注意してね。</p><button class="btn sub" onclick="if(confirm('記録を全部消して最初からにしますか？')){localStorage.removeItem(KEY);location.reload()}">記録をリセット</button></div></section>
+</div>
+<nav>
+<button class="on" data-p="home" onclick="showPage('home',this)"><span>🏠</span>ホーム</button>
+<button data-p="walk" onclick="showPage('walk',this)"><span>🗺️</span>おさんぽ</button>
+<button data-p="cats" onclick="showPage('cats',this)"><span>🐱</span>ねこ</button>
+<button data-p="dex" onclick="showPage('dex',this)"><span>📖</span>ずかん</button>
+<button data-p="log" onclick="showPage('log',this)"><span>📝</span>きろく</button>
+</nav>
+<div class="modal" id="hatchModal"><div class="modalbox"><div style="font-size:72px" id="hatchFace">🐱</div><h2>✨ ねこが目覚めた！ ✨</h2><p id="hatchText"></p><button class="btn" onclick="closeModal()">やったー！</button></div></div>
+<div class="toast" id="toast"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const KEY='osanpo_biyori_github_v1';
+const TYPES={
+ cafe:{name:'カフェねこ',face:'🐱',deco:'☕',label:'カフェ',need:400},
+ park:{name:'公園ねこ',face:'🐱',deco:'🌳',label:'公園',need:300},
+ shrine:{name:'神社ねこ',face:'🐱',deco:'⛩️',label:'神社・お寺',need:500},
+ bakery:{name:'パン屋ねこ',face:'🐱',deco:'🥐',label:'パン屋',need:400},
+ flower:{name:'お花屋ねこ',face:'🐱',deco:'🌸',label:'お花屋さん',need:350},
+ sweets:{name:'スイーツねこ',face:'🐱',deco:'🍰',label:'スイーツ',need:450},
+ station:{name:'駅ねこ',face:'🐱',deco:'🚉',label:'駅',need:600},
+ river:{name:'川辺ねこ',face:'🐱',deco:'💧',label:'川辺・橋',need:500},
+ library:{name:'図書館ねこ',face:'🐱',deco:'📚',label:'図書館',need:550},
+ conv:{name:'コンビニねこ',face:'🐱',deco:'🏪',label:'コンビニ',need:250},
+ michibata:{name:'みちばたねこ',face:'🐱',deco:'🐾',label:'みちばた',need:200}};
+const todayKey=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+let S;
+function defState(){return{cats:[],seeds:[],planters:[null,null,null],fruit:1,essence:1,logs:{},missions:null,missionDate:'',errands:[],uid:1,totalCheckins:0}}
+function load(){try{S=JSON.parse(localStorage.getItem(KEY))||defState()}catch(e){S=defState()} if(!S.logs)S.logs={}; ensureDay(); save()}
+function save(){localStorage.setItem(KEY,JSON.stringify(S))}
+function ensureDay(){const t=todayKey(); if(!S.logs[t])S.logs[t]={dist:0,steps:0}; if(S.missionDate!==t){S.missionDate=t;S.missions=makeMissions(t)}}
+function seeded(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return()=>{h=(h*1664525+1013904223)>>>0;return h/4294967296}}
+function makeMissions(date){const r=seeded(date);const cats=Object.keys(TYPES);const c=cats[Math.floor(r()*cats.length)];return[
+ {id:'walk',text:'今日 合計500m歩こう',target:500,type:'dist',done:false,reward:'fruit'},
+ {id:'check',text:'近くのスポットに1回チェックインしよう',target:1,type:'checkin',done:false,reward:'essence'},
+ {id:'cat',text:TYPES[c].label+'のスポットを目指して歩こう',target:1,type:'visit_'+c,done:false,reward:'fruit'}]}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2800)}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+let pos=null,lastPos=null,watchId=null,walking=false,map=null,markers=[],spots=[];
+function hav(a,b,c,d){const R=6371000,to=x=>x*Math.PI/180;const x=(c-a)*to(1)*Math.cos((b+d)/2*to(1)),y=(d-b)*to(1);return Math.sqrt(x*x+y*y)*1}
+function distM(a,b,c,d){const R=6371000,p=Math.PI/180;const h=Math.sin((c-a)*p/2)**2+Math.cos(a*p)*Math.cos(c*p)*Math.sin((d-b)*p/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+function toggleWalk(){if(walking){stopWalk()}else{startWalk()}}
+function startWalk(){if(!navigator.geolocation){toast('この端末では位置情報が使えません');return}
+ watchId=navigator.geolocation.watchPosition(onPos,e=>{document.getElementById('gpsStatus').textContent='位置情報を取得できませんでした。設定で許可を確認してね。';toast('位置情報の許可が必要です')},{enableHighAccuracy:true,maximumAge:5000,timeout:20000});walking=true;document.getElementById('gpsBtn').textContent='⏸ おさんぽを一時停止する';document.getElementById('gpsStatus').textContent='📍 おさんぽ中…歩くと歩数が増えます';}
+function stopWalk(){if(watchId!==null)navigator.geolocation.clearWatch(watchId);watchId=null;walking=false;lastPos=null;document.getElementById('gpsBtn').textContent='▶ おさんぽをはじめる（位置情報をON）';document.getElementById('gpsStatus').textContent='おさんぽを一時停止しました';}
+function onPos(p){const np={lat:p.coords.latitude,lon:p.coords.longitude,acc:p.coords.accuracy};const first=!pos;pos=np;
+ if(lastPos&&walking){const d=distM(lastPos.lat,lastPos.lon,np.lat,np.lon);if(d>=4&&d<120&&(p.coords.accuracy||99)<80){addDistance(d)}}
+ lastPos=np; if(first){initMap();loadSpots(false)} else{updateMapPos()} renderSpots();}
+function addDistance(d){ensureDay();const t=todayKey();S.logs[t].dist+=d;S.logs[t].steps=Math.floor(S.logs[t].dist/0.7);
+ S.planters.forEach((pl,i)=>{if(pl){pl.grown+=d;if(pl.grown>=pl.need){hatch(i)}}}); checkMissions();save();renderHome();renderCats();}
+function classify(tags){const a=tags.amenity||'',l=tags.leisure||'',s=tags.shop||'',r=tags.railway||'';
+ if(a==='cafe')return'cafe'; if(a==='bakery'||s==='bakery')return'bakery'; if(l==='park'||l==='garden')return'park';
+ if(tags.amenity==='place_of_worship'||tags.building==='shrine'||tags.building==='temple')return'shrine';
+ if(s==='florist')return'flower'; if(s==='confectionery'||a==='ice_cream')return'sweets'; if(r==='station'||a==='bus_station')return'station';
+ if(tags.waterway||tags.natural==='water'||tags.man_made==='bridge')return'river'; if(a==='library')return'library'; if(s==='convenience'||a==='convenience')return'conv'; return'michibata'}
+async function loadSpots(manual){if(!pos){if(manual)toast('まず「おさんぽをはじめる」を押してね');return}
+ const q=`[out:json][timeout:20];(node(around:1000,${pos.lat},${pos.lon})[amenity];node(around:1000,${pos.lat},${pos.lon})[leisure];node(around:1000,${pos.lat},${pos.lon})[shop];node(around:1000,${pos.lat},${pos.lon})[railway=station];way(around:1000,${pos.lat},${pos.lon})[leisure=park];);out center 60;`;
+ try{const res=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});if(!res.ok)throw 0;const j=await res.json();
+  spots=(j.elements||[]).map(e=>{const la=e.lat||e.center?.lat,lo=e.lon||e.center?.lon;if(!la)return null;const cat=classify(e.tags||{});return{name:(e.tags&&e.tags.name)||TYPES[cat].label,cat,lat:la,lon:lo}}).filter(Boolean);
+ }catch(e){spots=[]}
+ if(!spots.length){spots=fallbackSpots()}
+ spots.forEach(sp=>sp.dist=distM(pos.lat,pos.lon,sp.lat,sp.lon));spots.sort((a,b)=>a.dist-b.dist);spots=spots.slice(0,20);drawMarkers();renderSpots();if(manual)toast('スポットを更新しました')}
+function fallbackSpots(){const cats=['cafe','park','flower','bakery','conv','michibata','sweets','shrine'];return cats.map((c,i)=>{const ang=i/ cats.length*Math.PI*2,dd=180+i*75;const la=pos.lat+(dd*Math.cos(ang))/111320,lo=pos.lon+(dd*Math.sin(ang))/(111320*Math.cos(pos.lat*Math.PI/180));return{name:TYPES[c].label+'（近くの目印）',cat:c,lat:la,lon:lo,fallback:true}})}
+function initMap(){const el=document.getElementById('map');if(!window.L){el.textContent='地図ライブラリを読み込めませんでした。スポット一覧は下で使えます。';return}
+ if(map)return;map=L.map('map').setView([pos.lat,pos.lon],16);L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}).addTo(map);drawMarkers();}
+function updateMapPos(){if(map&&pos)map.setView([pos.lat,pos.lon]); spots.forEach(sp=>sp.dist=distM(pos.lat,pos.lon,sp.lat,sp.lon));spots.sort((a,b)=>a.dist-b.dist);}
+function drawMarkers(){if(!map||!pos)return;markers.forEach(m=>map.removeLayer(m));markers=[];markers.push(L.marker([pos.lat,pos.lon]).addTo(map).bindPopup('いまここ 📍'));spots.forEach(sp=>{markers.push(L.circleMarker([sp.lat,sp.lon],{radius:9,color:'#e85d94',fillColor:'#ffb9d2',fillOpacity:.9}).addTo(map).bindPopup(esc(sp.name)))})}
+function renderSpots(){const el=document.getElementById('spots');if(!el)return;if(!pos){el.innerHTML='<p class="small">位置情報をONにすると近くのスポットが出ます。</p>';return}
+ if(!spots.length){el.innerHTML='<p class="small">読み込み中…</p>';return}
+ el.innerHTML=spots.map((sp,i)=>{const near=sp.dist<=100;return`<div class="spot"><div class="row"><div class="grow"><b>${TYPES[sp.cat].deco} ${esc(sp.name)}</b><br><span class="badge">${TYPES[sp.cat].label}</span><span class="small">${Math.round(sp.dist)}m先</span></div><button class="btn mini" ${near?'':'disabled'} onclick="checkin(${i})">${near?'チェックイン':'あと'+Math.max(0,Math.round(sp.dist-100))+'m'}</button></div></div>`}).join('')}
+function checkin(i){const sp=spots[i];if(!sp||sp.dist>110){toast('もっと近づいてね（100m以内）');return}
+ S.seeds.push({cat:sp.cat,id:S.uid++});S.totalCheckins=(S.totalCheckins||0)+1;
+ S.missions&&S.missions.forEach(m=>{if(m.type==='checkin')m.done=true;if(m.type==='visit_'+sp.cat)m.done=true});checkMissions();save();renderCats();renderHome();toast('🌱 '+TYPES[sp.cat].label+'の「にゃんこのタネ」をもらいました！')}
+function checkMissions(){if(!S.missions)return;const t=S.logs[todayKey()]||{dist:0};S.missions.forEach(m=>{if(m.type==='dist'&&t.dist>=m.target&&!m.done){m.done=true;giveReward(m)}else if(m.done&&!m.rewarded){m.rewarded=true;giveReward(m)}})}
+function giveReward(m){if(m.reward==='fruit')S.fruit++;else S.essence++;toast('🎀 ミッション達成！ごほうびをもらいました')}
+function plantSeed(idx){const seed=S.seeds[0];if(!seed)return;S.seeds.shift();S.planters[idx]={cat:seed.cat,grown:0,need:TYPES[seed.cat].need,id:seed.id};save();renderCats();toast('🌱 タネを植えました。歩くと育ちます')}
+function hatch(idx){const pl=S.planters[idx];if(!pl)return;S.planters[idx]=null;const type=TYPES[pl.cat];const cat={id:S.uid++,cat:pl.cat,name:type.name,hearts:0,fav:S.cats.length===0,born:todayKey()};S.cats.push(cat);
+ document.getElementById('hatchFace').textContent=type.face+type.deco;document.getElementById('hatchText').innerHTML=`<b>${esc(type.name)}</b> が仲間になりました！<br><span class="small">${type.label}で見つけたデコねこです</span>`;document.getElementById('hatchModal').classList.add('on');save()}
+function closeModal(){document.getElementById('hatchModal').classList.remove('on');renderAll()}
+function feed(id,kind){const c=S.cats.find(x=>x.id===id);if(!c)return;if(kind==='fruit'){if(S.fruit<=0){toast('フルーツがありません。おつかいで集めてね');return}S.fruit--;c.hearts=Math.min(10,c.hearts+2)}else{if(S.essence<=0){toast('エキスがありません');return}S.essence--;c.hearts=Math.min(10,c.hearts+1)}save();renderCats();renderHome();toast('💗 なかよし度が上がりました')}
+function toggleFav(id){const c=S.cats.find(x=>x.id===id);c.fav=!c.fav;save();renderAll()}
+function renameCat(id){const c=S.cats.find(x=>x.id===id);const n=prompt('ねこの新しい名前',c.name);if(n&&n.trim()){c.name=n.trim().slice(0,12);save();renderAll()}}
+function sendErrand(id){if(S.errands.find(e=>e.catId===id)){toast('そのねこはおつかい中です');return}if(!spots.length){toast('先におさんぽ画面でスポットを表示してね');return}const sp=spots[Math.floor(Math.random()*Math.min(5,spots.length))];S.errands.push({catId:id,spot:sp.name,cat:sp.cat,until:Date.now()+3*60*1000});save();renderCats();toast('🧺 おつかいに行きました（約3分）')}
+function claimErrand(i){const e=S.errands[i];if(Date.now()<e.until)return;S.errands.splice(i,1);if(Math.random()<.5)S.fruit++;else S.essence++;const c=S.cats.find(x=>x.id===e.catId);if(c)c.hearts=Math.min(10,c.hearts+1);save();renderAll();toast('🎁 おつかいから帰ってきた！アイテムをもらいました')}
+setInterval(()=>{let changed=false;S&&S.errands.forEach(e=>{if(Date.now()>=e.until&&!e.ready){e.ready=true;changed=true}});if(changed){save();renderCats()}},5000);
+function showPage(p,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));document.getElementById('page-'+p).classList.add('on');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.p===p));if(p==='walk'&&map)setTimeout(()=>map.invalidateSize(),100);window.scrollTo(0,0)}
+function heartStr(h){return'♥'.repeat(Math.min(5,Math.ceil(h/2)))+'♡'.repeat(Math.max(0,5-Math.ceil(h/2)))}
+function renderHome(){ensureDay();const t=S.logs[todayKey()];document.getElementById('todaySteps').textContent=(t.steps||0).toLocaleString();document.getElementById('todayDist').textContent=Math.round(t.dist||0)+' m ・ GPSの移動距離からの推定歩数です';
+ const days=['日','月','火','水','木','金','土'];const now=new Date();let wh='';for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const log=S.logs[k];wh+=`<div class="day ${i===0?'today':''}">${days[d.getDay()]}<b>${log?log.steps||0:0}歩</b></div>`}document.getElementById('week').innerHTML=wh;
+ const favs=S.cats.filter(c=>c.fav);const list=favs.length?favs:S.cats.slice(0,5);document.getElementById('followCats').innerHTML=list.length?list.map(c=>`<div class="catmini"><div class="face">${TYPES[c.cat].face}</div>${TYPES[c.cat].deco}<br>${esc(c.name)}</div>`).join(''):'<p class="small">まだねこがいません。スポットでタネをもらって育ててね 🌱</p>';
+ document.getElementById('missions').innerHTML=(S.missions||[]).map(m=>`<div class="mission ${m.done?'done':''}"><div class="check">${m.done?'✓':''}</div><div class="grow">${esc(m.text)}</div><span class="pill">${m.reward==='fruit'?'🍓':'✨'}</span></div>`).join('')}
+function renderCats(){document.getElementById('fruitCount').textContent=S.fruit;document.getElementById('essenceCount').textContent=S.essence;
+ document.getElementById('planters').innerHTML=S.planters.map((pl,i)=>pl?`<div class="slot full">🌱 ${TYPES[pl.cat].label}のタネ<div class="bar"><i style="width:${Math.min(100,pl.grown/pl.need*100)}%"></i></div><span class="small">${Math.floor(pl.grown)} / ${pl.need}m 歩くと目覚めます</span></div>`:`<div class="slot">プランター ${i+1}（空き）<br><button class="btn mini" ${S.seeds.length?'':'disabled'} onclick="plantSeed(${i})">タネを植える</button></div>`).join('');
+ document.getElementById('seedBag').innerHTML='<p class="small">🎒 タネ袋：'+(S.seeds.length?S.seeds.map(s=>TYPES[s.cat].deco+TYPES[s.cat].label).join('、'):'からっぽ。スポットでチェックインしてね')+'</p>';
+ document.getElementById('myCats').innerHTML=S.cats.length?S.cats.map(c=>`<div class="mission"><div style="font-size:36px">${TYPES[c.cat].face}</div><div class="grow"><b>${esc(c.name)}</b> ${c.fav?'★':''}<br><span class="small">${TYPES[c.cat].name} ${TYPES[c.cat].deco}</span><br><span class="hearts">${heartStr(c.hearts)}</span></div></div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"><button class="btn mini sub" onclick="feed(${c.id},'fruit')">🍓あげる</button><button class="btn mini sub" onclick="feed(${c.id},'essence')">✨あげる</button><button class="btn mini sub" onclick="sendErrand(${c.id})">🧺おつかい</button><button class="btn mini sub" onclick="toggleFav(${c.id})">★お気に入り</button><button class="btn mini sub" onclick="renameCat(${c.id})">名前変更</button></div>`).join(''):'<p class="small">まだねこがいません。</p>';
+ document.getElementById('errands').innerHTML=S.errands.length?S.errands.map((e,i)=>{const c=S.cats.find(x=>x.id===e.catId);const left=Math.max(0,Math.ceil((e.until-Date.now())/1000));return`<div class="mission"><div class="grow">🧺 ${esc(c?c.name:'ねこ')} → ${esc(e.spot)}<br><span class="small">${left>0?'あと約'+left+'秒':'帰ってきました！'}</span></div><button class="btn mini" ${left>0?'disabled':''} onclick="claimErrand(${i})">受け取る</button></div>`}).join(''):'<p class="small">おつかい中のねこはいません。</p>'}
+function renderDex(){const owned=new Set(S.cats.map(c=>c.cat));document.getElementById('dexCount').textContent=`（${owned.size}/11）`;document.getElementById('dex').innerHTML=Object.entries(TYPES).map(([k,v])=>`<div class="dex ${owned.has(k)?'':'locked'}"><div class="face">${owned.has(k)?v.face:'❔'}</div><div>${owned.has(k)?v.deco+' '+v.name:'？？？'}</div><div class="small">${v.label}のスポット</div></div>`).join('')}
+function renderLog(){const keys=Object.keys(S.logs).sort().reverse();document.getElementById('logs').innerHTML=keys.length?keys.map(k=>`<div class="mission"><div class="grow"><b>${k}</b></div><span>${S.logs[k].steps||0}歩 ・ ${Math.round(S.logs[k].dist||0)}m</span></div>`).join(''):'<p class="small">まだ記録がありません。</p>'}
+function renderAll(){renderHome();renderCats();renderDex();renderLog();renderSpots()}
+load();renderAll();
+if('serviceWorker' in navigator){/* GitHub Pagesでも単体で動くよう、追加ファイルなしで動作します */}
+</script>
+</body>
+</html>
