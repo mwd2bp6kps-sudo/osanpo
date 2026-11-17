@@ -873,9 +873,9 @@ function renderBag(){syncIncubators();v12Migrate();
  const meatTotal=MEATS.reduce(function(a,m){return a+(S.meats[m.id]||0);},0);
  let h='<div style="display:flex;gap:10px;margin-bottom:12px"><div class="bigCatBtn" onclick="openKariSheet()"><div>'+karikariSVG("pink",34)+'</div><b>カリカリ</b><div class="sub">× '+kariTotal+'</div></div><div class="bigCatBtn" onclick="openEggSheet()"><div>'+illuSVG("egg",34)+'</div><b>卵</b><div class="sub">× '+eggTotal+'</div></div><div class="bigCatBtn" onclick="openMeatSheet()"><div>'+illuSVG("meat",34)+'</div><b>肉・草</b><div class="sub">× '+(meatTotal+(S.pickups.kusa||0))+'</div></div></div>';
  h+='<h3 style="margin:10px 0 6px">'+illuSVG("basket",20)+' 拾い物（売る）</h3>';
- const owned=PICKUPS.filter(function(p){return (S.pickups[p.id]||0)>0;});
+ const owned=PICKUPS.filter(function(p){return p.id!=="kusa"&&(S.pickups[p.id]||0)>0;});
  h+=owned.length?owned.map(function(p){return '<div class="shopRow"><div>'+p.icon+'</div><div class="grow">'+p.name+(p.edible?' <span class="sub">（猫が食べられる）</span>':'')+'</div><b>× '+(S.pickups[p.id]||0)+'</b><span class="sub">'+coinHTML(p.price)+'</span><button class="sm" onclick="sellPickup(\''+p.id+'\',false)">売る</button><button class="sm ghost" onclick="sellPickup(\''+p.id+'\',true)">全部</button></div>';}).join(""):'<div class="sub">まだ何も拾っていません</div>';
- if(owned.some(function(p){return !p.edible;}))h+='<div style="margin:6px 0"><button class="sm ghost" onclick="sellAllPickups()">草以外をまとめて売る</button></div>';
+ if(owned.length)h+='<div style="margin:6px 0"><button class="sm ghost" onclick="sellAllPickups()">まとめて売る</button></div>';
  h+='<h3 style="margin:14px 0 6px">'+illuSVG("gift",20)+' ショップ（'+coinHTML(S.coins||0)+'）</h3>';
  h+='<div class="catBtnRow">'
  +'<div class="bigCatBtn" style="'+(shopCatSel==="food"?"border-color:#ff5c93;background:#fff0f6":"")+'" onclick="setShopCat(\'food\')"><div>'+illuSVG("bowl",30)+'</div><b>食べ物</b></div>'
@@ -976,7 +976,7 @@ function renderPicker(){const isHunt=picker.kind==="hunt";const title=isHunt?" �
   if(b)return '<div class="catTile busyCat" onclick="toast(busyLabel(\''+c.id+'\'))">'+catSVG(c.coat,c.design,56)+'<div>'+(c.name||coatById(c.coat).name)+'</div><div class="sub">'+(b.type==="errand"?"おつかい中":"狩り中")+'</div></div>';
   return '<div class="catTile pickTile '+(sel?"sel":"")+'" onclick="togglePick(\''+c.id+'\')">'+catFxSVG(c,56)+'<div>'+(c.name||coatById(c.coat).name)+(sel?" ✓":"")+'</div><div style="font-size:9px">'+heartsHTML(c.fp)+'</div></div>';}).join("")+'</div>';
  const mins=pickerMinutes();
- h+='<div style="margin-top:12px"><b>'+picker.sel.length+'匹選択中 ・ 所要時間 約'+mins+'分</b> <span class="sub">（増やすと短くなります）</span></div>';
+ h+='<div style="margin-top:12px"><b>'+picker.sel.length+'匹選択中'+(picker.sel.length?' ・ 所要時間 約'+mins+'分':'')+'</b></div>';
  h+='<div style="margin-top:10px"><button '+(picker.sel.length?"":"disabled")+' onclick="confirmPicker()">出発する</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';
  showSheet(h);}
 function confirmPicker(){if(!picker.sel.length)return;if(picker.kind==="errand")sendErrandPicked(picker.id,picker.sel.slice());else startHunt(picker.id,picker.sel.slice());}
@@ -1030,6 +1030,8 @@ function collectHuntClaim(id){const h=(S.hunts||[]).find(function(x){return x.id
  (rw.items||[]).forEach(function(it){if(it.kind==="meat"){S.meats[it.id]=(S.meats[it.id]||0)+1;}else{S.pickups[it.id]=(S.pickups[it.id]||0)+1;S.pickupSeen[it.id]=true;}});
  gainCoins(rw.coins);gainXP(rw.xp);if(typeof sePlay==="function")sePlay("decide");toast("狩りの報酬を受け取ったよ");closeSheet();save();renderErrands();renderBag();renderHeader();renderHome();}
 function collectHunt(id){openHuntClaim(id);}
+function confirmAbandonHunt(id){const x=(S.hunts||[]).find(function(y){return y.id===id;});if(!x||Date.now()>=x.returnAt)return;const sz=huntSizeById(x.size);const names=x.catIds.map(function(cid){const c=S.cats.find(function(y){return y.id===cid;});return c?(c.name||coatById(c.coat).name):"";}).filter(Boolean).join("、");showSheet('<h3 style="margin-top:0;text-align:center">かくにん</h3><div style="text-align:center">'+huntImgHTML(x.size,150)+'</div><div class="sub" style="font-size:13px;line-height:1.9;margin-top:8px;text-align:center">'+sz.name+'<br>'+names+'<br>報酬なしで帰ってきます</div><div style="margin-top:12px;text-align:center"><button onclick="abandonHuntDo(\''+id+'\')">帰る</button> <button class="ghost sm" onclick="openActiveHuntSheet(\''+id+'\')">やめる</button></div>');}
+function abandonHuntDo(id){const x=(S.hunts||[]).find(function(y){return y.id===id;});if(!x)return;if(Date.now()>=x.returnAt){openActiveHuntSheet(id);return;}S.hunts=S.hunts.filter(function(y){return y.id!==id;});closeSheet();toast("狩りをやめて帰ってきたよ");save();renderErrands();renderHome();drawMapPins();}
 function remainBarHTML(startAt,returnAt){if(!returnAt)return "";const now=Date.now();if(now>=returnAt)return '<div class="bar" style="margin:5px 0 3px"><i style="width:100%"></i></div>';if(!startAt||returnAt<=startAt)return "";const pct=Math.max(2,Math.min(100,Math.round((now-startAt)/(returnAt-startAt)*100)));return '<div class="bar" style="margin:5px 0 3px"><i style="width:'+pct+'%"></i></div>';}
 function huntRewardText(size){if(size==="large")return "コイン多め ・ 拾い物×3 ・ 肉がもらえることも";if(size==="normal")return "コイン ・ 拾い物×2";return "コイン少し ・ 拾い物×1";}
 function openHuntSheet(spotId){const sp=(S.huntSpots||[]).find(function(x){return x.id===spotId;});if(!sp)return;const sz=huntSizeById(sp.size);const dist=S.lastPos?Math.round(hav(S.lastPos.lat,S.lastPos.lng,sp.lat,sp.lng)):(sp.dist||0);const cc=coatById(sp.color);const dot=sp.color==="white"?"#ffffff":sp.color==="black"?"#4a4048":sp.color==="mike"?"#e8862e":sp.color==="chatora"?"#f2a54a":"#aab3bd";
@@ -1048,7 +1050,7 @@ function openActiveHuntSheet(huntId){const x=(S.hunts||[]).find(function(y){retu
  +(back?'':'<div style="margin-top:10px">'+remainBarHTML(st,x.returnAt)+'<div class="sub">あと '+fmtRemain(x.returnAt-Date.now())+'</div></div>')
  +'<div class="sub" style="font-size:13px;line-height:1.9;margin-top:8px">色：<span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:'+dot+';border:2px solid #e0b3c4;vertical-align:-1px"></span> '+cc.name+'色<br>もらえるもの：'+huntRewardText(x.size)+'</div>'
  +'<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px">'+catsHTML+'</div>'
- +'<div style="margin-top:12px;text-align:center">'+(back?'<button onclick="closeSheet();collectHunt(\''+x.id+'\')">受け取る</button> ':'')+'<button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';
+ +'<div style="margin-top:12px;text-align:center">'+(back?'<button onclick="closeSheet();collectHunt(\''+x.id+'\')">受け取る</button> ':'<button class="ghost sm" onclick="confirmAbandonHunt(\''+x.id+'\')">あきらめて帰る</button> ')+'<button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';
  showSheet(h);}
 function renderHunts(){const box=$("huntBox");if(!box||!S)return;huntTodayReset();ensureHuntSpots();
  let h='<div class="sub" style="margin-bottom:8px">今日あと '+(3-(S.huntCount||0))+' 回</div>';
@@ -1556,8 +1558,10 @@ const FURN=[
 {id:"kotatsuStar",base:"kotatsu",name:"コタツ・星柄",color:"#7a9fd0",pattern:"star",price:500,x:"36%",y:"50%"}];
 const FURN_BASES=[{id:"sara",name:"餌の皿"},{id:"bed",name:"猫のベッド"},{id:"tsume",name:"爪とぎ"},{id:"clock",name:"時計"},{id:"tower",name:"キャットタワー"},{id:"plant",name:"観葉植物"},{id:"poster",name:"ポスター"},{id:"water",name:"水入れ"},{id:"toilet",name:"猫トイレ"},{id:"kotatsu",name:"コタツ"}];
 const furnById=function(id){return FURN.find(function(x){return x.id===id;});};
-function sellPickup(id,all){const p=pickupById(id);if(!p)return;const n=all?(S.pickups[id]||0):1;if(n<=0)return;S.pickups[id]-=n;gainCoins(p.price*n);toast(p.name+" を売って コイン "+(p.price*n));save();renderBag();renderHeader();}
-function sellAllPickups(){let total=0;PICKUPS.forEach(function(p){const n=S.pickups[p.id]||0;if(n>0&&!p.edible){total+=p.price*n;S.pickups[p.id]=0;}});if(total<=0){toast("売れるものがないよ");return;}gainCoins(total);toast("まとめて売って コイン "+total);save();renderBag();renderHeader();}
+function sellPickup(id,all){const p=pickupById(id);if(!p)return;if(id==="kusa"){toast("草は売れないよ");return;}const n=all?(S.pickups[id]||0):1;if(n<=0)return;const coins=p.price*n;showSheet('<h3 style="margin-top:0;text-align:center">かくにん</h3><div class="bagRow"><div>'+p.icon+'</div><div class="grow">'+p.name+' ×'+n+'</div><b>'+coinHTML(coins)+'</b></div><div style="margin-top:12px;text-align:center"><button onclick="sellPickupDo(\''+id+'\','+(all?'true':'false')+')">売る</button> <button class="ghost sm" onclick="closeSheet()">やめる</button></div>');}
+function sellPickupDo(id,all){const p=pickupById(id);if(!p||id==="kusa")return;const n=all?(S.pickups[id]||0):1;if(n<=0){closeSheet();return;}S.pickups[id]-=n;gainCoins(p.price*n);toast(p.name+" を売って コイン "+(p.price*n));save();closeSheet();renderBag();renderHeader();}
+function sellAllPickups(){let total=0,count=0;PICKUPS.forEach(function(p){if(p.id==="kusa")return;const n=S.pickups[p.id]||0;if(n>0){total+=p.price*n;count+=n;}});if(total<=0){toast("売れるものがないよ");return;}showSheet('<h3 style="margin-top:0;text-align:center">かくにん</h3><div class="bagRow"><div>'+illuSVG("basket",40)+'</div><div class="grow">拾い物 ×'+count+'</div><b>'+coinHTML(total)+'</b></div><div style="margin-top:12px;text-align:center"><button onclick="sellAllPickupsDo()">売る</button> <button class="ghost sm" onclick="closeSheet()">やめる</button></div>');}
+function sellAllPickupsDo(){let total=0;PICKUPS.forEach(function(p){if(p.id==="kusa")return;const n=S.pickups[p.id]||0;if(n>0){total+=p.price*n;S.pickups[p.id]=0;}});if(total<=0){closeSheet();toast("売れるものがないよ");return;}gainCoins(total);toast("まとめて売って コイン "+total);save();closeSheet();renderBag();renderHeader();}
 function buyInfo(kind,id){if(kind==="kusa")return{icon:illuSVG("grass",44),name:"草",price:5};
  if(kind==="kariColor")return{icon:karikariSVG(id,44),name:KARINAME[id]||"カリカリ",price:20};
  if(kind==="meatKind"){const m=meatById(id);return{icon:meatSVG(id,44),name:m?m.name:"肉",price:50};}
