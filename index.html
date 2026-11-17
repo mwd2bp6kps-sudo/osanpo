@@ -101,12 +101,36 @@ button{background:linear-gradient(135deg,#ff8fb8,#ffa8c8)}
 .incRow{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
 .feedTab{margin:2px}
 .kariIcon{display:inline-block;line-height:0}
+
+.goldBtn{background:linear-gradient(135deg,#f5b921,#ffd94d)!important;color:#6b4e00!important;box-shadow:0 3px 10px rgba(245,185,33,.45)}
+.mrowGold{background:linear-gradient(135deg,#fff7d6,#ffedb0);border-radius:14px;padding:8px}
+.lockOverlay{position:fixed;inset:0;z-index:2000;background:rgba(255,240,246,.94);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;text-align:center;padding:20px}
+.lockOverlay.on{display:flex}
+.houseCard{background:linear-gradient(180deg,#fff 60%,#ffeef5 60%);border-top:16px solid #ff9ec6;cursor:pointer}
+.coinChip{background:#fff;border:2px solid #ffd94d;border-radius:999px;padding:2px 10px;font-weight:800;color:#8a6d00;font-size:13px;white-space:nowrap}
+.pickTile.sel{outline:3px solid #ff5c93}
+.busyCat{filter:grayscale(1);opacity:.65}
+@keyframes crackShake{0%,100%{transform:rotate(0)}25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
+.crackEgg{animation:crackShake .3s ease-in-out;cursor:pointer;display:inline-block}
+@keyframes birthPop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.birthPop{animation:birthPop .6s ease-out}
+.destArrow{position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:500;background:rgba(255,255,255,.95);border:2px solid #ff5c93;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:800;color:#e5639a;box-shadow:0 3px 10px rgba(0,0,0,.18)}
+.weatherWidget{position:absolute;top:10px;left:10px;z-index:600;background:rgba(255,255,255,.94);border:2px solid #ffe3ee;border-radius:16px;padding:5px 10px 6px 6px;box-shadow:0 3px 12px rgba(90,61,74,.18);max-width:48vw;pointer-events:none}
+.weatherWidget .wwMain{display:flex;align-items:center;gap:6px}
+.weatherWidget .wwTemp{font-size:15px;font-weight:800;color:#5a3d4a;line-height:1.15}
+.weatherWidget .wwLabel{font-size:10px;color:#9a7a88;line-height:1.15}
+.weatherWidget .wwNote{font-size:10px;font-weight:700;color:#4d7fc9;margin-top:2px;line-height:1.25}
+.shopRow{display:flex;align-items:center;gap:10px;margin-bottom:8px;background:#fff;border-radius:14px;padding:6px 8px;box-shadow:0 2px 8px rgba(255,143,184,.12)}
+.roomBox{border-radius:18px;padding:12px;min-height:180px;position:relative;overflow:hidden;border:3px solid #fff;box-shadow:inset 0 0 0 2px #ffe3ee}
+.furnIcon{position:absolute;font-size:30px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.2))}
+.bigCatBtn{flex:1;background:#fff;border:2px solid #ffe3ee;border-radius:18px;padding:12px 6px;text-align:center;cursor:pointer;box-shadow:0 2px 8px rgba(255,143,184,.12)}
+input[type=range]{accent-color:#ff5c93;height:28px}
 </style>
 </head>
 <body>
 <header>
 <div class="row"><h1 class="grow">🌸 おさんぽ日和</h1><button class="hambtn" onclick="openMenu()" aria-label="メニュー">☰</button></div>
-<div class="lvrow"><span id="lvLabel">Lv.1</span><div class="xpbar"><i id="xpFill" style="width:0%"></i></div><span id="xpLabel" class="sub"></span></div>
+<div class="lvrow"><span id="lvLabel">Lv.1</span><span class="coinChip" id="coinLabel">🪙 0</span><div class="xpbar"><i id="xpFill" style="width:0%"></i></div><span id="xpLabel" class="sub"></span></div>
 </header>
 <main>
 <section id="tab-home" class="tab on">
@@ -116,12 +140,12 @@ button{background:linear-gradient(135deg,#ff8fb8,#ffa8c8)}
 <div id="homeCat"></div></div>
 <div class="sub" id="gpsState">位置情報をまっています…「おさんぽ」タブで許可してね</div></div>
 <div class="card incTap" onclick="openIncubator()"><h2>🥚 ふか器</h2><div id="incubator"></div></div>
-<div class="card"><h2>⭐ いっしょに歩くねこ</h2><div id="partyRow"></div></div>
+<div class="card houseCard" onclick="openHouse()"><h2>🏠 おうち（いっしょに歩くねこ）</h2><div id="partyRow"></div><div class="sub" style="margin-top:6px">タップでおうちに入る</div></div><div style="text-align:center;margin-bottom:12px"><button class="ghost sm" onclick="toggleLock(true)">🔒 タッチロック（歩くとき）</button></div>
 <div class="card"><h2>📅 こんしゅうのカレンダー</h2><div class="cal" id="weekCal"></div>
 <div class="sub" style="margin-top:8px">きろくは端末の中（このiPhone）に保存されます</div></div>
 </section>
 <section id="tab-map" class="tab">
-<div id="map"></div>
+<div style="position:relative"><div id="map"></div><div class="weatherWidget" id="weatherWidget" style="display:none"></div><div class="destArrow" id="destArrow" style="display:none"></div></div><div style="margin-top:10px"><button style="width:100%" onclick="openSpotList()">📍 スポットを見る</button></div>
 <div class="card" style="margin-top:12px"><h2>🐱 現在地のねこの色</h2><div class="sub" style="margin-bottom:8px">地図に出る小さなねこの毛色を5種類から選べます</div><div id="playerCoatBox"></div></div>
 <div id="eggNotice"></div><div id="fastInfo"></div>
 <div class="card" style="margin-top:12px"><h2>📍 目的地</h2><div id="destCard"></div></div>
@@ -130,7 +154,7 @@ button{background:linear-gradient(135deg,#ff8fb8,#ffa8c8)}
 <div class="card"><h2>🔭 探索機（1日1回）</h2><div id="detectorBox"></div>
 <div class="sub">使った場所の近くのスポットの卵と、フルーツが見つかります。</div></div>
 <div class="card"><h2>🧺 見つけたもの</h2><div id="discList"></div></div>
-<div class="card"><h2>🐾 おつかい中・帰ってきた猫</h2><div id="errandList"></div></div>
+<div class="card"><h2>🐾 おつかい中・帰ってきた猫</h2><div id="errandList"></div></div><div class="card"><h2>🏹 狩り</h2><div id="huntBox"></div></div>
 </section>
 <section id="tab-cats" class="tab">
 <div class="card"><h2>🐱 うちのねこ</h2><div id="catSortBox"></div><div id="catList"></div></div>
@@ -149,7 +173,7 @@ button{background:linear-gradient(135deg,#ff8fb8,#ffa8c8)}
 <div class="sheet" id="sheet"></div>
 <div class="tutOverlay" id="tutOverlay"></div>
 <div class="tutBanner" id="tutBanner"></div>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast"></div><div class="lockOverlay" id="lockOverlay"><div style="font-size:44px">🔒</div><div><b>タッチロック中</b><div class="sub" id="lockSteps"></div></div><button class="ghost" id="lockUnlockBtn">長押しで解除</button></div>
 <nav>
 <a href="#" data-tab="home" class="on"><span>🏠</span>ホーム</a>
 <a href="#" data-tab="map"><span>🗺️</span>おさんぽ</a>
@@ -240,7 +264,22 @@ const COAT_EGG_NAME={white:"白い卵",black:"黒い卵",mike:"三毛柄の卵",
 function eggColorName(coatId){return COAT_EGG_NAME[coatId]||"白い卵";}
 function seasonNow(){const m=new Date().getMonth()+1;if(m>=3&&m<=5)return"spring";if(m>=6&&m<=8)return"summer";if(m>=9&&m<=11)return"autumn";return"winter";}
 function eventNow(){const d=new Date(),m=d.getMonth()+1,day=d.getDate();if(m===10)return"halloween";if(m===2&&day<=14)return"valentine";if(m===1&&day<=7)return"newyear";return null;}
-function designAvailable(d){if(d.season)return d.season===seasonNow();if(d.event)return d.event===eventNow();return true;}
+var curWeather=null,weatherLastFetch={lat:0,lng:0,time:0,busy:false},weatherTimerStarted=false;
+function weatherKindFromCode(code){if(code===0)return{kind:"sunny",label:"晴れ"};if(code===1||code===2)return{kind:"partly",label:"晴れ時々くもり"};if(code===3)return{kind:"cloudy",label:"くもり"};if(code===45||code===48)return{kind:"fog",label:"霧"};if(code===95||code===96||code===99)return{kind:"thunder",label:"雷雨"};if(code===71||code===73||code===75||code===77||code===85||code===86)return{kind:"snow",label:"雪"};if((code>=51&&code<=67)||(code>=80&&code<=82))return{kind:"rain",label:"雨"};return{kind:"cloudy",label:"くもり"};}
+function weatherDesignId(){if(!curWeather)return null;if(curWeather.kind==="rain"||curWeather.kind==="thunder")return "rain";if(curWeather.kind==="snow")return "snow";return null;}
+function maybeWeatherDesign(prob){var wid=weatherDesignId();if(wid&&Math.random()<(prob||0.35))return wid;return null;}
+function designAvailable(d){if(d.id==="rain")return weatherDesignId()==="rain";if(d.id==="snow")return weatherDesignId()==="snow";if(d.season)return d.season===seasonNow();if(d.event)return d.event===eventNow();return true;}
+function weatherSVG(kind,size){var s=size||36;var cloud=function(f,st){return '<path d="M13 33a7.5 7.5 0 0 1-.6-14.94A10.5 10.5 0 0 1 32.4 16 7.5 7.5 0 0 1 37 33z" fill="'+f+'" stroke="'+st+'" stroke-width="2" stroke-linejoin="round"/>';};var face='<circle cx="21" cy="27" r="1.5" fill="#5a3d4a"/><circle cx="29" cy="27" r="1.5" fill="#5a3d4a"/><path d="M22.5 30.5Q25 32.5 27.5 30.5" stroke="#5a3d4a" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="17.5" cy="30" r="2.2" fill="#ffb3cd"/><circle cx="32.5" cy="30" r="2.2" fill="#ffb3cd"/>';var inner="";
+if(kind==="sunny")inner='<g stroke="#ffb84d" stroke-width="3" stroke-linecap="round"><path d="M24 3v5M24 40v5M3 24h5M40 24h5M9 9l3.5 3.5M35.5 35.5L39 39M39 9l-3.5 3.5M12.5 35.5L9 39"/></g><circle cx="24" cy="24" r="11" fill="#ffd94d" stroke="#f5b921" stroke-width="2"/><circle cx="20" cy="23" r="1.6" fill="#5a3d4a"/><circle cx="28" cy="23" r="1.6" fill="#5a3d4a"/><path d="M20.5 27.5Q24 30.5 27.5 27.5" stroke="#5a3d4a" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="16.5" cy="27" r="2.4" fill="#ffb3cd"/><circle cx="31.5" cy="27" r="2.4" fill="#ffb3cd"/>';
+else if(kind==="partly")inner='<circle cx="16" cy="15" r="7.5" fill="#ffd94d" stroke="#f5b921" stroke-width="2"/><g stroke="#ffb84d" stroke-width="2.4" stroke-linecap="round"><path d="M16 2v4M3 15h4M6 5l2.8 2.8"/></g><g transform="translate(3,5)">'+cloud("#ffffff","#e0b3c4")+face+'</g>';
+else if(kind==="rain")inner=cloud("#d6e9fb","#7aa8d9")+face+'<g stroke="#57a8e0" stroke-width="2.6" stroke-linecap="round"><path d="M17 38l-1.8 4M25 38l-1.8 4M33 38l-1.8 4"/></g>';
+else if(kind==="snow")inner=cloud("#eef6fd","#9fc7e8")+face+'<g stroke="#7cc3ee" stroke-width="1.8" stroke-linecap="round"><path d="M16 37v7M12.5 40.5h7M13.8 38.2l4.4 4.6M18.2 38.2l-4.4 4.6M32 37v7M28.5 40.5h7M29.8 38.2l4.4 4.6M34.2 38.2l-4.4 4.6"/></g>';
+else if(kind==="thunder")inner=cloud("#ddd8f5","#8a7fd0")+face+'<path d="M25 34L19.5 43h4L21 47.5L29 37.5h-4.2L27 34z" fill="#ffd94d" stroke="#f5b921" stroke-width="1.4" stroke-linejoin="round"/>';
+else if(kind==="fog")inner=cloud("#eef2f7","#b9c6d4")+face+'<g stroke="#b9c6d4" stroke-width="2.4" stroke-linecap="round"><path d="M14 39h18M18 44h14"/></g>';
+else inner=cloud("#eef2f7","#b9c6d4")+face;
+return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 48 48" role="img" aria-label="天気">'+inner+'</svg>';}
+function renderWeather(){var box=$("weatherWidget");if(!box)return;if(!curWeather){box.style.display="none";box.innerHTML="";return;}var wid=weatherDesignId();var note=wid==="rain"?"雨の日デザインが出るかも":wid==="snow"?"雪の日デザインが出るかも":"";box.innerHTML='<div class="wwMain">'+weatherSVG(curWeather.kind,36)+'<div><div class="wwTemp">'+(curWeather.temp!=null?Math.round(curWeather.temp)+"℃":"")+'</div><div class="wwLabel">'+curWeather.label+'</div></div></div>'+(note?'<div class="wwNote">'+note+'</div>':"");box.style.display="block";}
+function maybeFetchWeather(lat,lng){if(typeof lat!=="number"||typeof lng!=="number"||!isFinite(lat)||!isFinite(lng)||typeof fetch!=="function")return;if(!weatherTimerStarted){weatherTimerStarted=true;setInterval(function(){if(S&&S.lastPos)maybeFetchWeather(S.lastPos.lat,S.lastPos.lng);},5*60*1000);}if(weatherLastFetch.busy)return;var now=Date.now();if(weatherLastFetch.time&&hav(lat,lng,weatherLastFetch.lat,weatherLastFetch.lng)<2000){if(curWeather&&now-weatherLastFetch.time<30*60*1000)return;if(!curWeather&&now-weatherLastFetch.time<10*60*1000)return;}weatherLastFetch.busy=true;weatherLastFetch.lat=lat;weatherLastFetch.lng=lng;weatherLastFetch.time=now;fetch("https://api.open-meteo.com/v1/forecast?latitude="+encodeURIComponent(lat)+"&longitude="+encodeURIComponent(lng)+"&current=temperature_2m,weather_code,wind_speed_10m&wind_speed_unit=ms&timezone=auto").then(function(r){return r.json();}).then(function(j){weatherLastFetch.busy=false;var cur=j&&j.current?j.current:null;if(!cur||typeof cur.weather_code!=="number")return;var k=weatherKindFromCode(cur.weather_code);curWeather={kind:k.kind,label:k.label,code:cur.weather_code,temp:(typeof cur.temperature_2m==="number"?cur.temperature_2m:null),wind:(typeof cur.wind_speed_10m==="number"?cur.wind_speed_10m:null)};renderWeather();if(typeof bgmApply==="function")bgmApply();}).catch(function(){weatherLastFetch.busy=false;});}
 const DCOLOR={normal:"#8bc98a",cafe:"#b07a4f",restaurant:"#ef7d9b",sweets:"#ff9ec6",cinema:"#8a6fd6",pharmacy:"#57b06a",zoo:"#f2a54a",aquarium:"#4db6d9",forest:"#5da85f",waterside:"#57a8e0",post:"#e04d4d",art:"#b48ce0",museum:"#b08954",airport:"#5b84d6",station:"#405a8a",beach:"#f2b04d",convenience:"#3fae6a",supermarket:"#e08a3c",bakery:"#d99a4e",salon:"#e58ab0",fashion:"#e5639a",park:"#7ec850",library:"#7a5fb0",mountain:"#6a9a5f",stadium:"#4da3e0",rain:"#5b84d6",snow:"#8fc7e8",themepark:"#e5639a",busstop:"#e0a83c",ramen:"#e0563c",bridge:"#c95f4d",hotel:"#c9a13c",shrine:"#d63c4d",electronics:"#5b7fa6",homecenter:"#7a9a4d",school:"#d63c4d",laundry:"#6ab0c9",sakura:"#ff9ec6",float:"#e0563c",yakiimo:"#a86a9e",gloves:"#8a6fd6",halloween:"#ef7d2e",valentine:"#ff5c93",newyear:"#d63c4d"};
 function costumeSVG(id){
 if(typeof id==="string"&&id.indexOf("gotochi_")===0)return gotochiCostumeSVG(id);
@@ -409,7 +448,7 @@ default:return '<circle cx="24" cy="19" r="6.4" fill="#8bc98a"/><ellipse cx="13"
 }
 }
 function pinSVG(id,size){const s=size||42;
- return '<svg width="'+s+'" height="'+Math.round(s*52/48)+'" viewBox="0 0 48 52" role="img" aria-label="'+designById(id).name+'"><path d="M24 51 C24 51 15 40 13.4 33 L34.6 33 C33 40 24 51 24 51 Z" fill="#ff8fb8"/><circle cx="24" cy="22" r="19.5" fill="#ff8fb8" stroke="#ffffff" stroke-width="2.6"/><circle cx="24" cy="22" r="15.6" fill="#ffffff"/><g transform="translate(8,6) scale(0.667)">'+pinGlyph(id)+'</g></svg>';}
+ return '<svg width="'+s+'" height="'+Math.round(s*52/48)+'" viewBox="0 0 48 52" role="img" aria-label="'+designById(id).name+'"><circle cx="10" cy="10" r="2.4" fill="#ffc9da" opacity=".8"/><circle cx="40" cy="6" r="1.8" fill="#ffc9da" opacity=".8"/><circle cx="44" cy="26" r="2.2" fill="#ffd9e8" opacity=".9"/><path d="M24 51 C24 51 15 40 13.4 33 L34.6 33 C33 40 24 51 24 51 Z" fill="#ff9ec6"/><circle cx="24" cy="22" r="19.5" fill="#ffb3cd" stroke="#ffffff" stroke-width="2.6"/><circle cx="24" cy="22" r="15.8" fill="#fff5f8"/><circle cx="17" cy="15" r="6" fill="#ffe3ee" opacity=".8"/><g transform="translate(8,6) scale(0.667)">'+pinGlyph(id)+'</g></svg>';}
 function destPinSVG(size){const s=size||44;
  return '<svg width="'+s+'" height="'+Math.round(s*52/48)+'" viewBox="0 0 48 52"><path d="M24 51 C24 51 15 40 13.4 33 L34.6 33 C33 40 24 51 24 51 Z" fill="#ff5c93"/><circle cx="24" cy="22" r="19.5" fill="#ff5c93" stroke="#ffffff" stroke-width="2.6"/><circle cx="24" cy="22" r="15.6" fill="#ffffff"/><path d="M19 33 L19 12" stroke="#5a3d4a" stroke-width="2.6" stroke-linecap="round"/><path d="M19 12 L33 16 L19 21 Z" fill="#ff5c93"/></svg>';}
 function discPinSVG(d,size){const s=size||40;
@@ -430,6 +469,22 @@ let isFreshSave=false;
 function syncIncubators(){if(!S)return;if(!Array.isArray(S.incubators)){S.incubators=[S.incubating||null,null,null];}while(S.incubators.length<3)S.incubators.push(null);S.incubators=S.incubators.slice(0,3);S.incubating=S.incubators[0]||null;}
 function incFreeSlot(){syncIncubators();return S.incubators.findIndex(function(e){return !e;});}
 function incEggs(){syncIncubators();return S.incubators.filter(function(e){return !!e;});}
+function totalMoveM(){return (S.totalDist||0)+(S.fastTotal||0);}
+function v12Migrate(){if(!S)return;
+ if(typeof S.coins!=="number")S.coins=0; if(typeof S.coinTotal!=="number")S.coinTotal=0;
+ if(typeof S.lastCoinStep!=="number")S.lastCoinStep=Math.floor((S.totalSteps||0)/100);
+ if(typeof S.lastCoinDist!=="number")S.lastCoinDist=Math.floor(totalMoveM()/1000);
+ if(typeof S.lastPickStep!=="number")S.lastPickStep=Math.floor((S.totalSteps||0)/500);
+ if(typeof S.lastPickDist!=="number")S.lastPickDist=Math.floor(totalMoveM()/2000);
+ if(!S.pickups||typeof S.pickups!=="object")S.pickups={}; if(!S.pickupSeen||typeof S.pickupSeen!=="object")S.pickupSeen={};
+ if(!S.meats||typeof S.meats!=="object")S.meats={nezumi:0,usagi:0,tori:0,kaeru:0};
+ ["nezumi","usagi","tori","kaeru"].forEach(function(k){if(typeof S.meats[k]!=="number")S.meats[k]=0;});
+ if(!S.furnOwned||typeof S.furnOwned!=="object")S.furnOwned={}; if(!S.furnPlaced||typeof S.furnPlaced!=="object")S.furnPlaced={};
+ if(!Array.isArray(S.hunts))S.hunts=[]; if(!Array.isArray(S.huntSpots))S.huntSpots=[];
+ if(typeof S.huntDay!=="string")S.huntDay=""; if(typeof S.huntCount!=="number")S.huntCount=0;
+ if(typeof S.huntAnchor!=="string")S.huntAnchor=""; if(typeof S.spotPinId!=="string")S.spotPinId="";
+ syncIncubators(); (S.incubators||[]).forEach(function(e){if(e){if(typeof e.prog!=="number")e.prog=0; if(e.prog>=e.need)e.ready=true;}});
+}
 function v11Migrate(isExisting){if(!S)return;syncIncubators();(S.cats||[]).forEach(function(c){if(typeof c.walkSteps!=="number")c.walkSteps=0;if(!c.foundPlace)c.foundPlace="おうちの近く";});if(!S.cumClaimed)S.cumClaimed={};if(!Array.isArray(S.loginDays))S.loginDays=[];if(!S.stats||typeof S.stats!=="object")S.stats={hatch:0,errands:0,dest:0};if(typeof S.stats.hatch!=="number")S.stats.hatch=Math.max(0,(S.cats||[]).length-1);if(typeof S.stats.errands!=="number")S.stats.errands=0;if(typeof S.stats.dest!=="number")S.stats.dest=0;if(typeof S.tutorialDone==="undefined"){S.tutorialDone=isExisting?true:false;S.tutStep=isExisting?"done":"egg";}if(!S.tutStep)S.tutStep=S.tutorialDone?"done":"egg";if(typeof S.tutReplay!=="boolean")S.tutReplay=false;if(typeof S.fastProg!=="number")S.fastProg=0;if(typeof S.fastTotal!=="number")S.fastTotal=0;if(!Array.isArray(S.fastTrailSpots))S.fastTrailSpots=[];if(!Array.isArray(S.fastPath))S.fastPath=[];if(typeof S.prefId!=="string")S.prefId="";if(typeof S.prefName!=="string")S.prefName="";if(typeof S.prefCell!=="string")S.prefCell="";recordLoginDay();}
 function recordLoginDay(){if(!S)return;if(!Array.isArray(S.loginDays))S.loginDays=[];const tk=todayKey();if(S.loginDays.indexOf(tk)<0)S.loginDays.push(tk);}
 function defaultState(){
@@ -442,9 +497,9 @@ function defaultState(){
  karikari:{pink:0,purple:0,orange:0,yellow:0,green:0},fruits:{},
  discoveries:[],errands:[],destination:null,detectorDay:"",flowers:[],flowerDay:"",
  dailyM:null,weeklyM:null,log:{},lastPos:null,path:[],spots:[],
- lastMile:0,fruitMile:0,playerCoat:"white",trailSpots:[],v8EggInit:true,lastEggNotice:"",started:new Date().toISOString(),tutorialDone:false,tutStep:"egg",tutReplay:false,cumClaimed:{},loginDays:[todayKey()],stats:{hatch:0,errands:0,dest:0}};}
-function load(){try{const raw=localStorage.getItem(KEY);if(raw){S=JSON.parse(raw);if(S&&S.v===2){if(!S.flowers)S.flowers=[];if(!S.flowerDay)S.flowerDay="";if(!S.playerCoat)S.playerCoat="white";if(!Array.isArray(S.trailSpots))S.trailSpots=[];if(!S.v8EggInit){S.lastMile=Math.floor((S.totalSteps||0)/3000);S.trailSpots=[];S.v8EggInit=true;}if(!S.lastEggNotice)S.lastEggNotice="";(S.cats||[]).forEach(function(c,i){if(typeof c.seq!=="number")c.seq=i+1;if(typeof c.fav!=="boolean")c.fav=false;if(!c.foundAt)c.foundAt=0;});if(!Array.isArray(S.party))S.party=[];(function(){var favIds=(S.cats||[]).filter(function(c){return c.fav;}).map(function(c){return c.id;});var merged=[];favIds.forEach(function(id){if(merged.length<5&&merged.indexOf(id)<0&&(S.cats||[]).some(function(c){return c.id===id;}))merged.push(id);});(S.party||[]).forEach(function(id){if(merged.length<5&&merged.indexOf(id)<0&&(S.cats||[]).some(function(c){return c.id===id;}))merged.push(id);});S.party=merged;(S.cats||[]).forEach(function(c){c.fav=merged.indexOf(c.id)>=0;});})();migrateEggs();v11Migrate(true);save();return;}}}catch(e){}
- S=defaultState();isFreshSave=true;v11Migrate(false);save();}
+ lastMile:0,fruitMile:0,playerCoat:"white",trailSpots:[],v8EggInit:true,lastEggNotice:"",started:new Date().toISOString(),audio:{bgmOn:true,seOn:true,bgmVol:0.7,seVol:0.9,mode:"auto",track:"day"},tutorialDone:false,tutStep:"egg",tutReplay:false,cumClaimed:{},loginDays:[todayKey()],stats:{hatch:0,errands:0,dest:0}};}
+function load(){try{const raw=localStorage.getItem(KEY);if(raw){S=JSON.parse(raw);if(S&&S.v===2){if(!S.flowers)S.flowers=[];if(!S.flowerDay)S.flowerDay="";if(!S.playerCoat)S.playerCoat="white";if(!Array.isArray(S.trailSpots))S.trailSpots=[];if(!S.v8EggInit){S.lastMile=Math.floor((S.totalSteps||0)/3000);S.trailSpots=[];S.v8EggInit=true;}if(!S.lastEggNotice)S.lastEggNotice="";(S.cats||[]).forEach(function(c,i){if(typeof c.seq!=="number")c.seq=i+1;if(typeof c.fav!=="boolean")c.fav=false;if(!c.foundAt)c.foundAt=0;});if(!Array.isArray(S.party))S.party=[];(function(){var favIds=(S.cats||[]).filter(function(c){return c.fav;}).map(function(c){return c.id;});var merged=[];favIds.forEach(function(id){if(merged.length<5&&merged.indexOf(id)<0&&(S.cats||[]).some(function(c){return c.id===id;}))merged.push(id);});(S.party||[]).forEach(function(id){if(merged.length<5&&merged.indexOf(id)<0&&(S.cats||[]).some(function(c){return c.id===id;}))merged.push(id);});S.party=merged;(S.cats||[]).forEach(function(c){c.fav=merged.indexOf(c.id)>=0;});})();migrateEggs();v11Migrate(true);v12Migrate();ensureAudioSettings();save();return;}}}catch(e){}
+ S=defaultState();isFreshSave=true;v11Migrate(false);v12Migrate();ensureAudioSettings();save();}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 function companionIds(){if(!S||!Array.isArray(S.cats))return[];const favs=S.cats.filter(function(c){return c.fav;}).map(function(c){return c.id;});const ordered=[];(Array.isArray(S.party)?S.party:[]).forEach(function(id){if(favs.indexOf(id)>=0&&ordered.indexOf(id)<0)ordered.push(id);});favs.forEach(function(id){if(ordered.indexOf(id)<0)ordered.push(id);});return ordered.slice(0,5);}
 function syncCompanions(){if(!S||!Array.isArray(S.cats))return;const ids=companionIds();S.party=ids;S.cats.forEach(function(c){c.fav=ids.indexOf(c.id)>=0;});}
@@ -456,24 +511,26 @@ function rollDay(){const tk=todayKey(),wk=weekKey();
 function gainXP(n){S.xp+=n;let need=xpNeed(S.level);
  while(S.xp>=need){S.xp-=need;S.level++;need=xpNeed(S.level);toast("🎉 レベルアップ！ Lv."+S.level+" になったよ");}
  renderHeader();}
-function renderHeader(){$("lvLabel").textContent="Lv."+S.level;
- const need=xpNeed(S.level);$("xpFill").style.width=Math.min(100,S.xp/need*100)+"%";
- $("xpLabel").textContent="XP "+S.xp+" / "+need;}
+function renderHeader(){const ll=$("lvLabel");if(ll)ll.textContent="Lv."+S.level;
+ const need=xpNeed(S.level);const xf=$("xpFill");if(xf)xf.style.width=Math.min(100,S.xp/need*100)+"%";
+ const xl=$("xpLabel");if(xl)xl.textContent="XP "+S.xp+" / "+need;
+ const cl=$("coinLabel");if(cl)cl.textContent="🪙 "+(S.coins||0).toLocaleString();}
 function friendGain(cat,base){return base/(1+cat.fp/60);}
 function unownedDesignEgg(){
  const owned=new Set(S.cats.map(c=>c.design));
+ const wid=maybeWeatherDesign(0.35);if(wid&&!owned.has(wid))return {id:uid(),design:wid,need:3000,coat:pick(COATS).id};
  const pool=DESIGNS.filter(d=>d.id!=="normal"&&designAvailable(d)&&!owned.has(d.id));
  const d=pool.length?pick(pool):pick(DESIGNS.filter(x=>x.id!=="normal"&&designAvailable(x)));
  return {id:uid(),design:d.id,need:3000,coat:pick(COATS).id};}
 function eggIsHidden(e){return !!(e&&e.hidden);}
 function eggTitle(e){if(!e)return "";if(eggIsHidden(e))return eggColorName(e.coat||"white");return designById(e.design).name+"の卵 ・ "+eggColorName(e.coat||"white");}
-function unownedComboEgg(hidden){const owned=new Set(S.cats.map(c=>c.design+"|"+c.coat));if(S.prefId&&Math.random()<0.25){const gc=COATS.filter(function(c){return !owned.has("gotochi_"+S.prefId+"|"+c.id);});const gco=gc.length?pick(gc):pick(COATS);return{id:uid(),design:"gotochi_"+S.prefId,need:3000,coat:gco.id,hidden:!!hidden};}const combos=[];DESIGNS.filter(d=>designAvailable(d)).forEach(d=>{COATS.forEach(c=>{if(!owned.has(d.id+"|"+c.id))combos.push({design:d.id,coat:c.id});});});let cm;if(combos.length){const pref=combos.filter(x=>x.design!=="normal");cm=pick(pref.length?pref:combos);}else cm={design:pick(DESIGNS.filter(d=>designAvailable(d))).id,coat:pick(COATS).id};return {id:uid(),design:cm.design,need:cm.design==="normal"?1000:3000,coat:cm.coat,hidden:!!hidden};}
+function unownedComboEgg(hidden){const owned=new Set(S.cats.map(c=>c.design+"|"+c.coat));if(S.prefId&&Math.random()<0.25){const gc=COATS.filter(function(c){return !owned.has("gotochi_"+S.prefId+"|"+c.id);});const gco=gc.length?pick(gc):pick(COATS);return{id:uid(),design:"gotochi_"+S.prefId,need:3000,coat:gco.id,hidden:!!hidden};}const wid2=maybeWeatherDesign(0.35);if(wid2){const wc=COATS.filter(function(c){return !owned.has(wid2+"|"+c.id);});const wco=wc.length?pick(wc):pick(COATS);return{id:uid(),design:wid2,need:3000,coat:wco.id,hidden:!!hidden};}const combos=[];DESIGNS.filter(d=>designAvailable(d)).forEach(d=>{COATS.forEach(c=>{if(!owned.has(d.id+"|"+c.id))combos.push({design:d.id,coat:c.id});});});let cm;if(combos.length){const pref=combos.filter(x=>x.design!=="normal");cm=pick(pref.length?pref:combos);}else cm={design:pick(DESIGNS.filter(d=>designAvailable(d))).id,coat:pick(COATS).id};return {id:uid(),design:cm.design,need:cm.design==="normal"?1000:3000,coat:cm.coat,hidden:!!hidden};}
 function normalEgg(){return {id:uid(),design:"normal",need:1000,coat:pick(COATS).id};}
 function designEgg(id,coatId){const d=designById(id);return {id:uid(),design:d.id,need:d.id==="normal"?1000:3000,coat:coatId||pick(COATS).id};}
 function grantEgg(egg,why){if(!egg.coat)egg.coat=pick(COATS).id;S.eggs.push(egg);toast("🥚 "+eggColorName(egg.coat)+"（"+designById(egg.design).name+"）をゲット！"+(why||""));save();}
-function rollDestRewards(){const items=[];if(Math.random()<0.5){const egg=(Math.random()<0.5?unownedDesignEgg():normalEgg());if(S.prefId&&Math.random()<0.25){egg.design="gotochi_"+S.prefId;egg.need=3000;}items.push({kind:"egg",design:egg.design,coat:egg.coat,need:egg.need});}else{for(let i=0;i<2;i++){const f=pick(FRUITS);items.push({kind:"fruit",fruit:f.id});}}return {xp:20,items:items};}
+function rollDestRewards(){const items=[];if(Math.random()<0.5){const egg=(Math.random()<0.5?unownedDesignEgg():normalEgg());if(S.prefId&&Math.random()<0.25){egg.design="gotochi_"+S.prefId;egg.need=3000;}items.push({kind:"egg",design:egg.design,coat:egg.coat,need:egg.need});}else{const cols=Object.keys(KARINAME);for(let i=0;i<2;i++){items.push({kind:"kari",color:pick(cols),n:3});}}return {xp:20,items:items};}
 function ensureDestRewards(){if(!S||!S.destination)return null;const r=S.destination.rewards;if(!r||!Array.isArray(r.items)||!r.items.length){S.destination.rewards=rollDestRewards();}else{r.items.forEach(function(it){if(it.kind==="egg"){if(!it.coat)it.coat=pick(COATS).id;if(!it.design)it.design="normal";if(!it.need)it.need=it.design==="normal"?1000:3000;}});if(typeof r.xp!=="number")r.xp=20;}return S.destination.rewards;}
-function destRewardRowsHTML(rw){if(!rw)return "";let h=rw.items.map(function(it){if(it.kind==="egg")return '<div class="row" style="margin-bottom:6px"><div>'+eggSVG(it.design,it.coat,36)+'</div><div class="grow">'+eggColorName(it.coat)+'</div></div>';const f=fruitById(it.fruit);return '<div class="row" style="margin-bottom:6px"><div>'+fruitSVG(it.fruit,36)+'</div><div class="grow">'+(f?f.name:it.fruit)+'</div></div>';}).join("");if(rw.xp)h+='<div class="row" style="margin-bottom:6px"><div style="width:36px;text-align:center;font-size:20px">⭐</div><div class="grow">XP +' + rw.xp + '</div></div>';return h;}
+function destRewardRowsHTML(rw){if(!rw)return "";let h=rw.items.map(function(it){if(it.kind==="egg")return '<div class="row" style="margin-bottom:6px"><div>'+eggSVG(it.design,it.coat,36)+'</div><div class="grow">'+eggColorName(it.coat)+'</div></div>';if(it.kind==="kari")return '<div class="row" style="margin-bottom:6px"><div>'+karikariSVG(it.color,36)+'</div><div class="grow">'+KARINAME[it.color]+' ×'+(it.n||3)+'</div></div>';const f=fruitById(it.fruit);return f?'<div class="row" style="margin-bottom:6px"><div>'+karikariSVG(f.color,36)+'</div><div class="grow">'+KARINAME[f.color]+' ×'+f.kari+'</div></div>':"";}).join("");if(rw.xp)h+='<div class="row" style="margin-bottom:6px"><div style="width:36px;text-align:center;font-size:20px">⭐</div><div class="grow">XP +'+rw.xp+'</div></div>';return h;}
 function migrateEggs(){if(!S)return;const ensure=function(o){if(o&&!o.coat)o.coat=pick(COATS).id;};(S.eggs||[]).forEach(ensure);if(S.incubating)ensure(S.incubating);syncIncubators();(S.incubators||[]).forEach(ensure);(S.discoveries||[]).forEach(function(d){if(d.type==="egg")ensure(d);});(S.errands||[]).forEach(function(d){if(d.type==="egg")ensure(d);});if(S.destination)ensureDestRewards();}
 const DAILY_POOL=[
 {k:"steps",t:"今日 {n} 歩あるく",n:1000,xp:30,rw:"egg"},
@@ -496,48 +553,57 @@ const WEEKLY_POOL=[
 function makeMissions(pool,count,scope){return shuffle(pool).slice(0,count).map(p=>({k:p.k,t:p.t.replace("{n}",p.n.toLocaleString()),n:p.n,xp:p.xp,rw:p.rw,done:false,claimed:false,scope}));}
 function ensureMissions(){if(!S.dailyM)S.dailyM=makeMissions(DAILY_POOL,3,"today");if(!S.weeklyM)S.weeklyM=makeMissions(WEEKLY_POOL,5,"week");[S.dailyM,S.weeklyM].forEach(function(list){if(!Array.isArray(list))return;list.forEach(function(m,i){if(m&&m.k==="spot"){const scope=m.scope||(list===S.dailyM?"today":"week");list[i]={k:"detector",t:"探索機を 3 回つかう",n:3,xp:120,rw:"eggFruit",done:false,claimed:false,scope:scope};}});});}
 function missionProgress(m){const src=m.scope==="today"?S.today:S.week;return Math.min(m.n,src[m.k]||0);}
-function rewardLabel(rw){return {egg:"未所持デザインの卵×1",fruit:"フルーツ×2",eggFruit:"未所持デザインの卵×1＋フルーツ×2",eggFruit2:"未所持デザインの卵×1＋フルーツ×4",egg2:"未所持デザインの卵×2"}[rw]||"";}
-function giveReward(rw){const eggsN={egg:1,eggFruit:1,eggFruit2:1,egg2:2}[rw]||0;const frN={fruit:2,eggFruit:2,eggFruit2:4}[rw]||0;
+function rewardLabel(rw){return {egg:"未所持デザインの卵×1",fruit:"カリカリ×6",eggFruit:"未所持デザインの卵×1＋カリカリ×6",eggFruit2:"未所持デザインの卵×1＋カリカリ×12",egg2:"未所持デザインの卵×2"}[rw]||"";}
+function giveKari(n){const cols=Object.keys(KARINAME);for(let i=0;i<n;i++){const c=pick(cols);S.karikari[c]=(S.karikari[c]||0)+1;}}
+function giveReward(rw){const eggsN={egg:1,eggFruit:1,eggFruit2:1,egg2:2}[rw]||0;const kariN={fruit:6,eggFruit:6,eggFruit2:12}[rw]||0;
  for(let i=0;i<eggsN;i++)S.eggs.push(unownedComboEgg(true));
- for(let i=0;i<frN;i++){const f=pick(FRUITS);S.fruits[f.id]=(S.fruits[f.id]||0)+1;}
+ if(kariN)giveKari(kariN);
  toast("🎁 報酬ゲット！ "+rewardLabel(rw));}
 function claimMission(scope,idx){const list=scope==="today"?S.dailyM:S.weeklyM;const m=list[idx];
  if(!m||m.claimed||missionProgress(m)<m.n)return;
- m.claimed=true;m.done=true;giveReward(m.rw);gainXP(m.xp);save();renderMissions();renderBag();renderHome();}
+ m.claimed=true;m.done=true;if(typeof sePlay==="function")sePlay("decide");giveReward(m.rw);gainXP(m.xp);save();renderMissions();renderBag();renderHome();}
 function renderMissions(){ensureMissions();
- const html=(list,scope)=>list.map((m,i)=>{const p=missionProgress(m);const done=p>=m.n;
-  return '<div class="row" style="margin-bottom:10px"><div class="grow"><div>'+m.t+'</div>'
-  +'<div class="bar" style="margin:5px 0"><i style="width:'+(p/m.n*100)+'%"></i></div>'
-  +'<div class="sub">'+p.toLocaleString()+" / "+m.n.toLocaleString()+" ・ 報酬："+rewardLabel(m.rw)+" ・ XP+"+m.xp+'</div></div>'
-  +(m.claimed?'<span class="pill">受取済み✓</span>':done?'<button class="sm" onclick="claimMission(\''+scope+'\','+i+')">受け取る</button>':'<span class="pill">進行中</span>')+'</div>';}).join("");
- const allBtn='<div style="margin-bottom:10px"><button class="sm" onclick="claimAllMissions()">まとめて受け取る</button></div>';
+ const html=function(list,scope){return list.filter(function(m){return !m.claimed;}).map(function(m){const i=list.indexOf(m);const p=missionProgress(m);const done=p>=m.n;
+  return '<div class="row '+(done?"mrowGold":"")+'" style="margin-bottom:10px"><div class="grow"><div>'+m.t+'</div><div class="bar" style="margin:5px 0"><i style="width:'+(p/m.n*100)+'%"></i></div><div class="sub">'+p.toLocaleString()+" / "+m.n.toLocaleString()+" ・ 報酬："+rewardLabel(m.rw)+" ・ XP+"+m.xp+'</div></div>'+(done?'<button class="sm goldBtn" onclick="claimMission(\''+scope+'\','+i+')">受け取る</button>':'<span class="pill">進行中</span>')+'</div>';}).join("")||'<div class="sub">全部受け取り済みです</div>';};
+ const anyC=(function(){ensureMissions();let any=false;[S.dailyM,S.weeklyM].forEach(function(l){(l||[]).forEach(function(m){if(!m.claimed&&missionProgress(m)>=m.n)any=true;});});if(S.cumClaimed!==undefined){cumDefs().forEach(function(d){if(!S.cumClaimed[d.id]&&cumValue(d.metric)>=d.target)any=true;});}return any;})();
+ const allBtn='<div style="margin-bottom:10px"><button class="sm '+(anyC?"goldBtn":"")+'" onclick="claimAllMissions()">まとめて受け取る</button></div>';
  $("dailyM").innerHTML=allBtn+html(S.dailyM,"today");$("weeklyM").innerHTML=allBtn+html(S.weeklyM,"week");if(typeof renderCumulative==="function")renderCumulative();}
 function claimAllMissions(){let n=0;
  [["today",S.dailyM],["week",S.weeklyM]].forEach(function(pair){(pair[1]||[]).forEach(function(m){if(!m.claimed&&missionProgress(m)>=m.n){m.claimed=true;m.done=true;giveRewardSilent(m.rw);gainXP(m.xp);n++;}});});
  if(!S.cumClaimed)S.cumClaimed={};
- cumDefs().forEach(function(d){if(!S.cumClaimed[d.id]&&cumValue(d.metric)>=d.target){S.cumClaimed[d.id]=true;for(let i=0;i<d.eggs;i++)S.eggs.push(unownedComboEgg(true));for(let i=0;i<d.fruits;i++){const f=pick(FRUITS);S.fruits[f.id]=(S.fruits[f.id]||0)+1;}if(d.xp)gainXP(d.xp);n++;}});
- if(n>0)toast("🎁 "+n+"件の報酬を受け取ったよ");else toast("受け取れる報酬はまだないよ");
+ cumDefs().forEach(function(d){if(!S.cumClaimed[d.id]&&cumValue(d.metric)>=d.target){S.cumClaimed[d.id]=true;for(let i=0;i<d.eggs;i++)S.eggs.push(unownedComboEgg(true));if(d.fruits)giveKari(d.fruits*3);if(d.xp)gainXP(d.xp);n++;}});
+ if(n>0){if(typeof sePlay==="function")sePlay("decide");toast("🎁 "+n+"件の報酬を受け取ったよ");}else toast("受け取れる報酬はまだないよ");
  save();renderMissions();renderBag();renderHome();}
-function giveRewardSilent(rw){const eggsN={egg:1,eggFruit:1,eggFruit2:1,egg2:2}[rw]||0;const frN={fruit:2,eggFruit:2,eggFruit2:4}[rw]||0;
+
+function giveRewardSilent(rw){const eggsN={egg:1,eggFruit:1,eggFruit2:1,egg2:2}[rw]||0;const kariN={fruit:6,eggFruit:6,eggFruit2:12}[rw]||0;
  for(let i=0;i<eggsN;i++)S.eggs.push(unownedComboEgg(true));
- for(let i=0;i<frN;i++){const f=pick(FRUITS);S.fruits[f.id]=(S.fruits[f.id]||0)+1;}}
+ if(kariN)giveKari(kariN);}
 function renderHome(){rollDay();
  $("todaySteps").textContent=S.today.steps.toLocaleString();
  $("todayDist").textContent=Math.round(S.today.dist).toLocaleString();
  $("totalSteps").textContent=S.totalSteps.toLocaleString();
- const compIds=companionIds();const lead=S.cats.find(c=>c.id===compIds[0])||S.cats[0];
- $("homeCat").innerHTML=lead?catSVG(lead.coat,lead.design,76):"";
- $("partyRow").innerHTML=compIds.length?'<div class="partyGrid">'+compIds.map(id=>{const c=S.cats.find(x=>x.id===id);return c?'<div class="partyCat" style="cursor:pointer" onclick="openCatPop(\''+c.id+'\')">'+catFxSVG(c,64)+'<div>'+(c.name||coatById(c.coat).name)+'<br><span class="sub">'+designById(c.design).name+'</span></div></div>':"";}).join("")+'</div>':'<span class="sub">「ねこ」タブで ⭐ お気に入りに登録してね</span>';
- syncIncubators();const incs=incEggs();
- if(incs.length){$("incubator").innerHTML='<div class="incRow">'+S.incubators.map(function(e,i){return e?'<div style="text-align:center;width:96px">'+incubatorStageHTML(e,false,i)+'<div class="sub">あと '+(e.need-e.prog)+' 歩</div></div>':'<div style="text-align:center;width:96px;opacity:.55">'+incubatorBaseSVG(92)+'</div>';}).join("")+'</div>';}
- else $("incubator").innerHTML='<div class="incRow">'+[0,1,2].map(function(){return '<div style="opacity:.55">'+incubatorBaseSVG(92)+'</div>';}).join("")+'</div>';
+ $("homeCat").innerHTML=playerCatSVG(86,S.playerCoat);
+ const compIds=companionIds();
+ $("partyRow").innerHTML=compIds.length?'<div class="partyGrid">'+compIds.map(function(id){const c=S.cats.find(function(x){return x.id===id;});if(!c)return "";const b=typeof catBusy==="function"?catBusy(id):null;
+  if(b)return '<div class="partyCat busyCat" style="cursor:pointer" onclick="event.stopPropagation();toast(busyLabel(\''+c.id+'\'))">'+catSVG(c.coat,c.design,64)+'<div>'+(c.name||coatById(c.coat).name)+'<br><span class="sub">'+(b.type==="errand"?"おつかい中":"狩り中")+'</span></div></div>';
+  return '<div class="partyCat" style="cursor:pointer" onclick="event.stopPropagation();openCatPop(\''+c.id+'\')">'+catFxSVG(c,64)+'<div>'+(c.name||coatById(c.coat).name)+'<br><span class="sub">'+designById(c.design).name+'</span></div></div>';}).join("")+'</div>':'<span class="sub">「ねこ」タブで ⭐ お気に入りに登録してね</span>';
+ syncIncubators();
+ $("incubator").innerHTML='<div class="incRow">'+S.incubators.map(function(e,i){return '<div style="text-align:center;width:96px">'+incubatorStageHTML(e,false,i)+(e?'<div class="sub">'+(e.ready?"ふか準備OK！":"あと "+Math.max(0,e.need-e.prog).toLocaleString()+" 歩")+'</div>':"")+'</div>';}).join("")+'</div>';
  const days=["日","月","火","水","木","金","土"];const now=new Date();
  let cal="";for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);
   const k=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();const log=S.log[k];
   cal+='<div class="'+(i===0?"today":"")+'">'+days[d.getDay()]+'<br>'+(d.getMonth()+1)+"/"+d.getDate()+'<br>'+(log?log.steps.toLocaleString()+"歩":"-")+'</div>';}
- $("weekCal").innerHTML=cal;}
-function hearts(fp){const n=Math.max(0,Math.min(10,Math.floor((fp||0)/10)));return "♥".repeat(n)+"♡".repeat(10-n);}
-function heartsHTML(fp){const n=Math.max(0,Math.min(10,Math.floor((fp||0)/10)));let h="";for(let i=0;i<10;i++)h+='<span style="color:'+(i<n?"#ff5c93":"#e8ccd6")+'">♥</span>';return h;}
+ $("weekCal").innerHTML=cal;
+ const lk=$("lockSteps");if(lk&&$("lockOverlay")&&$("lockOverlay").classList.contains("on"))lk.textContent="今日 "+S.today.steps.toLocaleString()+" 歩 ・ 🪙 "+(S.coins||0).toLocaleString();}
+
+function heartsHTML(fp){const v=Math.max(0,Math.min(10,(fp||0)/12));let h="";
+ for(let i=0;i<5;i++){let fill,base;
+  if(v<=5){const f=Math.max(0,Math.min(1,v-i));fill="#ff5c93";base="#ead9e0";var pct=f*100;}
+  else{const g=Math.max(0,Math.min(1,v-5-i));fill="#f5b921";base="#ff5c93";var pct=g*100;}
+  const gid="hg"+i+"_"+Math.round(pct)+"_"+(v<=5?"p":"g");
+  h+='<svg width="15" height="14" viewBox="0 0 24 22" style="vertical-align:-2px"><defs><linearGradient id="'+gid+'" x1="0" x2="1"><stop offset="'+pct+'%" stop-color="'+fill+'"/><stop offset="'+pct+'%" stop-color="'+base+'"/></linearGradient></defs><path d="M12 20 C4 14 2.5 9 5 5.6 C7 3 11 3.4 12 6.4 C13 3.4 17 3 19 5.6 C21.5 9 20 14 12 20 Z" fill="url(#'+gid+')"/></svg>';}
+ return h;}
+function hearts(fp){return heartsHTML(fp);}
 function feedCountToday(c){return c&&c.feedDay===todayKey()?(c.feeds||0):0;}
 function fxClass(c){const n=feedCountToday(c);return n>=2?"fxH":n===1?"fxS":"";}
 function catFxSVG(c,size){return '<span class="fxWrap '+fxClass(c)+'">'+catSVG(c.coat,c.design,size)+'</span>';}
@@ -638,6 +704,8 @@ function renderFeedBox(){const box=$("feedBox");if(!box||!S)return;
  let h='<div class="row" style="flex-wrap:wrap;gap:4px;margin-bottom:10px">'+Object.keys(KARINAME).map(function(col){return '<button class="sm feedTab '+(feedColorSel===col?"":"ghost")+'" onclick="setFeedColor(\''+col+'\')"><span style="color:'+KARIDOT[col]+'">●</span> '+KARINAME[col].replace("のカリカリ","")+' ×'+S.karikari[col]+'</button>';}).join("")+'</div>';
  if(!S.cats.length)h+='<div class="sub">ねこはまだいません。</div>';
  else h+='<div class="partyGrid">'+S.cats.map(function(c){const n=feedCountToday(c);return '<div class="catTile" onclick="feedCat(\''+c.id+'\',feedColorSel)">'+catFxSVG(c,64)+'<div>'+(c.name||coatById(c.coat).name)+'</div><div class="sub">今日 '+n+' / 2</div></div>';}).join("")+'</div>';
+ const meatTotal=MEATS.reduce(function(a,m){return a+(S.meats[m.id]||0);},0);
+ h+='<div style="margin-top:12px"><b style="font-size:13px">🍖 肉・草（肉 ×'+meatTotal+' ・ 草 ×'+(S.pickups.kusa||0)+'）</b><div class="partyGrid" style="margin-top:6px">'+S.cats.map(function(c){return '<div class="catTile" onclick="openHouseFeed(\''+c.id+'\')">'+catFxSVG(c,56)+'<div>'+(c.name||coatById(c.coat).name)+'</div><div class="sub">肉・草をあげる</div></div>';}).join("")+'</div></div>';
  box.innerHTML=h;}
 function openCatPop(id){const c=S.cats.find(function(x){return x.id===id;});if(!c)return;const n=feedCountToday(c);
  showSheet('<div style="text-align:center;cursor:pointer" onclick="openCatDetail(\''+c.id+'\')">'+catFxSVG(c,130)+'<div style="font-size:17px;font-weight:800;margin-top:4px">'+(c.name||coatById(c.coat).name)+'</div><div style="font-size:15px;letter-spacing:1px;margin-top:2px">'+heartsHTML(c.fp)+'</div><div class="sub" style="margin-top:4px">今日のカリカリ '+n+' / 2</div></div><div style="margin-top:12px;text-align:center"><button class="sm" onclick="openCatDetail(\''+c.id+'\')">詳細を見る</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
@@ -658,53 +726,58 @@ function feedCat(id,col){const c=S.cats.find(x=>x.id===id);if(!c)return;
  if(c.feeds>=2){toast("今日はもう2回あげたよ。また明日ね");return;}
  if(S.karikari[col]<=0){toast(KARINAME[col]+"がないよ");return;}
  S.karikari[col]--;c.feeds++;c.fp+=friendGain(c,6);S.today.feeds++;S.week.feeds++;
- toast("😋 "+(c.name||coatById(c.coat).name)+" が "+KARINAME[col]+" を食べた！ なかよしアップ");
+ if(typeof sePlay==="function")sePlay("feed");toast("😋 "+(c.name||coatById(c.coat).name)+" が "+KARINAME[col]+" を食べた！ なかよしアップ");
  gainXP(3);save();renderCats();renderBag();renderHome();tutAfter("feed");}
-function renderBag(){syncIncubators();
- let h='<h3 style="margin:4px 0 6px">カリカリ</h3>';
- h+=Object.keys(KARINAME).map(function(col){return '<div class="bagRow"><div>'+karikariSVG(col,40)+'</div><div class="grow">'+KARINAME[col]+'</div><b>× '+S.karikari[col]+'</b></div>';}).join("");
- h+='<h3 style="margin:14px 0 6px">🥚 卵</h3>';
- h+='<div class="bagRow" style="cursor:pointer" onclick="openIncubator()"><div>'+incubatorBaseSVG(72)+'</div><div class="grow">ふか器</div><b>'+incEggs().length+' / 3</b></div>';
- const groups={};
- S.eggs.forEach(function(e){const k="bag_"+e.design+"_"+(e.coat||"white")+"_"+(e.hidden?1:0);if(!groups[k])groups[k]={e:e,n:0,bag:true};groups[k].n++;});
- S.incubators.forEach(function(e,i){if(!e)return;const k="inc_"+e.design+"_"+(e.coat||"white")+"_"+(e.hidden?1:0);if(!groups[k])groups[k]={e:e,n:0,bag:false,idx:i};groups[k].n++;});
- const gkeys=Object.keys(groups);
- if(!gkeys.length)h+='<div class="sub">卵はまだありません</div>';
- else h+=gkeys.map(function(k){const g=groups[k];const e=g.e;
-   if(g.bag)return '<div class="bagRow"><div style="cursor:pointer" onclick="openBagEggDetail(\''+e.id+'\')">'+eggSVG(e.design,e.coat,44)+'</div><div class="grow" style="cursor:pointer" onclick="openBagEggDetail(\''+e.id+'\')">'+eggColorName(e.coat||"white")+'<div class="sub">'+(eggIsHidden(e)?"":designById(e.design).name+" ・ ")+'ふかまで '+e.need+' 歩</div></div><b>× '+g.n+'</b>'+(incFreeSlot()>=0?'<button class="sm" onclick="setIncubator(\''+e.id+'\')">ふか器にセット</button>':'')+'</div>';
-   return '<div class="bagRow"><div style="cursor:pointer" onclick="openIncubator()">'+eggSVG(e.design,e.coat,44)+'</div><div class="grow" style="cursor:pointer" onclick="openIncubator()">'+eggColorName(e.coat||"white")+'<div class="sub">ふか器の中 ・ あと '+(e.need-e.prog)+' 歩</div></div><b>× '+g.n+'</b></div>';}).join("");
- h+='<h3 style="margin:14px 0 6px">🍓 フルーツ</h3>';
- const fids=Object.keys(S.fruits).filter(id=>S.fruits[id]>0);
- h+=fids.length?fids.map(id=>{const f=fruitById(id);return '<div class="bagRow"><div>'+fruitSVG(f.id,38)+'</div><div class="grow">'+f.name+'<div class="sub">'+KARINAME[f.color]+" "+f.kari+' 個に変換できる</div></div><b>× '+S.fruits[id]+'</b><button class="sm" onclick="convertFruit(\''+id+'\')">変換する</button></div>';}).join(""):'<div class="sub">フルーツはまだありません</div>';
+function renderBag(){syncIncubators();v12Migrate();
+ const kariTotal=Object.keys(KARINAME).reduce(function(a,c){return a+(S.karikari[c]||0);},0);
+ const eggTotal=(S.eggs||[]).length+incEggs().length;
+ const meatTotal=MEATS.reduce(function(a,m){return a+(S.meats[m.id]||0);},0);
+ let h='<div style="display:flex;gap:10px;margin-bottom:12px"><div class="bigCatBtn" onclick="openKariSheet()"><div style="font-size:30px">🍚</div><b>カリカリ</b><div class="sub">× '+kariTotal+'</div></div><div class="bigCatBtn" onclick="openEggSheet()"><div style="font-size:30px">🥚</div><b>卵</b><div class="sub">× '+eggTotal+'</div></div><div class="bigCatBtn" onclick="openMeatSheet()"><div style="font-size:30px">🍖</div><b>肉・草</b><div class="sub">× '+(meatTotal+(S.pickups.kusa||0))+'</div></div></div>';
+ h+='<h3 style="margin:10px 0 6px">🧺 拾い物（売る）</h3>';
+ const owned=PICKUPS.filter(function(p){return (S.pickups[p.id]||0)>0;});
+ h+=owned.length?owned.map(function(p){return '<div class="shopRow"><div style="font-size:26px">'+p.icon+'</div><div class="grow">'+p.name+(p.edible?' <span class="sub">（猫が食べられる）</span>':'')+'</div><b>× '+(S.pickups[p.id]||0)+'</b><span class="sub">🪙'+p.price+'</span><button class="sm" onclick="sellPickup(\''+p.id+'\',false)">売る</button><button class="sm ghost" onclick="sellPickup(\''+p.id+'\',true)">全部</button></div>';}).join(""):'<div class="sub">まだ何も拾っていません</div>';
+ if(owned.some(function(p){return !p.edible;}))h+='<div style="margin:6px 0"><button class="sm ghost" onclick="sellAllPickups()">草以外をまとめて売る</button></div>';
+ h+='<h3 style="margin:14px 0 6px">🛒 ショップ（🪙 '+(S.coins||0).toLocaleString()+'）</h3>';
+ h+='<div class="shopRow"><div style="font-size:24px">🌿</div><div class="grow">草</div><b>🪙5</b><button class="sm" onclick="buyItem(\'kusa\')">買う</button></div>';
+ h+='<div class="shopRow"><div>'+karikariSVG("pink",34)+'</div><div class="grow">カリカリ（ランダム3個）</div><b>🪙20</b><button class="sm" onclick="buyItem(\'kari\')">買う</button></div>';
+ h+='<div class="shopRow"><div style="font-size:24px">🍖</div><div class="grow">肉（ランダム）</div><b>🪙50</b><button class="sm" onclick="buyItem(\'meat\')">買う</button></div>';
+ h+=FURN.map(function(f){const own=!!S.furnOwned[f.id];return '<div class="shopRow"><div style="font-size:24px">'+f.icon+'</div><div class="grow">'+f.name+'</div>'+(own?'<span class="pill">所持済み</span>':'<b>🪙'+f.price+'</b><button class="sm" onclick="buyItem(\'furn\',\''+f.id+'\')">買う</button>')+'</div>';}).join("");
  $("bagBox").innerHTML=h;}
+function openKariSheet(){let h='<h3 style="margin-top:0">🍚 カリカリ</h3>'+Object.keys(KARINAME).map(function(col){return '<div class="bagRow"><div>'+karikariSVG(col,40)+'</div><div class="grow">'+KARINAME[col]+'</div><b>× '+(S.karikari[col]||0)+'</b></div>';}).join("")+'<div style="margin-top:10px;text-align:center"><button class="sm" onclick="closeSheet();goTab(\'cats\')">あげにいく</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';showSheet(h);}
+function openEggSheet(){syncIncubators();let h='<h3 style="margin-top:0">🥚 卵</h3><div class="bagRow" style="cursor:pointer" onclick="openIncubator()"><div>'+incubatorBaseSVG(72)+'</div><div class="grow">ふか器</div><b>'+incEggs().length+' / 3</b></div>';
+ const groups={};(S.eggs||[]).forEach(function(e){const k="b_"+e.design+"_"+(e.coat||"white")+"_"+(e.hidden?1:0);if(!groups[k])groups[k]={e:e,n:0,bag:true};groups[k].n++;});
+ (S.incubators||[]).forEach(function(e,i){if(!e)return;const k="i_"+e.design+"_"+(e.coat||"white")+"_"+(e.hidden?1:0);if(!groups[k])groups[k]={e:e,n:0,bag:false,idx:i};groups[k].n++;});
+ const gk=Object.keys(groups);if(!gk.length)h+='<div class="sub">卵はまだありません</div>';
+ else h+=gk.map(function(k){const g=groups[k];const e=g.e;if(g.bag)return '<div class="bagRow"><div style="cursor:pointer" onclick="openBagEggDetail(\''+e.id+'\')">'+eggSVG(e.design,e.coat,44)+'</div><div class="grow" style="cursor:pointer" onclick="openBagEggDetail(\''+e.id+'\')">'+eggColorName(e.coat||"white")+'<div class="sub">'+(eggIsHidden(e)?"":designById(e.design).name+" ・ ")+'ふかまで '+e.need+' 歩</div></div><b>× '+g.n+'</b>'+(incFreeSlot()>=0?'<button class="sm" onclick="setIncubator(\''+e.id+'\');openEggSheet()">ふか器にセット</button>':'')+'</div>';
+  return '<div class="bagRow"><div style="cursor:pointer" onclick="openIncubator()">'+eggSVG(e.design,e.coat,44)+'</div><div class="grow">'+eggColorName(e.coat||"white")+'<div class="sub">'+(e.ready?"ふか準備OK！":"ふか器の中 ・ あと "+Math.max(0,e.need-e.prog)+" 歩")+'</div></div><b>× '+g.n+'</b></div>';}).join("");
+ h+='<div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';showSheet(h);}
+function openMeatSheet(){let h='<h3 style="margin-top:0">🍖 肉・草</h3>'+MEATS.map(function(m){return '<div class="bagRow"><div style="font-size:26px">'+m.icon+'</div><div class="grow">'+m.name+'</div><b>× '+(S.meats[m.id]||0)+'</b></div>';}).join("")+'<div class="bagRow"><div style="font-size:26px">🌿</div><div class="grow">草</div><b>× '+(S.pickups.kusa||0)+'</b></div><div class="sub" style="margin-top:6px">おうちや「ねこ」から あげられます。</div><div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';showSheet(h);}
 function setIncubator(id){syncIncubators();const slot=incFreeSlot();if(slot<0){toast("ふか器はいっぱいだよ");return;}const i=S.eggs.findIndex(e=>e.id===id);if(i<0)return;
  const e=S.eggs.splice(i,1)[0];S.incubators[slot]={design:e.design,need:e.need,prog:0,coat:e.coat||pick(COATS).id,hidden:!!e.hidden,id:e.id};S.incubating=S.incubators[0]||null;save();renderBag();renderHome();toast("🥚 ふか器にセット！ 歩いてあたためよう");tutAfter("incub");}
-function convertFruit(id){const f=fruitById(id);if(!f||!S.fruits[id])return;
- S.fruits[id]--;S.karikari[f.color]+=f.kari;toast(f.name+" → "+KARINAME[f.color]+" ×"+f.kari);save();renderBag();tutAfter("convert");}
+function convertFruit(id){const f=fruitById(id);if(!f||!S.fruits[id])return;S.fruits[id]--;S.karikari[f.color]=(S.karikari[f.color]||0)+f.kari;toast(f.name+" → "+KARINAME[f.color]+" ×"+f.kari);save();renderBag();tutAfter("convert");}
 function hatchEgg(slot){syncIncubators();const e=S.incubators[slot];if(!e)return;S.incubators[slot]=null;S.incubating=S.incubators[0]||null;
  const coat=e.coat||pick(COATS).id;const maxSeq=S.cats.reduce(function(m,c){return Math.max(m,c.seq||0);},0);const cat={id:uid(),coat,design:e.design,name:"",fp:0,feeds:0,feedDay:"",seq:maxSeq+1,fav:false,foundAt:Date.now(),walkSteps:0,foundPlace:(S.prefName||"おうちの近く")};
  S.cats.push(cat);S.today.hatch++;S.week.hatch++;if(!S.stats)S.stats={hatch:0,errands:0,dest:0};S.stats.hatch++;gainXP(25);
- toast("🐣 ふか！ "+coatById(coat).name+"（"+designById(e.design).name+"）が生まれたよ");save();}
+ if(typeof sePlay==="function")sePlay("hatch");toast("🐣 ふか！ "+coatById(coat).name+"（"+designById(e.design).name+"）が生まれたよ");save();}
 function discW(d){return d.type==="egg"?(d.design==="normal"?2:4):fruitById(d.fruit).kari;}
 function discTitle(d){return d.type==="egg"?designById(d.design).name+"の卵 ・ "+eggColorName(d.coat||"white"):fruitById(d.fruit).name;}
 
-function freeCats(){const busy=new Set();S.errands.filter(e=>!e.collected).forEach(e=>e.catIds.forEach(id=>busy.add(id)));return S.cats.filter(c=>!busy.has(c.id));}
+function freeCats(){const busy=new Set();S.errands.filter(function(e){return !e.collected;}).forEach(function(e){e.catIds.forEach(function(id){busy.add(id);});});(S.hunts||[]).filter(function(e){return !e.collected;}).forEach(function(e){e.catIds.forEach(function(id){busy.add(id);});});return S.cats.filter(function(c){return !busy.has(c.id);});}
 function renderErrands(){
  $("detectorBox").innerHTML=S.detectorDay===todayKey()?'<span class="sub">今日はもう使ったよ。また明日ね。</span>':'<button onclick="useDetector()">探索機を使う</button>';
- if(!S.discoveries.length)$("discList").innerHTML='<div class="sub">まだ何も見つかっていません。歩いているとフルーツが見つかったり、探索機で卵やフルーツが見つかるよ。</div>';
- else $("discList").innerHTML=S.discoveries.map(d=>{const W=discW(d);const mins=errandMinutes(d.dist,W,W);
-  return '<div class="row" style="margin-bottom:10px"><div>'+discIcon(d)+'</div><div class="grow"><b>'+discTitle(d)+'</b>'
-  +'<div class="sub">距離 約'+Math.round(d.dist)+'m ・ 見つけた日 '+d.found+' ・ 重さ '+W+'（最大'+W+'匹）</div>'
-  +'<div class="sub">いちばん速い帰宅：約'+mins+'分（'+W+'匹）</div></div>'
-  +'<button class="sm" onclick="openDiscSheet(\''+d.id+'\')">おつかい</button></div>';}).join("");
+ if(!S.discoveries.length)$("discList").innerHTML='<div class="sub">まだ何も見つかっていません。</div>';
+ else $("discList").innerHTML=S.discoveries.map(function(d){return '<div class="row" style="margin-bottom:10px"><div>'+discIcon(d)+'</div><div class="grow"><b>'+discTitle(d)+'</b><div class="sub">距離 約'+Math.round(d.dist)+'m</div></div><button class="sm" onclick="openPicker(\'errand\',\''+d.id+'\')">おつかい</button></div>';}).join("");
  if(!S.errands.length)$("errandList").innerHTML='<div class="sub">おつかい中の猫はいません。</div>';
- else $("errandList").innerHTML=S.errands.map(e=>{const back=Date.now()>=e.returnAt;const names=e.catIds.map(id=>{const c=S.cats.find(x=>x.id===id);return c?(c.name||coatById(c.coat).name):"";}).join("、");
-  return '<div class="row" style="margin-bottom:10px"><div>'+discIcon(e)+'</div><div class="grow"><b>'+discTitle(e)+'</b><div class="sub">'+names+(back?" ・ 帰ってきたよ！":" ・ あと "+Math.max(1,Math.ceil((e.returnAt-Date.now())/60000))+" 分")+'</div></div>'
-  +(back?'<button class="sm" onclick="collectErrand(\''+e.id+'\')">タップで受け取る</button>':'<span class="pill">おつかい中</span>')+'</div>';}).join("");}
+ else $("errandList").innerHTML=S.errands.map(function(e){const back=Date.now()>=e.returnAt;const names=e.catIds.map(function(id){const c=S.cats.find(function(x){return x.id===id;});return c?(c.name||coatById(c.coat).name):"";}).join("、");
+  return '<div class="row" style="margin-bottom:10px"><div>'+discIcon(e)+'</div><div class="grow"><b>'+discTitle(e)+'</b><div class="sub">'+names+(back?" ・ 帰ってきたよ！":" ・ あと "+fmtRemain(e.returnAt-Date.now()))+'</div></div>'+(back?'<button class="sm" onclick="collectErrand(\''+e.id+'\')">タップで受け取る</button>':'<span class="pill">おつかい中</span>')+'</div>';}).join("");
+ renderHunts();}
+function openDiscSheet(id){const d=S.discoveries.find(function(x){return x.id===id;});if(!d)return;
+ showSheet('<h3 style="margin-top:0">'+discIcon(d)+" "+discTitle(d)+'</h3><div class="sub" style="font-size:13px">距離 約'+Math.round(d.dist)+'m</div><div style="margin-top:12px"><button onclick="closeSheet();openPicker(\'errand\',\''+d.id+'\')">おつかいに行かせる</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 function useDetector(){if(S.detectorDay===todayKey()){toast("探索機は1日1回までだよ");return;}
  S.detectorDay=todayKey();S.today.detector++;S.week.detector++;
  const catsNear=[...new Set(S.spots.map(s=>s.design))].filter(id=>designAvailable(designById(id)));
  const eggCats=shuffle(catsNear.length?catsNear:["normal"]).slice(0,Math.random()<0.5?1:2);
+ const dwid=maybeWeatherDesign(0.35);if(dwid&&eggCats.indexOf(dwid)<0)eggCats[0]=dwid;
  const base=S.lastPos||{lat:35.68,lng:139.69};
  eggCats.forEach(cid=>{const a=rnd(0,Math.PI*2),dist=rnd(80,380);
   S.discoveries.push({id:uid(),type:"egg",design:(S.prefId&&Math.random()<0.3?("gotochi_"+S.prefId):cid),coat:pick(COATS).id,lat:base.lat+Math.cos(a)*dist/111000,lng:base.lng+Math.sin(a)*dist/(111000*Math.cos(base.lat*Math.PI/180)),dist,found:todayKey()});});
@@ -712,26 +785,78 @@ function useDetector(){if(S.detectorDay===todayKey()){toast("探索機は1日1�
  for(let i=0;i<nf;i++){const f=pick(FRUITS);const a=rnd(0,Math.PI*2),dist=rnd(60,350);
   S.discoveries.push({id:uid(),type:"fruit",fruit:f.id,lat:base.lat+Math.cos(a)*dist/111000,lng:base.lng+Math.sin(a)*dist/(111000*Math.cos(base.lat*Math.PI/180)),dist,found:todayKey()});}
  toast("🔭 探索機！ 卵"+eggCats.length+"種類とフルーツ"+nf+"種類が見つかったよ");gainXP(10);save();renderErrands();drawMapPins();}
-function openDiscSheet(id){const d=S.discoveries.find(x=>x.id===id);if(!d)return;
- const W=discW(d);const free=freeCats();let opts="";
- for(let p=1;p<=W;p++)opts+='<option value="'+p+'"'+(p===Math.min(W,Math.max(1,free.length))?" selected":"")+">"+p+"匹（約"+errandMinutes(d.dist,W,p)+"分）</option>";
- showSheet('<h3 style="margin-top:0">'+discIcon(d)+" "+discTitle(d)+'</h3>'
- +'<div class="sub" style="font-size:13px;line-height:1.8">距離 約'+Math.round(d.dist)+'m ・ 見つけた日 '+d.found+'<br>もらえるもの：'+(d.type==="egg"?eggColorName(d.coat||"white")+"（ふか器で歩くと "+coatById(d.coat||"white").name+" の猫が生まれる）":"フルーツ（カリカリに変換できる）")+'<br>重さ '+W+' ・ 行かせられる猫は最大 '+W+'匹<br>帰宅時間 ＝ 往復時間 ×（11×重さ − 8×匹数 ＋ 3）÷ 36 で計算しています。匹数が多いほど速く帰ります。</div>'
- +'<div class="row" style="margin-top:10px"><select id="pSel">'+opts+'</select><button onclick="sendErrand(\''+d.id+'\')">おつかいに行かせる</button></div>'
- +(free.length?'<div class="sub" style="margin-top:6px">空いている猫：'+free.length+'匹</div>':'<div class="sub" style="margin-top:6px">空いている猫がいません</div>')
- +'<div style="margin-top:10px"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
-function sendErrand(id){const d=S.discoveries.find(x=>x.id===id);if(!d)return;
- const W=discW(d);const P=parseInt(($("pSel")||{}).value||"1",10);
- const free=freeCats();if(free.length<P){toast("空いている猫が足りないよ（"+P+"匹必要）");return;}
- const chosen=free.slice(0,P).map(c=>c.id);const mins=errandMinutes(d.dist,W,P);
- S.errands.push({id:uid(),type:d.type,design:d.design,coat:d.coat,fruit:d.fruit,catIds:chosen,returnAt:Date.now()+mins*60000,dist:d.dist});
- S.discoveries=S.discoveries.filter(x=>x.id!==id);closeSheet();
- toast("🐾 おつかいに出発！ 約"+mins+"分で帰ってくるよ");save();renderErrands();drawMapPins();}
-function collectErrand(id){const e=S.errands.find(x=>x.id===id);if(!e||Date.now()<e.returnAt)return;
- S.errands=S.errands.filter(x=>x.id!==id);S.today.errands++;S.week.errands++;if(!S.stats)S.stats={hatch:0,errands:0,dest:0};S.stats.errands++;
- if(e.type==="egg"){const eg=designEgg(e.design,e.coat);S.eggs.push(eg);toast("🥚 "+eggColorName(eg.coat)+"（"+designById(e.design).name+"）を受け取ったよ");}
- else{const f=fruitById(e.fruit);S.fruits[f.id]=(S.fruits[f.id]||0)+1;toast(f.name+" を受け取ったよ");}
- gainXP(15);save();renderErrands();renderBag();}
+
+function sendErrand(id){openPicker("errand",id);}
+function collectErrand(id){const e=S.errands.find(function(x){return x.id===id;});if(!e||Date.now()<e.returnAt)return;
+ S.errands=S.errands.filter(function(x){return x.id!==id;});S.today.errands++;S.week.errands++;if(!S.stats)S.stats={hatch:0,errands:0,dest:0};S.stats.errands++;
+ if(e.type==="egg"){const eg=designEgg(e.design,e.coat);S.eggs.push(eg);if(typeof sePlay==="function")sePlay("pickup");toast("🥚 "+eggColorName(eg.coat)+"（"+designById(e.design).name+"）を受け取ったよ");}
+ else{const f=fruitById(e.fruit);S.karikari[f.color]=(S.karikari[f.color]||0)+f.kari;toast(f.name+" → "+KARINAME[f.color]+" ×"+f.kari+" に変わったよ");}
+ gainXP(15);save();renderErrands();renderBag();renderHome();}
+
+/* ===== v12: picker / hunts ===== */
+function fmtRemain(ms){const m=Math.max(0,Math.ceil(ms/60000));if(m>=60)return Math.floor(m/60)+"時間"+(m%60?(" "+(m%60)+"分"):"");return m+"分";}
+function catBusy(id){const e=(S.errands||[]).find(function(x){return !x.collected&&x.catIds.indexOf(id)>=0;});if(e)return{type:"errand",returnAt:e.returnAt};const h=(S.hunts||[]).find(function(x){return !x.collected&&x.catIds.indexOf(id)>=0;});if(h)return{type:"hunt",returnAt:h.returnAt};return null;}
+function busyLabel(id){const b=catBusy(id);if(!b)return "";return (b.type==="errand"?"おつかい中（帰宅まであと ":"狩り中（終了まであと ")+fmtRemain(b.returnAt-Date.now())+"）";}
+let picker={kind:null,id:null,sel:[],sort:"found",asc:false,coat:null};
+function pickerSorted(){let list=S.cats.slice();if(picker.coat)list=list.filter(function(c){return c.coat===picker.coat;});
+ const desIdx=function(id){const d=DESIGNS.findIndex(function(x){return x.id===id;});return d<0?999:d;};
+ list.sort(function(a,b){let v=0;if(picker.sort==="fp")v=(a.fp-b.fp)||((a.seq||0)-(b.seq||0));else if(picker.sort==="design")v=(desIdx(a.design)-desIdx(b.design))||((a.seq||0)-(b.seq||0));else v=(a.seq||0)-(b.seq||0);return picker.asc?v:-v;});return list;}
+function pickerTargetCats(){return picker.sel.map(function(id){return S.cats.find(function(c){return c.id===id;});}).filter(Boolean);}
+function pickerMinutes(){const cats=pickerTargetCats();const P=Math.max(1,cats.length);
+ if(picker.kind==="errand"){const d=S.discoveries.find(function(x){return x.id===picker.id;});if(!d)return 0;return errandMinutes(d.dist,discW(d),P);}
+ const sp=(S.huntSpots||[]).find(function(x){return x.id===picker.id;});if(!sp)return 0;return huntMinutes(sp,cats);}
+function openPicker(kind,id){picker={kind:kind,id:id,sel:[],sort:catSortKey||"found",asc:!!catSortAsc,coat:null};renderPicker();}
+function togglePick(id){const b=catBusy(id);if(b){toast(busyLabel(id));return;}const i=picker.sel.indexOf(id);if(i>=0)picker.sel.splice(i,1);else{if(picker.kind==="hunt"&&picker.sel.length>=10){toast("狩りは10匹までだよ");return;}if(picker.kind==="errand"){const d=S.discoveries.find(function(x){return x.id===picker.id;});if(d&&picker.sel.length>=discW(d)){toast("このおつかいは最大"+discW(d)+"匹までだよ");return;}}picker.sel.push(id);}renderPicker();}
+function renderPicker(){const isHunt=picker.kind==="hunt";const title=isHunt?"🏹 狩りに行くねこ":("🧺 おつかいに行くねこ");
+ let head="";if(isHunt){const sp=(S.huntSpots||[]).find(function(x){return x.id===picker.id;});if(sp)head='<div class="sub" style="margin-bottom:6px">'+huntSizeById(sp.size).name+' ・ 色：'+coatById(sp.color).name+'（同じ毛色で短縮）</div>';}
+ else{const d=S.discoveries.find(function(x){return x.id===picker.id;});if(d)head='<div style="margin-bottom:6px"><b>'+discTitle(d)+'</b> <span class="sub">約'+Math.round(d.dist)+'m</span></div>';}
+ let h='<h3 style="margin-top:0">'+title+'</h3>'+head;
+ h+='<div class="row" style="flex-wrap:wrap;gap:6px;margin-bottom:8px"><select onchange="picker.sort=this.value;renderPicker()"><option value="found"'+(picker.sort==="found"?" selected":"")+'>見つけた日</option><option value="fp"'+(picker.sort==="fp"?" selected":"")+'>なかよし度</option><option value="design"'+(picker.sort==="design"?" selected":"")+'>カテゴリ</option></select><button class="sm ghost" onclick="picker.asc=!picker.asc;renderPicker()">'+(picker.asc?"↑ 昇順":"↓ 降順")+'</button></div>';
+ h+='<div class="row" style="flex-wrap:wrap;gap:6px;margin-bottom:10px">'+COATS.map(function(co){const on=picker.coat===co.id;return '<button class="sm '+(on?"":"ghost")+'" onclick="picker.coat=(picker.coat===\''+co.id+'\'?null:\''+co.id+'\');renderPicker()">'+co.name+'</button>';}).join("")+'</div>';
+ h+='<div class="partyGrid">'+pickerSorted().map(function(c){const b=catBusy(c.id);const sel=picker.sel.indexOf(c.id)>=0;
+  if(b)return '<div class="catTile busyCat" onclick="toast(busyLabel(\''+c.id+'\'))">'+catSVG(c.coat,c.design,56)+'<div>'+(c.name||coatById(c.coat).name)+'</div><div class="sub">'+(b.type==="errand"?"おつかい中":"狩り中")+'</div></div>';
+  return '<div class="catTile pickTile '+(sel?"sel":"")+'" onclick="togglePick(\''+c.id+'\')">'+catFxSVG(c,56)+'<div>'+(c.name||coatById(c.coat).name)+(sel?" ✓":"")+'</div><div style="font-size:9px">'+heartsHTML(c.fp)+'</div></div>';}).join("")+'</div>';
+ const mins=pickerMinutes();
+ h+='<div style="margin-top:12px"><b>'+picker.sel.length+'匹選択中 ・ 所要時間 約'+mins+'分</b> <span class="sub">（増やすと短くなります）</span></div>';
+ h+='<div style="margin-top:10px"><button '+(picker.sel.length?"":"disabled")+' onclick="confirmPicker()">出発する</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';
+ showSheet(h);}
+function confirmPicker(){if(!picker.sel.length)return;if(picker.kind==="errand")sendErrandPicked(picker.id,picker.sel.slice());else startHunt(picker.id,picker.sel.slice());}
+function sendErrandPicked(id,catIds){const d=S.discoveries.find(function(x){return x.id===id;});if(!d)return;const W=discW(d);const mins=errandMinutes(d.dist,W,catIds.length);
+ S.errands.push({id:uid(),type:d.type,design:d.design,coat:d.coat,fruit:d.fruit,catIds:catIds,returnAt:Date.now()+mins*60000,dist:d.dist});
+ S.discoveries=S.discoveries.filter(function(x){return x.id!==id;});closeSheet();toast("🐾 おつかいに出発！ 約"+mins+"分で帰ってくるよ");save();renderErrands();renderHome();drawMapPins();}
+const HUNT_SIZES=[{id:"small",name:"小さい狩り場",base:30},{id:"normal",name:"普通の狩り場",base:60},{id:"large",name:"大きい狩り場",base:120}];
+const huntSizeById=function(id){return HUNT_SIZES.find(function(x){return x.id===id;})||HUNT_SIZES[1];};
+function huntMinutes(spot,cats){const sz=huntSizeById(spot.size);const list=(cats||[]).filter(Boolean);const n=Math.max(1,list.length);
+ const A=6-5*(n-1)/9;
+ const d=list.filter(function(c){return c.coat!==spot.color;}).length;
+ const B=1+2*d/n;
+ let mins=sz.base*A*B;
+ if(list.length){const avgHearts=list.reduce(function(a,c){return a+Math.min(5,(c.fp||0)/12);},0)/list.length;mins*=(1-0.02*avgHearts);}
+ return Math.max(1,Math.round(mins));}
+function ensureHuntSpots(){if(!S||!S.lastPos)return;const cell=Math.round(S.lastPos.lat*40)+","+Math.round(S.lastPos.lng*40);
+ if(S.huntAnchor===cell&&(S.huntSpots||[]).length>=2)return;S.huntAnchor=cell;const base=S.lastPos;const sizes=shuffle(["small","normal","large"]);
+ S.huntSpots=sizes.map(function(sz,i){const a=rnd(0,Math.PI*2),dist=rnd(120,480);return{id:uid(),size:sz,color:pick(COATS).id,lat:base.lat+Math.cos(a)*dist/111000,lng:base.lng+Math.sin(a)*dist/(111000*Math.cos(base.lat*Math.PI/180)),dist:Math.round(dist)};});
+ save();}
+function huntTodayReset(){if(S.huntDay!==todayKey()){S.huntDay=todayKey();S.huntCount=0;}}
+function startHunt(spotId,catIds){huntTodayReset();if(S.huntCount>=3){toast("狩りは1日3回までだよ");return;}const sp=(S.huntSpots||[]).find(function(x){return x.id===spotId;});if(!sp)return;
+ const cats=catIds.map(function(id){return S.cats.find(function(c){return c.id===id;});}).filter(Boolean);const mins=huntMinutes(sp,cats);
+ S.hunts.push({id:uid(),spotId:spotId,size:sp.size,color:sp.color,catIds:catIds,returnAt:Date.now()+mins*60000,collected:false});
+ S.huntSpots=S.huntSpots.filter(function(x){return x.id!==spotId;});S.huntCount++;closeSheet();toast("🏹 狩りに出発！ 約"+mins+"分で終わるよ");save();renderErrands();renderHome();drawMapPins();}
+function collectHunt(id){const h=(S.hunts||[]).find(function(x){return x.id===id;});if(!h||Date.now()<h.returnAt)return;S.hunts=S.hunts.filter(function(x){return x.id!==id;});
+ const mult=h.size==="large"?4:(h.size==="normal"?2:1);const coins=(4+Math.floor(Math.random()*4))*mult;gainCoins(coins);gainXP(10*mult);
+ const msgs=["🪙"+coins,"XP+"+(10*mult)];const nP=1+(h.size==="large"?2:(h.size==="normal"?1:0));
+ for(let i=0;i<nP;i++){const p=rollPickup();S.pickups[p.id]=(S.pickups[p.id]||0)+1;S.pickupSeen[p.id]=true;msgs.push(p.name);}
+ if(h.size==="large"){const m=rollMeat();S.meats[m.id]++;msgs.push(m.name);}
+ toast("🏹 狩り完了！ "+msgs.join("・"));save();renderErrands();renderBag();renderHeader();}
+function renderHunts(){const box=$("huntBox");if(!box||!S)return;huntTodayReset();ensureHuntSpots();
+ let h='<div class="sub" style="margin-bottom:8px">今日あと '+(3-(S.huntCount||0))+' 回</div>';
+ if(S.lastPos&&(S.huntSpots||[]).length){h+=(S.huntSpots||[]).map(function(sp){const sz=huntSizeById(sp.size);const dist=S.lastPos?Math.round(hav(S.lastPos.lat,S.lastPos.lng,sp.lat,sp.lng)):sp.dist;const cc=coatById(sp.color);const dot=sp.color==="white"?"#ffffff":sp.color==="black"?"#4a4048":sp.color==="mike"?"#e8862e":sp.color==="chatora"?"#f2a54a":"#aab3bd";
+  return '<div class="row" style="margin-bottom:10px"><div style="font-size:26px">🏹</div><div class="grow"><b>'+sz.name+'</b><div class="sub">約'+dist+'m ・ <span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:'+dot+';border:2px solid #e0b3c4;vertical-align:-1px"></span> '+cc.name+'色</div></div><button class="sm" onclick="openPicker(\'hunt\',\''+sp.id+'\')">狩りに行く</button></div>';}).join("");}
+ else h+='<div class="sub">位置情報が取れると狩り場が出ます。</div>';
+ if((S.hunts||[]).length){h+='<div style="margin-top:8px">'+S.hunts.map(function(x){const back=Date.now()>=x.returnAt;const names=x.catIds.map(function(id){const c=S.cats.find(function(y){return y.id===id;});return c?(c.name||coatById(c.coat).name):"";}).join("、");
+  return '<div class="row" style="margin-bottom:8px"><div style="font-size:22px">🐾</div><div class="grow"><b>'+huntSizeById(x.size).name+'</b><div class="sub">'+names+(back?" ・ 終わったよ！":" ・ あと "+fmtRemain(x.returnAt-Date.now()))+'</div></div>'+(back?'<button class="sm" onclick="collectHunt(\''+x.id+'\')">受け取る</button>':'<span class="pill">狩り中</span>')+'</div>';}).join("")+'</div>';}
+ box.innerHTML=h;}
+
 function showSheet(h){$("sheet").innerHTML=h;$("sheet").classList.add("on");}
 function closeSheet(){$("sheet").classList.remove("on");}
 let map=null,mapGL=false,glReady=false,catMarker=null,pathLine=null,pathCasing=null,pinMarkers=[],flowerMarkers=[],spotsFetched=false;
@@ -822,29 +947,29 @@ function initLeafletMap(){if(map||!window.L)return;mapGL=false;
  updateTrail();updateCatMarker();drawMapPins();drawFlowers();}
 function resizeMap(){if(!map)return;if(mapGL){try{map.resize();}catch(e){}}else if(map.invalidateSize){map.invalidateSize();}}
 function playerCatSVG(s,coatId){s=s||40;coatId=coatId||(typeof S!=="undefined"&&S&&S.playerCoat)||"white";const co=coatById(coatId);const h=Math.round(s*65/60);
- const body=co.body;const dark=co.id==="black";const stroke=dark?"#2f2830":"#eed3de";const eyeCol=dark?"#ffd94d":"#4a3542";
+ const body=co.body;const dark=co.id==="black";const stroke=dark?"#2f2830":"#eec9d8";const eyeCol=dark?"#ffd94d":"#4a3542";
  let patch="";
- if(co.id==="mike")patch='<path d="M16 14 Q22 6 30 9 Q24 16 18 19 Z" fill="#e8862e"/><path d="M42 8 Q48 12 47 19 Q41 17 39 12 Z" fill="#4a3a32"/><ellipse cx="22" cy="48" rx="5" ry="4" fill="#e8862e" opacity=".9"/>';
- if(co.id==="chatora")patch='<path d="M22 10 L23 16 M30 8 L30 14 M38 10 L37 16" stroke="#d97f26" stroke-width="2" stroke-linecap="round"/>';
- if(co.id==="gray")patch='<ellipse cx="20" cy="14" rx="5" ry="3" fill="#ccd4db" opacity=".9"/>';
+ if(co.id==="mike")patch='<path d="M17 13 Q23 5 31 8 Q25 15 19 18 Z" fill="#e8862e"/><path d="M43 7 Q49 11 48 18 Q42 16 40 11 Z" fill="#4a3a32"/>';
+ if(co.id==="chatora")patch='<path d="M23 8 L24 14 M30 6 L30 12 M37 8 L36 14" stroke="#d97f26" stroke-width="2" stroke-linecap="round"/>';
+ if(co.id==="gray")patch='<ellipse cx="21" cy="12" rx="5" ry="3" fill="#ccd4db" opacity=".9"/>';
  return '<svg width="'+s+'" height="'+h+'" viewBox="0 0 60 65" role="img" aria-label="現在地のねこ">'
- +'<ellipse cx="30" cy="60" rx="15" ry="4" fill="rgba(90,61,74,.20)"/>'
- +'<path d="M43 45 Q55 43 53 32" fill="none" stroke="'+stroke+'" stroke-width="7.5" stroke-linecap="round"/>'
- +'<path d="M43 45 Q55 43 53 32" fill="none" stroke="'+body+'" stroke-width="5.5" stroke-linecap="round"/>'
- +'<ellipse cx="30" cy="47" rx="12" ry="11" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.6"/>'
+ +'<ellipse cx="30" cy="61" rx="14" ry="3.6" fill="rgba(90,61,74,.18)"/>'
+ +'<path d="M40 50 Q54 50 52 38" fill="none" stroke="'+stroke+'" stroke-width="7" stroke-linecap="round"/>'
+ +'<path d="M40 50 Q54 50 52 38" fill="none" stroke="'+body+'" stroke-width="5" stroke-linecap="round"/>'
+ +'<ellipse cx="30" cy="51" rx="11" ry="9" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.5"/>'
+ +'<ellipse cx="22" cy="58" rx="5" ry="2.6" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.1"/>'
+ +'<ellipse cx="38" cy="58" rx="5" ry="2.6" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.1"/>'
+ +'<path d="M13 17 L10 3 L25 9 Z" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.5" stroke-linejoin="round"/>'
+ +'<path d="M47 17 L50 3 L35 9 Z" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.5" stroke-linejoin="round"/>'
+ +'<path d="M14.5 14 L13 7 L21 10.5 Z" fill="#ffb3cd"/><path d="M45.5 14 L47 7 L39 10.5 Z" fill="#ffb3cd"/>'
+ +'<circle cx="30" cy="25" r="19" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.6"/>'
  +patch
- +'<ellipse cx="21" cy="57" rx="5.4" ry="2.8" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.2"/>'
- +'<ellipse cx="39" cy="57" rx="5.4" ry="2.8" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.2"/>'
- +'<path d="M14 19 L11 5 L25 11 Z" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.5" stroke-linejoin="round"/>'
- +'<path d="M46 19 L49 5 L35 11 Z" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.5" stroke-linejoin="round"/>'
- +'<path d="M15.5 16 L14 9 L21.5 12.5 Z" fill="#ffb3cd"/><path d="M44.5 16 L46 9 L38.5 12.5 Z" fill="#ffb3cd"/>'
- +'<circle cx="30" cy="27" r="17.5" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.6"/>'
- +patch
- +'<circle cx="23" cy="27" r="2.1" fill="'+eyeCol+'"/><circle cx="37" cy="27" r="2.1" fill="'+eyeCol+'"/>'
- +'<circle cx="23.8" cy="26.2" r=".7" fill="#fff"/><circle cx="37.8" cy="26.2" r=".7" fill="#fff"/>'
- +'<ellipse cx="30" cy="31.6" rx="2.2" ry="1.6" fill="#ff9ebb"/>'
- +'<path d="M30 33.2 Q30 35.4 26.8 35.2 M30 33.2 Q30 35.4 33.2 35.2" stroke="'+(dark?"#ffe9f2":"#4a3542")+'" stroke-width="1.3" fill="none" stroke-linecap="round"/>'
- +'<circle cx="18.5" cy="32.5" r="3.4" fill="#ffc9da" opacity=".85"/><circle cx="41.5" cy="32.5" r="3.4" fill="#ffc9da" opacity=".85"/>'
+ +'<circle cx="22.5" cy="25" r="2.3" fill="'+eyeCol+'"/><circle cx="37.5" cy="25" r="2.3" fill="'+eyeCol+'"/>'
+ +'<circle cx="23.3" cy="24.2" r=".8" fill="#fff"/><circle cx="38.3" cy="24.2" r=".8" fill="#fff"/>'
+ +'<ellipse cx="30" cy="29.6" rx="2.3" ry="1.7" fill="#ff9ebb"/>'
+ +'<path d="M30 31.2 Q30 33.4 26.8 33.2 M30 31.2 Q30 33.4 33.2 33.2" stroke="'+(dark?"#ffe9f2":"#4a3542")+'" stroke-width="1.3" fill="none" stroke-linecap="round"/>'
+ +'<circle cx="17.5" cy="30.5" r="3.6" fill="#ffc9da" opacity=".85"/><circle cx="42.5" cy="30.5" r="3.6" fill="#ffc9da" opacity=".85"/>'
+ +'<g transform="translate(44,2)"><circle cx="0" cy="0" r="2.2" fill="#ff9ec6"/><circle cx="3.4" cy="1.6" r="2.2" fill="#ffb3cd"/><circle cx="1.4" cy="3.8" r="2.2" fill="#ff9ec6"/><circle cx="-1.8" cy="3.2" r="2.2" fill="#ffc9da"/><circle cx=".8" cy="1.8" r="1.2" fill="#ffcf4d"/></g>'
  +'</svg>';}
 function renderPlayerCoatPicker(){const box=$("playerCoatBox");if(!box||!S)return;let h='<div class="row" style="flex-wrap:wrap;gap:8px">';
  COATS.forEach(function(co){const on=S.playerCoat===co.id;h+='<div style="text-align:center;cursor:pointer" onclick="setPlayerCoat(\''+co.id+'\')"><div style="border:3px solid '+(on?"#ff5c93":"#ffe3ee")+';border-radius:16px;padding:4px 6px;background:#fff">'+playerCatSVG(36,co.id)+'</div><div class="sub" style="font-weight:'+(on?"800":"400")+'">'+co.name+(on?" ✓":"")+'</div></div>';});
@@ -859,9 +984,13 @@ function updateCatMarker(){if(!map||!S.lastPos)return;
  if(catMarker){if(mapGL)map.jumpTo({center:[S.lastPos.lng,S.lastPos.lat],zoom:16});else map.setView([S.lastPos.lat,S.lastPos.lng],16);}}
 function drawMapPins(){if(!map)return;
  pinMarkers.forEach(rmMarker);pinMarkers=[];
- S.spots.forEach(function(sp){const m=mkMarker(sp.lat,sp.lng,pinSVG(sp.design,42),42,46,21,23,function(){openSpotSheet(sp);},"center");if(m)pinMarkers.push(m);});
- S.discoveries.forEach(function(dv){const m=mkMarker(dv.lat,dv.lng,discPinSVG(dv,40),40,40,20,20,function(){openDiscSheet(dv.id);},"center");if(m)pinMarkers.push(m);});
- if(S.destination){const dt=S.destination;const m=mkMarker(dt.lat,dt.lng,destPinSVG(44),44,48,22,46,function(){openDestSheet();},"bottom");if(m)pinMarkers.push(m);}}
+ if(S.spotPinId){const sp=(S.spots||[]).find(function(x){return x.id===S.spotPinId;});if(sp){const m=mkMarker(sp.lat,sp.lng,pinSVG(sp.design,46),46,50,23,25,function(){openSpotSheet(sp);},"center");if(m)pinMarkers.push(m);}}
+ (S.discoveries||[]).forEach(function(dv){const col=dv.type==="egg"?"#ff5c93":"#57b06a";const bg=dv.type==="egg"?"#fff0f6":"#eef9ee";const html='<span style="display:inline-flex;background:'+bg+';border:3px solid '+col+';border-radius:50%;width:42px;height:42px;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.25)">'+discSVG(dv,32)+'</span>';
+  const m=mkMarker(dv.lat,dv.lng,html,42,42,21,21,function(){openDiscSheet(dv.id);},"center");if(m)pinMarkers.push(m);});
+ (S.huntSpots||[]).forEach(function(sp){const co=coatById(sp.color);const bg=sp.color==="white"?"#ffffff":sp.color==="black"?"#4a4048":sp.color==="mike"?"#e8862e":sp.color==="chatora"?"#f2a54a":"#aab3bd";
+  const html='<span style="display:inline-flex;background:'+bg+';border:3px solid #fff;outline:2px solid #8a6d3b;border-radius:50%;width:40px;height:40px;align-items:center;justify-content:center;font-size:19px;box-shadow:0 2px 6px rgba(0,0,0,.3)">🏹</span>';
+  const m=mkMarker(sp.lat,sp.lng,html,40,40,20,20,function(){openPicker("hunt",sp.id);},"center");if(m)pinMarkers.push(m);});
+ if(S.destination){const dt=S.destination;const m=mkMarker(dt.lat,dt.lng,'<span style="display:inline-block;animation:catbob 1.2s ease-in-out infinite">'+destPinSVG(52)+'</span>',52,56,26,54,function(){openDestSheet();},"bottom");if(m)pinMarkers.push(m);}}
 function spotCatZukanHTML(designId){const d=designById(designId);const cats=(S&&S.cats)?S.cats:[];
  const has=function(co){return cats.some(function(c){return c.design===d.id&&c.coat===co.id;});};
  const ownedCount=COATS.filter(has).length;
@@ -873,8 +1002,8 @@ function spotCatZukanHTML(designId){const d=designById(designId);const cats=(S&&
  return h+'</div></div>';}
 function openSpotSheet(sp){const d=designById(sp.design);const dist=S.lastPos?hav(S.lastPos.lat,S.lastPos.lng,sp.lat,sp.lng):sp.dist||0;
  const mins=Math.max(1,Math.round(dist/80));
- showSheet('<h3 style="margin-top:0"><span style="display:inline-block;vertical-align:-14px;margin-right:6px">'+pinSVG(sp.design,30)+'</span>'+sp.name+'</h3><div class="sub" style="font-size:13px;line-height:1.8">カテゴリ：'+d.name+'<br>距離 約'+Math.round(dist)+'m ・ 徒歩約'+mins+'分<br>このスポットの近く（30m以内）の道を通って歩くと、3000歩ごとの卵の候補に入ります。卵が見つかったら、おつかいで取りに行けます。</div>'+spotCatZukanHTML(sp.design)
- +'<div style="margin-top:10px"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+ showSheet('<h3 style="margin-top:0"><span style="display:inline-block;vertical-align:-14px;margin-right:6px">'+pinSVG(sp.design,30)+'</span>'+sp.name+'</h3><div class="sub" style="font-size:13px;line-height:1.8">カテゴリ：'+d.name+'<br>距離 約'+Math.round(dist)+'m ・ 徒歩約'+mins+'分</div>'+spotCatZukanHTML(sp.design)
+ +'<div style="margin-top:10px"><button class="sm" onclick="S.spotPinId=\''+sp.id+'\';save();drawMapPins();closeSheet();goTab(\'map\')">ここへ行く（地図に表示）</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 function openDestSheet(){if(!S.destination){toast("目的地はまだ決まっていません");return;}
  const rw=ensureDestRewards();const dt=S.destination;const dist=S.lastPos?hav(S.lastPos.lat,S.lastPos.lng,dt.lat,dt.lng):(dt.dist||0);const mins=Math.max(1,Math.round(dist/80));const can=dist<=DEST_RANGE;const left=Math.max(1,Math.round(dist-DEST_RANGE));
  showSheet('<h3 style="margin-top:0"><span style="display:inline-block;vertical-align:-14px;margin-right:6px">'+destPinSVG(30)+'</span>'+dt.name+'</h3><div class="sub" style="font-size:13px;line-height:1.8">距離 約'+Math.round(dist)+'m ・ 徒歩約'+mins+'分<br>到着は、目的地の隣の道まで来たら（約'+DEST_RANGE+'m以内）で自動判定されます</div><div style="margin-top:10px"><b>行ったらもらえるもの</b><div style="margin-top:6px">'+destRewardRowsHTML(rw)+'</div></div>'
@@ -911,10 +1040,10 @@ function renderDest(){const box=$("destCard");if(!box)return;
  +'<div style="margin-top:6px"><button class="sm ghost" onclick="openDestSheet()">詳細を見る</button></div>'
 ;}
 function arriveDestination(){const rw=ensureDestRewards();S.today.dest++;S.week.dest++;if(!S.stats)S.stats={hatch:0,errands:0,dest:0};S.stats.dest++;
- const msgs=[];(rw?rw.items:[]).forEach(function(it){if(it.kind==="egg"){S.eggs.push({id:uid(),design:it.design,coat:it.coat||pick(COATS).id,need:it.need||(it.design==="normal"?1000:3000),hidden:true});msgs.push(eggColorName(it.coat||"white"));}else{const f=fruitById(it.fruit);if(f){S.fruits[f.id]=(S.fruits[f.id]||0)+1;msgs.push(f.name);}}});
- toast("🎁 目的地とうちゃく！ "+(msgs.length?msgs.join("・"):"")+" ゲット");
+ const msgs=[];(rw?rw.items:[]).forEach(function(it){if(it.kind==="egg"){S.eggs.push({id:uid(),design:it.design,coat:it.coat||pick(COATS).id,need:it.need||(it.design==="normal"?1000:3000),hidden:true});msgs.push(eggColorName(it.coat||"white"));}else if(it.kind==="kari"){S.karikari[it.color]=(S.karikari[it.color]||0)+(it.n||3);msgs.push(KARINAME[it.color]);}else if(it.fruit){const f=fruitById(it.fruit);if(f){S.karikari[f.color]=(S.karikari[f.color]||0)+f.kari;msgs.push(KARINAME[f.color]);}}});
+ if(typeof sePlay==="function")sePlay("decide");toast("🎁 目的地とうちゃく！ "+(msgs.length?msgs.join("・"):"")+" ゲット");
  if(rw&&rw.xp)gainXP(rw.xp);
- newDestination(S.lastPos);save();renderBag();renderHome();}
+ newDestination(S.lastPos);save();renderBag();renderHome();updateDestIndicator();}
 function recordTrailSpots(lat,lng){if(!S||!Array.isArray(S.spots))return;if(!Array.isArray(S.trailSpots))S.trailSpots=[];
  S.spots.forEach(function(sp){if(hav(lat,lng,sp.lat,sp.lng)<=30){if(!S.trailSpots.some(function(x){return x.spotId===sp.id;})){S.trailSpots.push({spotId:sp.id,design:sp.design,name:sp.name,lat:sp.lat,lng:sp.lng});}}});}
 function spawnWalkEgg(){
@@ -940,6 +1069,7 @@ function spawnWalkEgg(){
   const a=rnd(0,Math.PI*2),off=rnd(30,80);
   lat=base.lat+Math.cos(a)*off/111000;lng=base.lng+Math.sin(a)*off/(111000*Math.cos(base.lat*Math.PI/180));dist=off;
  }
+ const wwid=maybeWeatherDesign(0.30);if(wwid)designId=wwid;
  const disc={id:uid(),type:"egg",design:designId,coat:pick(COATS).id,lat:lat,lng:lng,dist:Math.max(20,Math.round(dist)),found:todayKey(),spotName:spotName};
  S.discoveries.push(disc);S.lastEggNotice="🥚 卵が見つかったよ！「おつかい」画面から猫を取りに行かせてね（"+designById(designId).name+"・"+eggColorName(disc.coat)+"）";
  toast(S.lastEggNotice);drawMapPins();renderEggNotice();}
@@ -1098,13 +1228,14 @@ function spawnFastEgg(){
   else{const base=S.lastPos||((S.fastPath&&S.fastPath.length)?{lat:S.fastPath[S.fastPath.length-1][0],lng:S.fastPath[S.fastPath.length-1][1]}:null);if(!base)return;const a=rnd(0,Math.PI*2),off=rnd(30,80);lat=base.lat+Math.cos(a)*off/111000;lng=base.lng+Math.sin(a)*off/(111000*Math.cos(base.lat*Math.PI/180));dist=off;}
  }else if(pool.length){const chosen=pick(pool);designId=chosen.design;lat=chosen.lat;lng=chosen.lng;spotName=chosen.name||"";dist=S.lastPos?hav(S.lastPos.lat,S.lastPos.lng,lat,lng):200;
  }else{designId="normal";const base=S.lastPos||((S.fastPath&&S.fastPath.length)?{lat:S.fastPath[S.fastPath.length-1][0],lng:S.fastPath[S.fastPath.length-1][1]}:null);if(!base)return;const a=rnd(0,Math.PI*2),off=rnd(30,80);lat=base.lat+Math.cos(a)*off/111000;lng=base.lng+Math.sin(a)*off/(111000*Math.cos(base.lat*Math.PI/180));dist=off;}
+ if(!useGoto){const fwid=maybeWeatherDesign(0.30);if(fwid)designId=fwid;}
  const disc={id:uid(),type:"egg",design:designId,coat:pick(COATS).id,lat:lat,lng:lng,dist:Math.max(20,Math.round(dist)),found:todayKey(),spotName:spotName};
  S.discoveries.push(disc);S.lastEggNotice="🥚 卵が見つかったよ！速い移動20kmで見つけたよ。「おつかい」画面から猫を取りに行かせてね（"+designById(designId).name+"・"+eggColorName(disc.coat)+"）";
  toast(S.lastEggNotice);drawMapPins();renderEggNotice();}
 function addFast(distM,lat,lng){if(!S)return;S.fastProg=(S.fastProg||0)+distM;S.fastTotal=(S.fastTotal||0)+distM;
  if(!Array.isArray(S.fastPath))S.fastPath=[];S.fastPath.push([lat,lng]);if(S.fastPath.length>600)S.fastPath=S.fastPath.slice(-600);
  let guard=0;while(S.fastProg>=20000&&guard<10){S.fastProg-=20000;spawnFastEgg();guard++;}
- if(typeof renderFastInfo==="function")renderFastInfo();}
+ processCoinPickups();if(typeof renderFastInfo==="function")renderFastInfo();}
 let prefFetchBusy=false,prefLastFetch=0;
 function prefCellKey(lat,lng){return Math.round(lat*20)+","+Math.round(lng*20);}
 function maybeFetchPref(lat,lng){if(!S||typeof fetch!=="function")return;const cell=prefCellKey(lat,lng);
@@ -1143,16 +1274,16 @@ function onPos(p){const lat=p.coords.latitude,lng=p.coords.longitude;
   if(d>=3&&d<120){addWalk(d);}}
  if(!fast){S.path.push([lat,lng]);if(S.path.length>600)S.path=S.path.slice(-600);
  updateTrail();maybeBloom(lat,lng);}
- maybeFetchPref(lat,lng);updateCatMarker();fetchSpots(lat,lng);if(!fast)recordTrailSpots(lat,lng);
+ maybeFetchPref(lat,lng);maybeFetchWeather(lat,lng);updateCatMarker();fetchSpots(lat,lng);ensureHuntSpots();updateDestIndicator();if(!fast)recordTrailSpots(lat,lng);
  if(!S.destination)newDestination(S.lastPos);
  if(S.destination&&hav(lat,lng,S.destination.lat,S.destination.lng)<=DEST_RANGE)arriveDestination();
- renderDest();save();}
+ renderDest();save();if(typeof bgmApply==="function")bgmApply();}
 function addWalk(distM){const steps=Math.max(1,Math.round(distM/0.65));
  S.today.steps+=steps;S.week.steps+=steps;S.totalSteps+=steps;
  S.today.dist+=distM;S.week.dist+=distM;S.totalDist+=distM;
  S.xpCarrySteps+=steps;const xpAdd=Math.floor(S.xpCarrySteps/100);if(xpAdd>0){S.xpCarrySteps-=xpAdd*100;gainXP(xpAdd);}
- companionIds().forEach(id=>{const c=S.cats.find(x=>x.id===id);if(c){c.fp+=friendGain(c,distM*0.004);c.walkSteps=(c.walkSteps||0)+steps;}});
- syncIncubators();for(let _slot=0;_slot<3;_slot++){const _e=S.incubators[_slot];if(_e){_e.prog+=steps;if(_e.prog>=_e.need)hatchEgg(_slot);}}S.incubating=S.incubators[0]||null;
+ companionIds().filter(function(id){return !catBusy(id);}).forEach(id=>{const c=S.cats.find(x=>x.id===id);if(c){c.fp+=friendGain(c,distM*0.004);c.walkSteps=(c.walkSteps||0)+steps;}});
+ syncIncubators();for(let _slot=0;_slot<3;_slot++){const _e=S.incubators[_slot];if(_e){_e.prog+=steps;if(_e.prog>=_e.need&&!_e.ready){_e.ready=true;toast("🥚 卵がふかしそう！ ふか器をタップしてね");}}}S.incubating=S.incubators[0]||null;
  const mile=Math.floor(S.totalSteps/3000);
  if(mile>S.lastMile){S.lastMile=mile;spawnWalkEgg();}
  const fmile=Math.floor(S.totalSteps/1000);
@@ -1160,7 +1291,69 @@ function addWalk(distM){const steps=Math.max(1,Math.round(distM/0.65));
   if(Math.random()<0.6&&S.lastPos){const f=pick(FRUITS);const a=rnd(0,Math.PI*2),dist=rnd(60,300);
    S.discoveries.push({id:uid(),type:"fruit",fruit:f.id,lat:S.lastPos.lat+Math.cos(a)*dist/111000,lng:S.lastPos.lng+Math.sin(a)*dist/(111000*Math.cos(S.lastPos.lat*Math.PI/180)),dist,found:todayKey()});
    toast(f.name+" を見つけた！ おつかいで持って帰れるよ");drawMapPins();}}
- rollDay();save();renderHome();}
+ processCoinPickups();rollDay();save();renderHome();}
+
+/* ===== v12: coins / pickups / shop / house / lock ===== */
+const PICKUPS=[
+{id:"koishi",name:"小石",icon:"🪨",price:3,w:100},{id:"kusa",name:"草",icon:"🌿",price:2,w:100,edible:true},
+{id:"donguri",name:"どんぐり",icon:"🌰",price:4,w:90},{id:"eda",name:"木の枝",icon:"🪵",price:4,w:85},
+{id:"happa",name:"はっぱ",icon:"🍃",price:3,w:85},{id:"maruishi",name:"丸い石",icon:"⚪",price:4,w:70},
+{id:"dorodango",name:"泥団子",icon:"🟤",price:5,w:75},{id:"futa",name:"ふた",icon:"🔘",price:5,w:70},
+{id:"matsubokkuri",name:"松ぼっくり",icon:"🌲",price:6,w:60},{id:"botan",name:"ボタン",icon:"🔵",price:8,w:55},
+{id:"kaigara",name:"貝がら",icon:"🐚",price:8,w:50},{id:"sakuraP",name:"花びら",icon:"🌸",price:5,w:50},
+{id:"watage",name:"たんぽぽの綿毛",icon:"💮",price:6,w:45},{id:"kiNoMi",name:"木の実",icon:"🫐",price:7,w:45},
+{id:"suna",name:"きれいな砂",icon:"✨",price:6,w:40},{id:"clover",name:"クローバー",icon:"🍀",price:12,w:35},
+{id:"garasu",name:"ガラス玉",icon:"🔮",price:18,w:28},{id:"nezumiO",name:"ねずみの置物",icon:"🐭",price:15,w:22},
+{id:"hane",name:"白い羽",icon:"🪶",price:20,w:16},{id:"akikan",name:"空き缶",icon:"🥫",price:12,w:15},
+{id:"okashi",name:"お菓子の袋",icon:"🍬",price:10,w:13},{id:"keshigomu",name:"消しゴム",icon:"🧽",price:9,w:12},
+{id:"kagi",name:"なくした鍵",icon:"🔑",price:25,w:10},{id:"ginBotan",name:"銀のボタン",icon:"⚪",price:30,w:8},
+{id:"coinOld",name:"古いコイン",icon:"🪙",price:35,w:7},{id:"yubiwa",name:"指輪",icon:"💍",price:40,w:6},
+{id:"hoshi",name:"星の砂",icon:"⭐",price:45,w:5},{id:"okashiFull",name:"中身入りお菓子",icon:"🍫",price:60,w:3},
+{id:"kinHane",name:"金色の羽",icon:"🌟",price:100,w:2},{id:"nijiiro",name:"虹色の石",icon:"🌈",price:80,w:2}];
+const pickupById=function(id){return PICKUPS.find(function(x){return x.id===id;});};
+function rollPickup(){let tot=0;PICKUPS.forEach(function(p){tot+=p.w;});let r=Math.random()*tot;for(const p of PICKUPS){r-=p.w;if(r<=0)return p;}return PICKUPS[0];}
+function gainCoins(n,silent){if(n<=0)return;S.coins=(S.coins||0)+n;S.coinTotal=(S.coinTotal||0)+n;if(!silent){renderHeader();if(typeof sePlay==="function")sePlay("coin");}}
+function processCoinPickups(){if(!S)return;let changed=false,picked=false;
+ const cs=Math.floor((S.totalSteps||0)/100);if(cs>(S.lastCoinStep||0)){const n=cs-(S.lastCoinStep||0);S.lastCoinStep=cs;gainCoins(n,true);changed=true;}
+ const cd=Math.floor(totalMoveM()/1000);if(cd>(S.lastCoinDist||0)){const n=cd-(S.lastCoinDist||0);S.lastCoinDist=cd;gainCoins(n,true);changed=true;}
+ const ps=Math.floor((S.totalSteps||0)/500);while((S.lastPickStep||0)<ps){S.lastPickStep=(S.lastPickStep||0)+1;const p=rollPickup();S.pickups[p.id]=(S.pickups[p.id]||0)+1;S.pickupSeen[p.id]=true;toast("✨ "+p.name+" を拾った！");picked=true;changed=true;}
+ const pd=Math.floor(totalMoveM()/2000);while((S.lastPickDist||0)<pd){S.lastPickDist=(S.lastPickDist||0)+1;const p=rollPickup();S.pickups[p.id]=(S.pickups[p.id]||0)+1;S.pickupSeen[p.id]=true;toast("✨ "+p.name+" を拾った！");picked=true;changed=true;}
+ if(picked&&typeof sePlay==="function")sePlay("pickup");if(changed){renderHeader();save();}}
+function resyncCoinCountersDown(){S.lastCoinStep=Math.floor((S.totalSteps||0)/100);S.lastCoinDist=Math.floor(totalMoveM()/1000);S.lastPickStep=Math.floor((S.totalSteps||0)/500);S.lastPickDist=Math.floor(totalMoveM()/2000);}
+const MEATS=[{id:"usagi",name:"ウサギのお肉",icon:"🐰",fp:8,w:50},{id:"nezumi",name:"ネズミのお肉",icon:"🐭",fp:12,w:30},{id:"tori",name:"小鳥のお肉",icon:"🐦",fp:18,w:15},{id:"kaeru",name:"カエルのお肉",icon:"🐸",fp:26,w:5}];
+const meatById=function(id){return MEATS.find(function(x){return x.id===id;});};
+function rollMeat(){let tot=0;MEATS.forEach(function(m){tot+=m.w;});let r=Math.random()*tot;for(const m of MEATS){r-=m.w;if(r<=0)return m;}return MEATS[0];}
+const FURN=[{id:"sara",name:"餌の皿",icon:"🍽️",price:100,x:"8%",y:"62%"},{id:"bed",name:"猫のベッド",icon:"🛏️",price:200,x:"62%",y:"58%"},{id:"tsume",name:"爪とぎ",icon:"🪵",price:150,x:"30%",y:"60%"},{id:"clock",name:"時計",icon:"🕰️",price:180,x:"78%",y:"8%"},{id:"tower",name:"キャットタワー",icon:"🗼",price:500,x:"84%",y:"34%"},{id:"wpSakura",name:"壁紙・さくら",icon:"🌸",price:250,wall:"#ffe3ee"},{id:"wpHoshi",name:"壁紙・星空",icon:"🌌",price:300,wall:"#dfe8ff"},{id:"flWood",name:"床・木目",icon:"🪵",price:250,floor:"#f3ddba"},{id:"flPink",name:"床・ピンク",icon:"🎀",price:300,floor:"#ffd9e8"}];
+const furnById=function(id){return FURN.find(function(x){return x.id===id;});};
+function sellPickup(id,all){const p=pickupById(id);if(!p)return;const n=all?(S.pickups[id]||0):1;if(n<=0)return;S.pickups[id]-=n;gainCoins(p.price*n);toast(p.name+" を売って 🪙"+(p.price*n));save();renderBag();renderHeader();}
+function sellAllPickups(){let total=0;PICKUPS.forEach(function(p){const n=S.pickups[p.id]||0;if(n>0&&!p.edible){total+=p.price*n;S.pickups[p.id]=0;}});if(total<=0){toast("売れるものがないよ");return;}gainCoins(total);toast("まとめて売って 🪙"+total);save();renderBag();renderHeader();}
+function buyItem(kind,id){if(kind==="kusa"){if(S.coins<5){toast("コインが足りないよ");return;}S.coins-=5;S.pickups.kusa=(S.pickups.kusa||0)+1;S.pickupSeen.kusa=true;toast("🌿 草を買ったよ");}
+ else if(kind==="kari"){if(S.coins<20){toast("コインが足りないよ");return;}S.coins-=20;giveKari(3);toast("🍚 カリカリ（ランダム3個）を買ったよ");}
+ else if(kind==="meat"){if(S.coins<50){toast("コインが足りないよ");return;}S.coins-=50;const m=rollMeat();S.meats[m.id]++;toast(m.icon+" "+m.name+" を買ったよ");}
+ else if(kind==="furn"){const f=furnById(id);if(!f)return;if(S.furnOwned[id]){toast("もう持っているよ");return;}if(S.coins<f.price){toast("コインが足りないよ");return;}S.coins-=f.price;S.furnOwned[id]=true;S.furnPlaced[id]=true;toast(f.icon+" "+f.name+" を買ったよ");}
+ save();renderBag();renderHeader();}
+function openPickupZukan(){let h='<h3 style="margin-top:0">📖 拾ったもの図鑑</h3><div class="grid">';
+ PICKUPS.forEach(function(p){const seen=!!S.pickupSeen[p.id];const n=S.pickups[p.id]||0;h+='<div class="zcell"><div style="font-size:30px" class="'+(seen?"":"sil")+'">'+p.icon+'</div><div>'+(seen?p.name:"？？？")+'</div><div class="sub">'+(seen?("×"+n+" ・ 売値 🪙"+p.price):"まだ")+'</div></div>';});
+ h+='</div><div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';showSheet(h);}
+function feedMeat(id,mid){const c=S.cats.find(function(x){return x.id===id;});const m=meatById(mid);if(!c||!m)return;if((S.meats[mid]||0)<=0){toast(m.name+"がないよ");return;}if(c.feedDay!==todayKey()){c.feedDay=todayKey();c.feeds=0;}if(c.feeds>=2){toast("今日のお食事は2回までだよ");return;}S.meats[mid]--;c.feeds++;c.fp+=friendGain(c,m.fp);S.today.feeds++;S.week.feeds++;if(typeof sePlay==="function")sePlay("feed");toast(m.icon+" "+(c.name||coatById(c.coat).name)+" が "+m.name+" を食べた！ なかよしアップ");gainXP(4);save();renderAll();}
+function feedGrass(id){const c=S.cats.find(function(x){return x.id===id;});if(!c)return;if((S.pickups.kusa||0)<=0){toast("草がないよ");return;}S.pickups.kusa--;c.fp+=friendGain(c,3);if(typeof sePlay==="function")sePlay("feed");toast("🌿 "+(c.name||coatById(c.coat).name)+" が草を食べた");save();renderAll();}
+function openHouseFeed(id){const c=S.cats.find(function(x){return x.id===id;});if(!c)return;const n=feedCountToday(c);
+ let h='<h3 style="margin-top:0;text-align:center">'+(c.name||coatById(c.coat).name)+' にあげる</h3><div style="text-align:center">'+catFxSVG(c,90)+'<div style="font-size:13px;letter-spacing:1px">'+heartsHTML(c.fp)+'</div><div class="sub">今日のお食事 '+n+' / 2</div></div>';
+ h+='<div style="margin-top:10px">'+Object.keys(KARINAME).map(function(col){return '<div class="shopRow"><div>'+karikariSVG(col,34)+'</div><div class="grow">'+KARINAME[col]+' ×'+(S.karikari[col]||0)+'</div><button class="sm" onclick="closeSheet();feedCat(\''+id+'\',\''+col+'\')">あげる</button></div>';}).join("")+'</div>';
+ h+=MEATS.map(function(m){return '<div class="shopRow"><div style="font-size:26px">'+m.icon+'</div><div class="grow">'+m.name+' ×'+(S.meats[m.id]||0)+'</div><button class="sm" onclick="feedMeat(\''+id+'\',\''+m.id+'\');openHouse()">あげる</button></div>';}).join("");
+ h+='<div class="shopRow"><div style="font-size:26px">🌿</div><div class="grow">草 ×'+(S.pickups.kusa||0)+'</div><button class="sm" onclick="feedGrass(\''+id+'\');openHouse()">あげる</button></div>';
+ h+='<div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="openHouse()">← おうちにもどる</button></div>';showSheet(h);}
+function roomWallFloor(){let wall="#fff5f9",floor="#ffeef5";FURN.forEach(function(f){if(S.furnPlaced[f.id]&&f.wall)wall=f.wall;if(S.furnPlaced[f.id]&&f.floor)floor=f.floor;});return{wall:wall,floor:floor};}
+function openHouse(){const wf=roomWallFloor();const comp=companionIds();
+ let furn="";FURN.forEach(function(f){if(S.furnOwned[f.id]&&S.furnPlaced[f.id]&&f.x)furn+='<span class="furnIcon" style="left:'+f.x+';top:'+f.y+'">'+f.icon+'</span>';});
+ let cats=comp.length?comp.map(function(id){const c=S.cats.find(function(x){return x.id===id;});return c?'<span style="display:inline-block;cursor:pointer" onclick="openHouseFeed(\''+c.id+'\')">'+catFxSVG(c,64)+'</span>':"";}).join(""):'<span class="sub">いっしょに歩くねこがいません</span>';
+ let h='<h3 style="margin-top:0">🏠 おうち</h3><div class="roomBox" style="background:linear-gradient(180deg,'+wf.wall+' 58%,'+wf.floor+' 58%)">'+furn+'<div style="position:absolute;left:8px;bottom:8px;right:8px">'+cats+'</div></div>';
+ h+='<div style="margin-top:10px">'+FURN.map(function(f){if(!S.furnOwned[f.id])return '<div class="shopRow"><div style="font-size:24px" class="sil">'+f.icon+'</div><div class="grow">'+f.name+'<div class="sub">未所持（ショップ 🪙'+f.price+'）</div></div></div>';const on=!!S.furnPlaced[f.id];return '<div class="shopRow"><div style="font-size:24px">'+f.icon+'</div><div class="grow">'+f.name+'</div><button class="sm '+(on?"ghost":"")+'" onclick="S.furnPlaced[\''+f.id+'\']='+(on?"false":"true")+';save();openHouse()">'+(on?"しまう":"置く")+'</button></div>';}).join("")+'</div>';
+ h+='<div class="sub" style="margin-top:6px">ねこを押すと餌をあげられます。</div><div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';showSheet(h);}
+let lockTimer=null;
+function toggleLock(on){const ov=$("lockOverlay");if(!ov)return;if(on){ov.classList.add("on");const ls=$("lockSteps");if(ls)ls.textContent="今日 "+(S.today?S.today.steps:0).toLocaleString()+" 歩 ・ 🪙 "+(S.coins||0);}else ov.classList.remove("on");}
+document.addEventListener("DOMContentLoaded",function(){const b=$("lockUnlockBtn");if(!b)return;const start=function(e){e.preventDefault();lockTimer=setTimeout(function(){toggleLock(false);toast("ロックを解除したよ");},1200);};const cancel=function(){if(lockTimer)clearTimeout(lockTimer);};b.addEventListener("pointerdown",start);b.addEventListener("pointerup",cancel);b.addEventListener("pointerleave",cancel);});
+
 /* ===== step manual edit ===== */
 function openStepEditor(){rollDay();
  showSheet('<h3 style="margin-top:0;text-align:center">歩数を編集</h3>'
@@ -1187,11 +1380,178 @@ function applyStepEdit(){const el=$("stepEditInput");if(!el)return;
  S.week.dist=Math.max(0,(S.week.dist||0)+dDist);
  S.totalDist=Math.max(0,(S.totalDist||0)+dDist);
  syncIncubators();
- if(delta>0){for(let s=0;s<3;s++){const e=S.incubators[s];if(e){e.prog+=delta;if(e.prog>=e.need)hatchEgg(s);}}}
+ if(delta>0){for(let s=0;s<3;s++){const e=S.incubators[s];if(e){e.prog+=delta;if(e.prog>=e.need)e.ready=true;}}}
  else{const cut=-delta;for(let s=0;s<3;s++){const e=S.incubators[s];if(e)e.prog=Math.max(0,e.prog-cut);}}
  S.incubating=S.incubators[0]||null;
  if(delta>0){const mile=Math.floor((S.totalSteps||0)/3000);if(mile>(S.lastMile||0)){const n=mile-(S.lastMile||0);S.lastMile=mile;for(let i=0;i<n;i++)spawnManualEgg();}}
+ if(delta>0)processCoinPickups();else resyncCoinCountersDown();
  rollDay();save();closeSheet();renderAll();toast("歩数を "+target.toLocaleString()+" 歩に変更したよ");}
+/* ===== audio: BGM (MP3 files) + cute WebAudio sound effects ===== */
+const BGM_TRACKS=[
+{id:"early",file:"bgm-early.mp3",cat:"早朝",title:"夏が終わる前に"},
+{id:"morning",file:"bgm-morning.mp3",cat:"朝",title:"ソーダの気持ち"},
+{id:"day",file:"bgm-day.mp3",cat:"昼",title:"ぽかぽか日和"},
+{id:"evening",file:"bgm-evening.mp3",cat:"夕方",title:"陽が沈みかけた街"},
+{id:"night",file:"bgm-night.mp3",cat:"夜",title:"星の降る夜"},
+{id:"latenight",file:"bgm-latenight.mp3",cat:"深夜",title:"星空の中で"},
+{id:"rain",file:"bgm-rain.mp3",cat:"雨の日",title:"雨の日のチル"},
+{id:"snow",file:"bgm-snow.mp3",cat:"雪の日",title:"今日は楽しいクリスマス"},
+{id:"wind",file:"bgm-wind.mp3",cat:"風の強い日",title:"よりそい合い"},
+{id:"summer",file:"bgm-summer.mp3",cat:"夏",title:"あの日の想ひ出"},
+{id:"water",file:"bgm-water.mp3",cat:"水辺",title:"海とアイスコーヒー"},
+{id:"library",file:"bgm-library.mp3",cat:"",title:"静かな図書室で"},
+{id:"noon",file:"bgm-noon.mp3",cat:"",title:"おひるすぎ"},
+{id:"bakery",file:"bgm-bakery.mp3",cat:"",title:"かわいいパン屋さん"},
+{id:"caffeine",file:"bgm-caffeine.mp3",cat:"",title:"Caffeine"}];
+function bgmTrackById(id){return BGM_TRACKS.find(function(t){return t.id===id;})||BGM_TRACKS[2];}
+function bgmTrackLabel(t){return (t.cat?t.cat+" ・ ":"")+t.title;}
+function ensureAudioSettings(){if(!S)return;if(!S.audio||typeof S.audio!=="object")S.audio={};
+ if(typeof S.audio.bgmOn!=="boolean")S.audio.bgmOn=true;
+ if(typeof S.audio.seOn!=="boolean")S.audio.seOn=true;
+ if(typeof S.audio.bgmVol!=="number"||!isFinite(S.audio.bgmVol))S.audio.bgmVol=0.7;
+ if(typeof S.audio.seVol!=="number"||!isFinite(S.audio.seVol))S.audio.seVol=0.9;
+ S.audio.bgmVol=Math.max(0,Math.min(1,S.audio.bgmVol));S.audio.seVol=Math.max(0,Math.min(1,S.audio.seVol));
+ if(S.audio.mode!=="manual")S.audio.mode="auto";
+ if(!BGM_TRACKS.some(function(t){return t.id===S.audio.track;}))S.audio.track="day";}
+function nearWatersideSpot(){if(!S||!S.lastPos||!Array.isArray(S.spots))return false;
+ for(let i=0;i<S.spots.length;i++){const sp=S.spots[i];
+  if(sp&&(sp.design==="waterside"||sp.design==="beach")&&hav(S.lastPos.lat,S.lastPos.lng,sp.lat,sp.lng)<=200)return true;}
+ return false;}
+function bgmAutoId(){
+ if(nearWatersideSpot())return "water";
+ if(curWeather){
+  if(curWeather.kind==="rain"||curWeather.kind==="thunder")return "rain";
+  if(curWeather.kind==="snow")return "snow";
+  if(typeof curWeather.wind==="number"&&curWeather.wind>=8)return "wind";}
+ const now=new Date(),mo=now.getMonth()+1,h=now.getHours();
+ if(mo>=6&&mo<=9&&h>=7&&h<19)return "summer";
+ if(h>=5&&h<7)return "early";
+ if(h>=7&&h<11)return "morning";
+ if(h>=11&&h<16)return "day";
+ if(h>=16&&h<19)return "evening";
+ if(h>=19)return "night";
+ return "latenight";}
+function bgmDesiredId(){if(!S||!S.audio||!S.audio.bgmOn)return null;
+ const id=S.audio.mode==="manual"?S.audio.track:bgmAutoId();
+ if(bgmFailed[id])return null;
+ return id;}
+var bgmEl=null,bgmCur=null,bgmUnlocked=false,bgmFailed={},bgmAltTried={},bgmFadeTimer=null;
+function bgmTargetVol(){return (S&&S.audio&&typeof S.audio.bgmVol==="number")?S.audio.bgmVol:0.7;}
+function bgmFadeTo(target,dur,done){if(!bgmEl){if(done)done();return;}
+ if(bgmFadeTimer)clearInterval(bgmFadeTimer);
+ const from=bgmEl.volume,steps=Math.max(1,Math.round(dur/40));let i=0;
+ bgmFadeTimer=setInterval(function(){i++;
+  const v=from+(target-from)*(i/steps);
+  try{bgmEl.volume=Math.max(0,Math.min(1,v));}catch(e){}
+  if(i>=steps){clearInterval(bgmFadeTimer);bgmFadeTimer=null;if(done)done();}},40);}
+function bgmSrcFor(id,alt){const t=bgmTrackById(id);return alt?t.file:("bgm/"+t.file);}
+function bgmStartEl(id){if(!bgmEl)return;
+ bgmEl.src=bgmSrcFor(id,false);
+ if(bgmUnlocked){const pr=bgmEl.play();if(pr&&pr.catch)pr.catch(function(){});}
+ bgmFadeTo(bgmTargetVol(),600,null);}
+function bgmApply(){if(!S)return;ensureAudioSettings();if(!bgmEl)return;
+ const want=bgmDesiredId();
+ if(!want){if(bgmCur){bgmFadeTo(0,300,function(){if(bgmEl){try{bgmEl.pause();}catch(e){}}});bgmCur=null;}return;}
+ if(want===bgmCur){if(bgmUnlocked&&bgmEl.paused&&bgmEl.src){const pr=bgmEl.play();if(pr&&pr.catch)pr.catch(function(){});}
+  if(Math.abs(bgmEl.volume-bgmTargetVol())>0.02&&!bgmFadeTimer)bgmFadeTo(bgmTargetVol(),200,null);
+  return;}
+ const prev=bgmCur;bgmCur=want;
+ if(prev&&bgmUnlocked&&!bgmEl.paused){bgmFadeTo(0,320,function(){if(bgmCur===want)bgmStartEl(want);});}
+ else bgmStartEl(want);}
+function bgmInit(){ensureAudioSettings();
+ try{bgmEl=new Audio();}catch(e){bgmEl=null;}
+ if(bgmEl){bgmEl.loop=true;bgmEl.preload="auto";bgmEl.volume=0;
+  bgmEl.addEventListener("error",function(){if(!bgmCur)return;
+   if(!bgmAltTried[bgmCur]){bgmAltTried[bgmCur]=true;bgmEl.src=bgmSrcFor(bgmCur,true);
+    if(bgmUnlocked){const pr=bgmEl.play();if(pr&&pr.catch)pr.catch(function(){});}return;}
+   bgmFailed[bgmCur]=true;const bad=bgmCur;bgmCur=null;
+   try{bgmEl.pause();}catch(e){}
+   if(bgmDesiredId()&&bgmDesiredId()!==bad)bgmApply();});}
+ const unlock=function(){if(!bgmUnlocked){bgmUnlocked=true;seEnsureCtx();bgmApply();}};
+ document.addEventListener("pointerdown",unlock);
+ document.addEventListener("click",unlock);
+ setInterval(function(){bgmApply();},60000);
+ bgmApply();
+ document.addEventListener("click",function(ev){const t=ev.target;
+  if(!t||!t.closest)return;
+  if(t.closest("input,select,textarea"))return;
+  if(t.closest("button,nav a,.catTile,.partyCat,.zcell,.incTap,.bigCatBtn,.rainbowEgg,.crackEgg"))sePlay("tap");});}
+var seCtx=null,seMaster=null,seLastSpecific=0;
+function seEnsureCtx(){if(!S||!S.audio||!S.audio.seOn)return null;
+ if(!seCtx){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
+   seCtx=new AC();seMaster=seCtx.createGain();
+   seMaster.gain.value=(typeof S.audio.seVol==="number"?S.audio.seVol:0.9);
+   seMaster.connect(seCtx.destination);}catch(e){return null;}}
+ if(seCtx.state==="suspended"){const pr=seCtx.resume();if(pr&&pr.catch)pr.catch(function(){});}
+ return seCtx;}
+function seTone(o){const ctx=seCtx;if(!ctx||!seMaster)return;
+ const t0=ctx.currentTime+(o.at||0);
+ const osc=ctx.createOscillator(),g=ctx.createGain();
+ osc.type=o.type||"sine";
+ osc.frequency.setValueAtTime(o.f0,t0);
+ if(o.f1)osc.frequency.exponentialRampToValueAtTime(Math.max(30,o.f1),t0+o.dur);
+ g.gain.setValueAtTime(0.0001,t0);
+ g.gain.exponentialRampToValueAtTime(o.vol||0.4,t0+0.015);
+ g.gain.exponentialRampToValueAtTime(0.0001,t0+o.dur);
+ osc.connect(g);g.connect(seMaster);
+ osc.start(t0);osc.stop(t0+o.dur+0.05);}
+function sePlay(kind){if(!S||!S.audio)return;ensureAudioSettings();
+ if(!S.audio.seOn)return;
+ if(kind==="tap"&&Date.now()-seLastSpecific<180)return;
+ if(kind!=="tap")seLastSpecific=Date.now();
+ if(!seEnsureCtx())return;
+ if(seMaster)seMaster.gain.value=S.audio.seVol;
+ if(kind==="tap"){ /* poyon */
+  seTone({f0:620,f1:240,dur:0.16,vol:0.35});
+  seTone({f0:900,f1:1180,at:0.07,dur:0.1,vol:0.14});}
+ else if(kind==="decide"){ /* kirakira 3 notes */
+  seTone({f0:1046,dur:0.14,type:"triangle",vol:0.4});
+  seTone({f0:1318,at:0.07,dur:0.14,type:"triangle",vol:0.4});
+  seTone({f0:1568,at:0.14,dur:0.24,type:"triangle",vol:0.42});
+  seTone({f0:2093,at:0.15,dur:0.2,vol:0.12});}
+ else if(kind==="hatch"){ /* rising arpeggio + sparkle */
+  const ns=[523,659,784,1046,1318];
+  ns.forEach(function(f,i){seTone({f0:f,at:i*0.08,dur:0.22,type:"triangle",vol:0.38});});
+  seTone({f0:2093,at:0.42,dur:0.3,vol:0.13});
+  seTone({f0:2637,at:0.5,dur:0.34,vol:0.1});}
+ else if(kind==="pickup"){ /* pyokon */
+  seTone({f0:340,f1:940,dur:0.12,vol:0.38});
+  seTone({f0:1180,at:0.1,dur:0.09,vol:0.16});}
+ else if(kind==="coin"){ /* charin */
+  seTone({f0:1568,dur:0.08,vol:0.36});
+  seTone({f0:2093,at:0.06,dur:0.22,vol:0.36});
+  seTone({f0:2637,at:0.06,dur:0.14,vol:0.1});}
+ else if(kind==="feed"){ /* poyon + bell */
+  seTone({f0:560,f1:220,dur:0.15,vol:0.32});
+  seTone({f0:1318,at:0.12,dur:0.4,vol:0.3});
+  seTone({f0:1975,at:0.12,dur:0.26,vol:0.1});}}
+function setBgmOn(v){ensureAudioSettings();S.audio.bgmOn=!!v;save();bgmApply();openAudioSettings();}
+function setSeOn(v){ensureAudioSettings();S.audio.seOn=!!v;save();openAudioSettings();if(v)sePlay("decide");}
+function setBgmMode(m){ensureAudioSettings();S.audio.mode=(m==="manual"?"manual":"auto");save();bgmApply();openAudioSettings();}
+function setBgmTrack(id){ensureAudioSettings();S.audio.track=id;S.audio.mode="manual";save();bgmApply();openAudioSettings();}
+function setBgmVol(v){ensureAudioSettings();S.audio.bgmVol=Math.max(0,Math.min(1,(Number(v)||0)/100));save();
+ if(bgmEl&&bgmCur&&!bgmFadeTimer)bgmEl.volume=bgmTargetVol();
+ const el=$("bgmVolVal");if(el)el.textContent=Math.round(S.audio.bgmVol*100)+"%";}
+function setSeVol(v){ensureAudioSettings();S.audio.seVol=Math.max(0,Math.min(1,(Number(v)||0)/100));save();
+ if(seMaster)seMaster.gain.value=S.audio.seVol;
+ const el=$("seVolVal");if(el)el.textContent=Math.round(S.audio.seVol*100)+"%";}
+function openAudioSettings(){ensureAudioSettings();const a=S.audio;
+ const want=bgmDesiredId();const wantT=want?bgmTrackById(want):null;
+ let h='<h3 style="margin-top:0">🎵 BGM・効果音</h3>';
+ h+='<div class="sub" style="margin-bottom:8px">いまのBGM：'+(a.bgmOn?(wantT?bgmTrackLabel(wantT):"（ファイルが見つかりません）"):"オフ")+(a.bgmOn&&a.mode==="auto"?" ・ 自動":"")+'</div>';
+ h+='<div class="shopRow"><div class="grow"><b>BGM</b></div><button class="sm '+(a.bgmOn?"":"ghost")+'" onclick="setBgmOn(true)">オン</button><button class="sm '+(a.bgmOn?"ghost":"")+'" onclick="setBgmOn(false)">オフ</button></div>';
+ h+='<div class="shopRow"><div class="grow"><b>効果音</b></div><button class="sm '+(a.seOn?"":"ghost")+'" onclick="setSeOn(true)">オン</button><button class="sm '+(a.seOn?"ghost":"")+'" onclick="setSeOn(false)">オフ</button></div>';
+ h+='<div style="margin:10px 0 2px"><b style="font-size:13px">BGMの音量</b> <span class="sub" id="bgmVolVal">'+Math.round(a.bgmVol*100)+'%</span></div>';
+ h+='<input type="range" min="0" max="100" value="'+Math.round(a.bgmVol*100)+'" oninput="setBgmVol(this.value)" style="width:100%">';
+ h+='<div style="margin:8px 0 2px"><b style="font-size:13px">効果音の音量</b> <span class="sub" id="seVolVal">'+Math.round(a.seVol*100)+'%</span></div>';
+ h+='<input type="range" min="0" max="100" value="'+Math.round(a.seVol*100)+'" oninput="setSeVol(this.value)" onchange="sePlay(\'tap\')" style="width:100%">';
+ h+='<div style="margin:12px 0 6px"><b style="font-size:13px">BGMの選び方</b></div>';
+ h+='<div class="row" style="gap:8px"><button class="sm '+(a.mode==="auto"?"":"ghost")+'" onclick="setBgmMode(\'auto\')">自動（時間帯・天気）</button><button class="sm '+(a.mode==="manual"?"":"ghost")+'" onclick="setBgmMode(\'manual\')">手動で固定</button></div>';
+ if(a.mode==="manual"){
+  h+='<div style="margin-top:10px">'+BGM_TRACKS.map(function(t){const on=a.track===t.id;
+   return '<div class="shopRow" style="cursor:pointer" onclick="setBgmTrack(\''+t.id+'\')"><div class="grow">'+(on?"♪ ":"")+bgmTrackLabel(t)+'</div>'+(on?'<span class="pill">再生中</span>':'<span class="sub">えらぶ</span>')+'</div>';}).join("")+'</div>';}
+ h+='<div style="margin-top:12px;text-align:center"><button class="ghost sm" onclick="openMenu()">← メニューにもどる</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';
+ showSheet(h);}
 /* ===== v11: incubator view / cumulative missions / tutorial / menu ===== */
 function rainbowEggSVG(size){const s=size||130,h=Math.round(s*1.15);
  return '<svg width="'+s+'" height="'+h+'" viewBox="0 0 100 115"><defs><linearGradient id="rbG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8fb8"/><stop offset=".25" stop-color="#ffb35c"/><stop offset=".5" stop-color="#ffdf6b"/><stop offset=".7" stop-color="#7ed492"/><stop offset=".88" stop-color="#6fc3ec"/><stop offset="1" stop-color="#b48ce0"/></linearGradient></defs><ellipse cx="50" cy="60" rx="34" ry="43" fill="url(#rbG)" stroke="#ffffff" stroke-width="3.5"/><ellipse cx="36" cy="36" rx="10" ry="7" fill="#ffffff" opacity=".75"/><circle cx="66" cy="82" r="4" fill="#ffffff" opacity=".8"/><path d="M22 62 Q36 52 50 62 Q64 72 78 62 L78 74 Q64 84 50 74 Q36 64 22 74 Z" fill="#ffffff" opacity=".35"/></svg>';}
@@ -1200,10 +1560,12 @@ function incubatorBaseSVG(w){const h=Math.round(w*0.52);
 function incubatorStageHTML(e,big,idx){
  const baseW=big?150:92,eggSize=big?84:52;
  const baseH=Math.round(baseW*0.52),eggH=Math.round(eggSize*1.15);
- const overlap=Math.round(eggH*0.15);
- const stageH=big?(baseH+eggH-overlap):(e?(baseH+eggH-overlap):baseH);
- const eggHtml=e?'<div class="incEggPos" style="bottom:'+(baseH-overlap)+'px" onclick="event.stopPropagation();openIncEggDetail('+(typeof idx==="number"?idx:0)+')">'+eggSVG(e.design,e.coat,eggSize)+'</div>':'';
- return '<div class="incStage" style="width:'+baseW+'px;height:'+stageH+'px;margin:0 auto">'+eggHtml+'<div class="incBase">'+incubatorBaseSVG(baseW)+'</div></div>';}
+ const overlap=Math.round(eggH*0.42);
+ const stageH=baseH+eggH-overlap;
+ const ready=e&&e.ready;
+ const eggHtml=e?'<div class="incEggPos" style="bottom:'+(baseH-overlap)+'px;z-index:2" onclick="event.stopPropagation();'+(ready?('openCrack('+(typeof idx==="number"?idx:0)+')'):('openIncEggDetail('+(typeof idx==="number"?idx:0)+')'))+'">'+eggSVG(e.design,e.coat,eggSize)+(ready?'<div style="position:absolute;inset:auto 0 -4px 0;text-align:center;font-size:11px;font-weight:800;color:#e5639a;line-height:1">タップ！</div>':"")+'</div>':'';
+ const lip=e?'<svg style="position:absolute;left:50%;transform:translateX(-50%);bottom:'+(baseH-overlap-2)+'px;z-index:3;pointer-events:none" width="'+Math.round(eggSize*0.92)+'" height="'+Math.round(eggH*0.34)+'" viewBox="0 0 100 40"><path d="M4 6 Q50 34 96 6 L92 22 Q50 44 8 22 Z" fill="#ffd9e8" stroke="#ff8fb8" stroke-width="3"/></svg>':'';
+ return '<div class="incStage" style="position:relative;width:'+baseW+'px;height:'+stageH+'px;margin:0 auto">'+eggHtml+'<div class="incBase">'+incubatorBaseSVG(baseW)+'</div>'+lip+'</div>';}
 function openIncubator(){syncIncubators();
  let stages='<div class="incRow">';
  for(let i=0;i<3;i++){const e=S.incubators[i];
@@ -1223,6 +1585,16 @@ function openIncEggDetail(idx){syncIncubators();const e=S.incubators[idx||0];if(
  showSheet('<h3 style="margin-top:0;text-align:center">卵の詳細</h3>'+eggDetailHTML(e,e.prog)+'<div style="margin-top:12px;text-align:center"><button class="ghost sm" onclick="openIncubator()">← ふか器にもどる</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 function openBagEggDetail(id){const e=(S.eggs||[]).find(x=>x.id===id);if(!e)return;
  showSheet('<h3 style="margin-top:0;text-align:center">卵の詳細</h3>'+eggDetailHTML(e,null)+'<div class="sub" style="text-align:center;margin-top:6px">ふか器にセットして歩くと、あたたまってふかします。</div><div style="margin-top:12px;text-align:center">'+(incFreeSlot()>=0?'<button class="sm" onclick="closeSheet();setIncubator(\''+e.id+'\')">ふか器にセット</button> ':'')+'<button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+
+let crackState={slot:0,taps:0};
+function crackOverlaySVG(stage,coatId){if(stage<=0)return "";const col="#8a6a58";const p1='<path d="M50 18 L44 34 L54 44 L46 58" fill="none" stroke="'+col+'" stroke-width="2.4" stroke-linecap="round"/>';const p2='<path d="M30 40 L44 48 L38 62 M70 38 L58 50 L66 64 M50 58 L50 78" fill="none" stroke="'+col+'" stroke-width="2.4" stroke-linecap="round"/>';return '<svg style="position:absolute;left:50%;top:0;transform:translateX(-50%);pointer-events:none" width="120" height="138" viewBox="0 0 100 115">'+p1+(stage>=2?p2:"")+'</svg>';}
+function openCrack(slot){syncIncubators();const e=S.incubators[slot];if(!e||!e.ready){if(e)openIncEggDetail(slot);return;}crackState={slot:slot,taps:0};renderCrack();}
+function renderCrack(){const e=S.incubators[crackState.slot];if(!e){closeSheet();return;}
+ showSheet('<h3 style="margin-top:0;text-align:center">🥚 ふか</h3><div style="text-align:center;position:relative"><span class="crackEgg" onclick="tapCrack()"><span style="position:relative;display:inline-block">'+eggSVG(e.design,e.coat,120)+crackOverlaySVG(crackState.taps,e.coat)+'</span></span><div class="sub" style="margin-top:8px">卵をタップしてね（'+crackState.taps+' / 3）</div></div><div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+function tapCrack(){if(typeof sePlay==="function")sePlay("tap");crackState.taps++;if(crackState.taps>=3){const slot=crackState.slot;const e=S.incubators[slot];hatchEgg(slot);const cat=S.cats[S.cats.length-1];save();renderAll();
+  showSheet('<h3 style="margin-top:0;text-align:center">🐣 誕生！</h3><div style="text-align:center"><span class="birthPop" style="display:inline-block;font-size:34px">✨</span><div class="birthPop">'+(cat?catSVG(cat.coat,cat.design,130):"")+'</div><div style="font-weight:800;margin-top:4px">'+(cat?(coatById(cat.coat).name+"（"+designById(cat.design).name+"）"):"")+'</div></div><div style="margin-top:12px;text-align:center"><button class="sm" onclick="closeSheet();renderAll()">やったー！</button></div>');return;}
+ renderCrack();}
+
 /* ---- cumulative missions ---- */
 const CUM_TABLE={
  login:{label:"ログイン日数",unit:"日",rows:[[1,1,0,10],[3,0,2,20],[7,0,2,30],[14,1,0,40],[30,1,2,60],[60,1,2,80],[100,2,2,120]]},
@@ -1230,37 +1602,38 @@ const CUM_TABLE={
  cats:{label:"ねこゲット数",unit:"匹",rows:[[1,0,1,15],[3,0,2,30],[5,1,0,50],[10,1,2,80],[15,1,2,100],[20,2,2,150],[30,2,4,200],[40,2,4,250],[50,3,4,300]]},
  hatch:{label:"ふか回数",unit:"回",rows:[[1,0,1,20],[3,0,2,40],[5,1,0,60],[10,1,2,100],[20,2,2,160],[30,2,4,220]]},
  errands:{label:"おつかい完了回数",unit:"回",rows:[[1,0,1,20],[5,0,2,40],[10,1,0,70],[20,1,2,110],[50,2,2,180],[100,2,4,260]]},
- dest:{label:"目的地到着回数",unit:"回",rows:[[1,0,1,20],[5,0,2,40],[10,1,0,70],[20,1,2,110],[50,2,2,180],[100,2,4,260]]}};
+ dest:{label:"目的地到着回数",unit:"回",rows:[[1,0,1,20],[5,0,2,40],[10,1,0,70],[20,1,2,110],[50,2,2,180],[100,2,4,260]]},coins:{label:"コイン獲得数",unit:"コイン",rows:[[100,0,2,20],[500,1,0,50],[2000,1,2,100],[5000,1,4,160],[15000,2,4,260],[40000,3,6,400]]}};
 function cumDefs(){const out=[];Object.keys(CUM_TABLE).forEach(function(mk){CUM_TABLE[mk].rows.forEach(function(r){out.push({id:mk+"_"+r[0],metric:mk,target:r[0],eggs:r[1],fruits:r[2],xp:r[3]});});});return out;}
-function cumValue(mk){if(mk==="login")return (S.loginDays||[]).length;if(mk==="steps")return S.totalSteps||0;if(mk==="cats")return (S.cats||[]).length;if(mk==="hatch")return (S.stats&&S.stats.hatch)||0;if(mk==="errands")return (S.stats&&S.stats.errands)||0;if(mk==="dest")return (S.stats&&S.stats.dest)||0;return 0;}
-function cumRewardLabel(d){const parts=[];if(d.eggs)parts.push("卵×"+d.eggs+"（まだ持っていないデザイン×毛色からランダム）");if(d.fruits)parts.push("フルーツ×"+d.fruits);if(d.xp)parts.push("XP+"+d.xp);return parts.join("＋");}
+function cumValue(mk){if(mk==="login")return (S.loginDays||[]).length;if(mk==="steps")return S.totalSteps||0;if(mk==="cats")return (S.cats||[]).length;if(mk==="hatch")return (S.stats&&S.stats.hatch)||0;if(mk==="errands")return (S.stats&&S.stats.errands)||0;if(mk==="dest")return (S.stats&&S.stats.dest)||0;if(mk==="coins")return S.coinTotal||0;return 0;}
+function cumRewardLabel(d){const parts=[];if(d.eggs)parts.push("卵×"+d.eggs+"（まだ持っていないデザイン×毛色からランダム）");if(d.fruits)parts.push("カリカリ×"+(d.fruits*3));if(d.xp)parts.push("XP+"+d.xp);return parts.join("＋");}
 function renderCumulative(){const box=$("cumMissions");if(!box||!S)return;
- let h='<div style="margin-bottom:10px"><button class="sm" onclick="claimAllMissions()">まとめて受け取る</button></div>';
+ const anyC=(function(){ensureMissions();let any=false;[S.dailyM,S.weeklyM].forEach(function(l){(l||[]).forEach(function(m){if(!m.claimed&&missionProgress(m)>=m.n)any=true;});});if(S.cumClaimed!==undefined){cumDefs().forEach(function(d){if(!S.cumClaimed[d.id]&&cumValue(d.metric)>=d.target)any=true;});}return any;})();
+ let h='<div style="margin-bottom:10px"><button class="sm '+(anyC?"goldBtn":"")+'" onclick="claimAllMissions()">まとめて受け取る</button></div>';
  Object.keys(CUM_TABLE).forEach(function(mk){const meta=CUM_TABLE[mk];const val=cumValue(mk);
   const rows=meta.rows;const claimedN=rows.filter(function(r){return S.cumClaimed&&S.cumClaimed[mk+"_"+r[0]];}).length;
   const curIdx=rows.findIndex(function(r){return !(S.cumClaimed&&S.cumClaimed[mk+"_"+r[0]]);});
   h+='<div class="row" style="margin-bottom:12px"><div style="font-size:26px">🏆</div><div class="grow"><div><b>'+meta.label+'</b> <span class="lvBadge">Lv'+claimedN+'</span></div>';
-  if(curIdx<0){h+='<div class="sub">全て達成しました ✓</div>';}
+  if(curIdx<0){h+='<div class="sub">全て達成しました ✓</div></div></div>';}
   else{const r=rows[curIdx];const d={id:mk+"_"+r[0],metric:mk,target:r[0],eggs:r[1],fruits:r[2],xp:r[3]};const p=Math.min(val,r[0]);const done=val>=r[0];
-   h+='<div style="font-size:13px;margin-top:2px">'+p.toLocaleString()+' <span class="sub">/ '+r[0].toLocaleString()+' '+meta.unit+'</span></div><div class="bar" style="margin:4px 0"><i style="width:'+(p/r[0]*100)+'%"></i></div><div class="sub">報酬：'+cumRewardLabel(d)+'</div></div>'
-   +(done?'<button class="sm" onclick="claimCum(\''+d.id+'\')">受け取る</button>':'<span class="pill">進行中</span>')+'</div>';return;}
-  h+='</div></div>';});
+   h+='<div style="font-size:13px;margin-top:2px">'+p.toLocaleString()+' <span class="sub">/ '+r[0].toLocaleString()+' '+meta.unit+'</span></div><div class="bar" style="margin:4px 0"><i style="width:'+(p/r[0]*100)+'%"></i></div><div class="sub">報酬：'+cumRewardLabel(d)+'</div></div>'+(done?'<button class="sm goldBtn" onclick="claimCum(\''+d.id+'\')">受け取る</button>':'<span class="pill">進行中</span>')+'</div>';}});
  box.innerHTML=h;}
-function claimCum(id){const d=cumDefs().find(x=>x.id===id);if(!d)return;if(!S.cumClaimed)S.cumClaimed={};if(S.cumClaimed[id])return;if(cumValue(d.metric)<d.target){toast("まだ達成していません");return;}
- S.cumClaimed[id]=true;for(let i=0;i<d.eggs;i++)S.eggs.push(unownedComboEgg(true));for(let i=0;i<d.fruits;i++){const f=pick(FRUITS);S.fruits[f.id]=(S.fruits[f.id]||0)+1;}
- toast("🏆 累計ミッション達成！ "+cumRewardLabel(d));if(d.xp)gainXP(d.xp);save();renderMissions();renderBag();renderHome();tutAfter("cum",id);}
+function claimCum(id){const d=cumDefs().find(function(x){return x.id===id;});if(!d)return;if(!S.cumClaimed)S.cumClaimed={};if(S.cumClaimed[id])return;if(cumValue(d.metric)<d.target){toast("まだ達成していません");return;}
+ S.cumClaimed[id]=true;for(let i=0;i<d.eggs;i++)S.eggs.push(unownedComboEgg(true));if(d.fruits)giveKari(d.fruits*3);
+ if(typeof sePlay==="function")sePlay("decide");toast("🏆 累計ミッション達成！ "+cumRewardLabel(d));if(d.xp)gainXP(d.xp);save();renderMissions();renderBag();renderHome();tutAfter("cum",id);}
 /* ---- menu & help ---- */
 function goTab(name){const a=document.querySelector('nav a[data-tab="'+name+'"]');if(a)a.click();}
-function openMenu(){showSheet('<h3 style="margin-top:0">☰ メニュー</h3><button class="menuBtn" onclick="closeSheet();startTutorial(true)">🔁 チュートリアルをもう一度見る</button><button class="menuBtn ghost" onclick="openHelp()">📖 詳しい説明（ヘルプ）</button><button class="menuBtn ghost" onclick="closeSheet();openIncubator()">🥚 ふか器を見る</button><div style="margin-top:10px"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+function openMenu(){showSheet('<h3 style="margin-top:0">☰ メニュー</h3><button class="menuBtn" onclick="closeSheet();startTutorial(true)">🔁 チュートリアルをもう一度見る</button><button class="menuBtn" onclick="openAudioSettings()">🎵 BGM・効果音</button><button class="menuBtn ghost" onclick="openHelp()">📖 詳しい説明（ヘルプ）</button><button class="menuBtn ghost" onclick="closeSheet();openIncubator()">🥚 ふか器を見る</button><button class="menuBtn ghost" onclick="closeSheet();goTab(\'cats\')">📖 ねこずかん</button><button class="menuBtn ghost" onclick="closeSheet();openPickupZukan()">📖 拾ったもの図鑑</button><button class="menuBtn ghost" onclick="closeSheet();openHouse()">🏠 おうち</button><button class="menuBtn ghost" onclick="closeSheet();toggleLock(true)">🔒 タッチロック</button><div style="margin-top:10px"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 function openHelp(){showSheet('<h3 style="margin-top:0">📖 詳しい説明</h3><div style="font-size:13px;line-height:1.8">'
 +'<div class="helpSec"><b>🐾 遊び方</b><br>アプリを開いたまま歩くと、GPSで距離と歩数（推定）が記録され、歩いた道にお花が咲きます。一緒に歩くねこ（お気に入り、最大5匹）は なかよし度が上がります。フレンド・ランキングなどの対人要素はありません。</div>'
 +'<div class="helpSec"><b>🥚 卵の出方</b><br>3000歩あるくごとに卵が1つ必ず見つかり、「おつかい」で取りに行けます。その間に通った道の近く（30m以内）にスポットがあったときは、そのスポットのデザインからランダム、なかったときはノーマルの卵が現在地の近くに出ます。探索機やミッション、目的地、累計ミッションでも卵がもらえます。卵の色・柄は、中のねこの毛色を表しています。</div>'
 +'<div class="helpSec"><b>🐣 ふか器</b><br>ふか器は3台あり、同時に3個までセットできます。ホームのふか器をタップすると3台並んで大きく見られます（空の台はふか器だけの絵です）。卵は「もちもの」からセットでき、ノーマル卵は1000歩、デザイン卵は3000歩歩くとふかします。ふか器の中の卵をタップすると、デザイン・毛色・残り歩数などの詳細が見られます。もちもの画面の卵の欄にあるふか器の絵をタップしても、ふか器の画面に飛べます。ふか器に入っている卵も、卵の所持数に数えます。</div>'
 +'<div class="helpSec"><b>🗺️ 地図の見かた</b><br>地図上の猫があなたと一緒に動きます。歩いた道には小さなお花が咲いていくよ（今日の分は保存されます）。スポットのピンを押すと、徒歩の目安が見られます。3000歩あるくごとに、卵が1つ必ず見つかり、おつかいで取りに行けます。通った道の近く（30m以内）にスポットがあったときは、そのスポットのデザインの中からランダムで1つ見つかります。スポットが1つもなかったときは、ノーマル（みちばた）の卵が現在地の近くに見つかります。見つけた卵やフルーツのピンを押すと、おつかいの時間が見られます。車・電車など速い移動（時速20km超）は歩数に入りませんが、20kmごとに卵が1つ見つかります。今いる都道府県のご当地ねこの卵が出ることもあるよ（ねこずかんの「ご当地」ページで確認できます）。</div>'
++'<div class="helpSec"><b>🌦️ 天気</b><br>地図の左上に現在地の天気と気温が出ます。雨のときは「雨の日」、雪のときは「雪の日」デザインの卵が出ることがあります。</div>'
++'<div class="helpSec"><b>🎵 BGM・効果音</b><br>☰ メニューの「BGM・効果音」から設定できます。自動では、水辺の近く→雨・雪・強風→季節（夏）→時間帯（早朝・朝・昼・夕方・夜・深夜）の順で曲が切り替わります。手動で固定すると、好きな曲をずっと流せます（雨の日の曲を晴れの日にも聞けます）。BGMと効果音のオン／オフと音量も変えられます。曲のファイル（bgmフォルダ）は index.html と一緒にアップロードしてください。音は、画面を最初にタップしたあとから流れます。</div>'
 +'<div class="helpSec"><b>🐱 ねこの詳細</b><br>「うちのねこ」やホームの「いっしょに歩くねこ」でねこの絵を押すと、ねこの絵と名前、なかよし度（ハート）が大きく出ます。そこをもう一度押すと詳細が見られ、名前の変更、なかよし度、いっしょに歩いた歩数、見つけた日と場所、お気に入りの登録・解除、デザインの種類が確認できます。なかよし度は数字ではなくハートで表示され、たまった分だけハートに色がつきます。その日にカリカリを1個あげたねこにはキラキラ、2個（上限）あげたねこにはハートのエフェクトがつきます。</div>'
 +'<div class="helpSec"><b>🧺 おつかい・探索機</b><br>見つけた卵やフルーツは、ねこをおつかいに行かせて持って帰ってきます。行かせる匹数が多いほど速く帰ります。探索機は1日1回、その場所の近くのスポットの卵（1〜2種類）とフルーツ（2〜3種類）が見つかります。</div>'
 +'<div class="helpSec"><b>📍 目的地</b><br>現在地から500〜800mの範囲に出ます。旗をタップすると、もらえるものが全部（1個ずつ）見られます。約30m以内まで近づくと自動で報酬がもらえ、次の目的地が出ます。「更新」で引き直せます。</div>'
-+'<div class="helpSec"><b>🍓 フルーツとカリカリ</b><br>フルーツは「もちもの」で色ごとのカリカリに変換できます。カリカリは「ねこ」画面の「カリカリをあげる」欄で、色（種類）を切り替えて、ねこを選んであげられます（1匹につき1日2回まで）。あげるとなかよし度が上がります。</div>'
++'<div class="helpSec"><b>🍓 フルーツとカリカリ</b><br>おつかいで猫がフルーツを持ち帰ったら、その猫をタップすると自動でカリカリに変わります。ミッションなどの報酬もカリカリで届きます。カリカリは「ねこ」画面の「カリカリをあげる」欄や おうち であげられます（1匹につき1日2回まで）。肉はカリカリより なかよし度が上がりやすいです。</div>'
 +'<div class="helpSec"><b>👣 歩数の編集</b><br>ホームの「きょうのおさんぽ」の歩数の横にある ✏️ から、今日の歩数を直接変更できます。変更すると累計歩数・距離・ふか器の進みぐあいにも反映されます（減らすこともできます）。増えた分でも、3000歩ごとの卵の判定をします。</div>'
 +'<div class="helpSec"><b>🏆 累計ミッション</b><br>期限なしで、アプリを使い始めてからの累計（ログイン日数・累計歩数・ねこゲット数・ふか回数・おつかい回数・目的地到着回数）で達成します。カテゴリごとに今の段階だけが表示され、達成して受け取ると次の段階に切り替わります。クリアした段階数は「Lv」で分かります（例：ログイン1日目クリアでLv1）。報酬は卵・フルーツ・XPで、歩数など難しいものほど大きくなります。卵は まだ持っていないデザイン×毛色からランダムで優先して出ます。デイリー・ウィークリー・累計は「まとめて受け取る」で一括受け取りできます。</div>'
 +'<div class="helpSec"><b>🚗 速い移動の卵</b><br>車や電車など時速20kmを超える速い移動は歩数には数えませんが、その距離は別に数えています。20km進むごとに卵が1つ見つかり、「おつかい」で取りに行けます。その20kmの間に通った道の近く（軌跡から30m以内）にあったスポットのデザインからランダムで決まり、スポットが無かった区間はノーマルの卵が軌跡上の点に出ます。20km未満の端数は次回に持ち越します。</div>'+'<div class="helpSec"><b>🗾 ご当地ねこ</b><br>47都道府県ごとに名物のねこがいます（例：大阪＝たこ焼き、山口＝ふぐ、愛知＝金のシャチホコ、京都＝寺、北海道＝乳牛、沖縄＝シーサー）。今いる都道府県はGPSから自動で判定します。その県にいる間に見つかる卵（3000歩の卵・速い移動の卵・探索機の卵など）の一部が、その土地のご当地デザインになります。集めたご当地ねこは、ねこずかんの「ご当地」ページで地方ごとに確認できます（通常の図鑑のコンプリートには含めません）。</div>'+'<div class="helpSec"><b>ℹ️ 注意</b><br>Webアプリのため、開いている間のみ記録されます。スマホを閉じた間の歩数・位置の反映と、iPhoneの歩数計（ヘルスケア）との連動はできません。記録は端末の中（このiPhone）に保存されます。車や電車での移動は歩数に数えません（時速20kmを超える速さの区間は、歩数・距離・XP・お花には入りません）。ただし速い移動の距離は別に数えて、20km進むごとに卵が1つ見つかります（その間に通った道の近くのスポットのデザイン、無ければノーマル）。今いる都道府県の「ご当地ねこ」の卵が出ることもあります。</div>'
@@ -1277,10 +1650,10 @@ function tutAdvance(next){S.tutStep=next;save();renderTut();}
 function tutAfter(action,arg){if(!S||S.tutorialDone||S.tutReplay)return;const step=S.tutStep;
  if(action==="fav"&&step==="fav"){const st=tutStarter();if(st&&st.fav)tutAdvance("cum");}
  else if(action==="cum"&&step==="cum"&&arg==="login_1"){tutAdvance("incub");}
- else if(action==="incub"&&step==="incub"){if(!Object.keys(S.fruits||{}).some(k=>S.fruits[k]>0)&&!(S.karikari&&Object.values(S.karikari).some(v=>v>0))){S.fruits["strawberry"]=(S.fruits["strawberry"]||0)+1;toast("🍓 チュートリアル用に いちご を渡したよ");}save();renderBag();tutAdvance("feed_convert");}
+ else if(action==="incub"&&step==="incub"){S.karikari.pink=(S.karikari.pink||0)+2;toast("🍚 チュートリアル用に カリカリを渡したよ");save();renderBag();tutAdvance("feed_give");}
  else if(action==="convert"&&step==="feed_convert"){tutAdvance("feed_give");}
  else if(action==="feed"&&step==="feed_give"){finishTutorial();}}
-function tutReplayNext(){const order=["egg","reveal","fav","cum","incub","feed_convert","feed_give"];const i=order.indexOf(S.tutStep);if(i<0||i>=order.length-1){S.tutReplay=false;S.tutStep="done";save();renderTut();toast("チュートリアルの再演はおわりです");return;}S.tutStep=order[i+1];save();renderTut();}
+function tutReplayNext(){const order=["egg","reveal","fav","cum","incub","feed_give"];const i=order.indexOf(S.tutStep);if(i<0||i>=order.length-1){S.tutReplay=false;S.tutStep="done";save();renderTut();toast("チュートリアルの再演はおわりです");return;}S.tutStep=order[i+1];save();renderTut();}
 function renderTut(){const ov=$("tutOverlay"),bn=$("tutBanner");if(!ov||!bn||!S){return;}
  if(S.tutorialDone&&!S.tutReplay){ov.classList.remove("on");bn.classList.remove("on");ov.innerHTML="";bn.innerHTML="";return;}
  const step=S.tutStep||"egg";const replay=S.tutReplay;const st=tutStarter();
@@ -1296,21 +1669,36 @@ function renderTut(){const ov=$("tutOverlay"),bn=$("tutBanner");if(!ov||!bn||!S)
   fav:'<b>① お気に入りに登録しよう</b><br><span class="sub">「ねこ」画面で 最初のねこの ☆ お気に入り を押すと、その子が <b>いっしょに歩くねこ</b> になります（最大5匹）。</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'cats\')">ねこ画面を開く</button> '+skipBtn+'</div>',
   cum:'<b>② 累計ミッションの報酬を受け取ろう</b><br><span class="sub">「ログイン日数 1日」が達成されました！「ミッション」画面の <b>累計ミッション</b> で「受け取る」を押して、卵をもらおう。</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'mission\')">ミッション画面を開く</button> '+skipBtn+'</div>',
   incub:'<b>③ 卵をふか器にセットしよう</b><br><span class="sub">「もちもの」画面で、もらった卵の「ふか器にセット」を押してね。ホームのふか器をタップすると、残り歩数や卵の詳細が見られます。</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'bag\')">もちもの画面を開く</button> '+skipBtn+'</div>',
-  feed_convert:'<b>④ フルーツをカリカリに変えよう</b><br><span class="sub">フルーツを1つ渡しました。「もちもの」画面で フルーツの「変換する」を押すと、カリカリになります。</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'bag\')">もちもの画面を開く</button> '+skipBtn+'</div>',
+  feed_convert:'<b>④ カリカリをあげよう</b><br><span class="sub">カリカリを渡しました。</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'cats\')">ねこ画面を開く</button> '+skipBtn+'</div>',
   feed_give:'<b>⑤ カリカリをねこにあげよう</b><br><span class="sub">「ねこ」画面の「カリカリをあげる」で、色を選んでねこを押してあげてね。これでチュートリアルはおわりです！</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'cats\')">ねこ画面を開く</button> '+skipBtn+'</div>'};
  bn.innerHTML=(msgs[step]||"")+nextBtn;}
 function tutEggTap(){if(S.tutReplay){tutReplayNext();return;}tutAdvance("reveal");}
 function maybeStartTutorial(){if(!S)return;if(isFreshSave&&!S.tutorialDone){startTutorial(false);}else{renderTut();}}
 
-function renderAll(){renderHeader();renderHome();renderErrands();renderCats();renderBag();renderMissions();renderDest();renderPlayerCoatPicker();renderEggNotice();if(typeof renderFastInfo==="function")renderFastInfo();if(typeof renderTut==="function"&&S&&(!S.tutorialDone||S.tutReplay))renderTut();}
+
+function flyTo(lat,lng){if(!map)return;try{if(mapGL){map.easeTo({center:[lng,lat],zoom:16});}else{map.setView([lat,lng],16);}}catch(e){}}
+function bearingDeg(a,b,c,d){const t=Math.PI/180;const y=Math.sin((d-b)*t)*Math.cos(c*t);const x=Math.cos(a*t)*Math.sin(c*t)-Math.sin(a*t)*Math.cos(c*t)*Math.cos((d-b)*t);return (Math.atan2(y,x)/t+360)%360;}
+function updateDestIndicator(){const el=$("destArrow");if(!el)return;if(!S||!S.destination||!S.lastPos){el.style.display="none";return;}
+ const dist=hav(S.lastPos.lat,S.lastPos.lng,S.destination.lat,S.destination.lng);const brg=bearingDeg(S.lastPos.lat,S.lastPos.lng,S.destination.lat,S.destination.lng);
+ const arrows=["↑","↗","→","↘","↓","↙","←","↖"];const ar=arrows[Math.round(brg/45)%8];
+ el.style.display="block";el.innerHTML="🚩 目的地 "+ar+" 約"+Math.round(dist)+"m";}
+function openSpotList(){let h='<h3 style="margin-top:0">📍 スポットを見る</h3>';
+ if(S.destination){const dist=S.lastPos?Math.round(hav(S.lastPos.lat,S.lastPos.lng,S.destination.lat,S.destination.lng)):0;h+='<div class="shopRow"><div style="font-size:24px">🚩</div><div class="grow"><b>'+S.destination.name+'</b><div class="sub">約'+dist+'m</div></div><button class="sm" onclick="closeSheet();goTab(\'map\');setTimeout(function(){flyTo('+S.destination.lat+','+S.destination.lng+');},200)">地図で見る</button></div>';}
+ if((S.huntSpots||[]).length){h+='<b style="font-size:13px">🏹 狩り場</b>'+S.huntSpots.map(function(sp){const dist=S.lastPos?Math.round(hav(S.lastPos.lat,S.lastPos.lng,sp.lat,sp.lng)):sp.dist;return '<div class="shopRow"><div style="font-size:22px">🏹</div><div class="grow">'+huntSizeById(sp.size).name+'<div class="sub">約'+dist+'m ・ '+coatById(sp.color).name+'色</div></div><button class="sm ghost" onclick="closeSheet();goTab(\'map\');setTimeout(function(){flyTo('+sp.lat+','+sp.lng+');},200)">地図で見る</button><button class="sm" onclick="closeSheet();openPicker(\'hunt\',\''+sp.id+'\')">狩りに行く</button></div>';}).join("");}
+ if((S.discoveries||[]).length){h+='<b style="font-size:13px">🧺 見つけたもの</b>'+S.discoveries.map(function(d){return '<div class="shopRow"><div>'+discIcon(d)+'</div><div class="grow">'+discTitle(d)+'<div class="sub">約'+Math.round(d.dist)+'m</div></div><button class="sm ghost" onclick="closeSheet();goTab(\'map\');setTimeout(function(){flyTo('+d.lat+','+d.lng+');},200)">地図で見る</button><button class="sm" onclick="closeSheet();openPicker(\'errand\',\''+d.id+'\')">おつかい</button></div>';}).join("");}
+ if((S.spots||[]).length){h+='<b style="font-size:13px">📍 スポット</b>'+S.spots.slice(0,40).map(function(sp){const dist=S.lastPos?Math.round(hav(S.lastPos.lat,S.lastPos.lng,sp.lat,sp.lng)):(sp.dist||0);return '<div class="shopRow"><div>'+pinSVG(sp.design,30)+'</div><div class="grow">'+sp.name+'<div class="sub">'+designById(sp.design).name+' ・ 約'+dist+'m</div></div><button class="sm" onclick="S.spotPinId=\''+sp.id+'\';save();drawMapPins();closeSheet();goTab(\'map\');setTimeout(function(){flyTo('+sp.lat+','+sp.lng+');},200)">ここへ行く</button></div>';}).join("");}
+ if(!(S.spots||[]).length&&!(S.discoveries||[]).length)h+='<div class="sub">まだ何もありません。</div>';
+ h+='<div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';showSheet(h);}
+
+function renderAll(){renderHeader();renderHome();renderErrands();renderCats();renderBag();renderMissions();renderDest();renderPlayerCoatPicker();renderEggNotice();if(typeof renderWeather==="function")renderWeather();updateDestIndicator();if(typeof renderFastInfo==="function")renderFastInfo();if(typeof renderTut==="function"&&S&&(!S.tutorialDone||S.tutReplay))renderTut();}
 document.querySelectorAll("nav a").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();
  document.querySelectorAll("nav a").forEach(x=>x.classList.remove("on"));a.classList.add("on");
  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));
  $("tab-"+a.dataset.tab).classList.add("on");
  if(a.dataset.tab==="map"){initMap();setTimeout(()=>{resizeMap();},120);startGPS();}
  renderAll();}));
-setInterval(()=>{renderErrands();},30000);
-load();rollDay();ensureMissions();save();renderAll();startGPS();maybeStartTutorial();
+setInterval(()=>{renderErrands();renderHeader();},30000);
+load();rollDay();ensureMissions();save();renderAll();startGPS();maybeStartTutorial();bgmInit();
 </script>
 </body>
 </html>
