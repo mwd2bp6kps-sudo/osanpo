@@ -88,10 +88,10 @@ button{background:linear-gradient(135deg,#ff8fb8,#ffa8c8)}
 .pin{font-size:26px;text-align:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
 .fxWrap{position:relative;display:inline-block;line-height:0}
 .fxWrap svg{display:block}
-.fxS::before,.fxS::after{content:"✨";position:absolute;font-size:15px;line-height:1;animation:fxfloat 1.6s ease-in-out infinite;pointer-events:none}
+.fxS::before,.fxS::after{content:"✦";color:#ffb52e;position:absolute;font-size:15px;line-height:1;animation:fxfloat 1.6s ease-in-out infinite;pointer-events:none}
 .fxS::before{top:-4px;left:-8px}.fxS::after{bottom:2px;right:-8px;animation-delay:.7s}
-.fxH::before,.fxH::after{content:"💗";position:absolute;font-size:15px;line-height:1;animation:fxfloat 1.6s ease-in-out infinite;pointer-events:none}
-.fxH::before{top:-6px;left:-9px}.fxH::after{top:34%;right:-10px;content:"💕";animation-delay:.7s}
+.fxH::before,.fxH::after{content:"♥";color:#ff5c93;position:absolute;font-size:15px;line-height:1;animation:fxfloat 1.6s ease-in-out infinite;pointer-events:none}
+.fxH::before{top:-6px;left:-9px}.fxH::after{top:34%;right:-10px;content:"♥";color:#ff8fb8;animation-delay:.7s}
 @keyframes fxfloat{0%,100%{transform:translateY(0) scale(1);opacity:.85}50%{transform:translateY(-4px) scale(1.18);opacity:1}}
 .catTile{background:#fff0f6;border-radius:14px;padding:8px 4px 6px;width:88px;text-align:center;font-size:11px;line-height:1.3;cursor:pointer}
 .catTile svg{display:block;margin:0 auto}
@@ -106,7 +106,7 @@ button{background:linear-gradient(135deg,#ff8fb8,#ffa8c8)}
 .mrowGold{background:linear-gradient(135deg,#fff7d6,#ffedb0);border-radius:14px;padding:8px}
 .lockOverlay{position:fixed;inset:0;z-index:2000;background:rgba(255,240,246,.94);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;text-align:center;padding:20px}
 .lockOverlay.on{display:flex}
-.houseCard{background:linear-gradient(180deg,#fff 60%,#ffeef5 60%);border-top:16px solid #ff9ec6;cursor:pointer}
+.houseCard{background:linear-gradient(180deg,#e8d7bd 58%,#b08954 58%);border-top:16px solid #a67c52;cursor:pointer}
 .coinChip{background:#fff;border:2px solid #ffd94d;border-radius:999px;padding:2px 10px;font-weight:800;color:#8a6d00;font-size:13px;white-space:nowrap}
 .pickTile.sel{outline:3px solid #ff5c93}
 .busyCat{filter:grayscale(1);opacity:.65}
@@ -125,68 +125,143 @@ button{background:linear-gradient(135deg,#ff8fb8,#ffa8c8)}
 .furnIcon{position:absolute;font-size:30px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.2))}
 .bigCatBtn{flex:1;background:#fff;border:2px solid #ffe3ee;border-radius:18px;padding:12px 6px;text-align:center;cursor:pointer;box-shadow:0 2px 8px rgba(255,143,184,.12)}
 input[type=range]{accent-color:#ff5c93;height:28px}
+
+html,body,header,nav,.sheet,.lockOverlay,.tutOverlay,.tutBanner{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+input,textarea,select{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+.heartsRow{display:inline-flex;flex-direction:row;flex-wrap:nowrap;gap:1px;white-space:nowrap;vertical-align:middle;line-height:0;max-width:100%}
+.heartsRow svg{flex:none;display:block}
+.icn{display:inline-block;line-height:0;vertical-align:-5px}
+.icn svg{display:block}
+nav a .icn{vertical-align:0}
+.coinChip{display:inline-flex;align-items:center;gap:4px}
+.coinTxt{display:inline-flex;align-items:center;gap:3px;vertical-align:-3px}
+.roomBox{padding:0;min-height:230px;}
+.roomWall{position:absolute;left:0;right:0;top:0;height:58%;border-bottom:6px solid rgba(122,84,50,.35)}
+.roomFloor{position:absolute;left:0;right:0;bottom:0;height:42%}
+.roomFloor::before{content:"";position:absolute;left:0;right:0;top:6px;border-top:2px solid rgba(255,255,255,.18)}
+.roomCats{position:absolute;left:8px;bottom:10px;right:8px;display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end}
+.furnIcon{line-height:0}
+.furnIcon svg{display:block;filter:drop-shadow(0 2px 2px rgba(90,61,74,.25))}
+.catBtnRow{display:flex;gap:10px;margin-bottom:12px}
+.shopSubGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
 </style>
 </head>
 <body>
 <header>
-<div class="row"><h1 class="grow">🌸 おさんぽ日和</h1><button class="hambtn" onclick="openMenu()" aria-label="メニュー">☰</button></div>
-<div class="lvrow"><span id="lvLabel">Lv.1</span><span class="coinChip" id="coinLabel">🪙 0</span><div class="xpbar"><i id="xpFill" style="width:0%"></i></div><span id="xpLabel" class="sub"></span></div>
+<div class="row"><h1 class="grow"><span class="icn" data-icn="flower" data-sz="22"></span> おさんぽ日和</h1><button class="hambtn" onclick="openMenu()" aria-label="メニュー">☰</button></div>
+<div class="lvrow"><span id="lvLabel">Lv.1</span><span class="coinChip" id="coinLabel">0</span><div class="xpbar"><i id="xpFill" style="width:0%"></i></div><span id="xpLabel" class="sub"></span></div>
 </header>
 <main>
 <section id="tab-home" class="tab on">
 <div class="card"><h2>きょうのおさんぽ</h2>
-<div class="row"><div class="grow"><div class="big"><span id="todaySteps">0</span><span style="font-size:16px"> 歩</span><button class="editStepsBtn" onclick="openStepEditor()" aria-label="歩数を編集" title="歩数を編集">✏️</button></div>
+<div class="row"><div class="grow"><div class="big"><span id="todaySteps">0</span><span style="font-size:16px"> 歩</span><button class="editStepsBtn" onclick="openStepEditor()" aria-label="歩数を編集" title="歩数を編集"><span class="icn" data-icn="pencil" data-sz="15"></span></button></div>
 <div class="sub">GPS推定 ・ 距離 <span id="todayDist">0</span> m ・ 累計 <span id="totalSteps">0</span> 歩</div></div>
 <div id="homeCat"></div></div>
 <div class="sub" id="gpsState">位置情報をまっています…「おさんぽ」タブで許可してね</div></div>
-<div class="card incTap" onclick="openIncubator()"><h2>🥚 ふか器</h2><div id="incubator"></div></div>
-<div class="card houseCard" onclick="openHouse()"><h2>🏠 おうち（いっしょに歩くねこ）</h2><div id="partyRow"></div><div class="sub" style="margin-top:6px">タップでおうちに入る</div></div><div style="text-align:center;margin-bottom:12px"><button class="ghost sm" onclick="toggleLock(true)">🔒 タッチロック（歩くとき）</button></div>
-<div class="card"><h2>📅 こんしゅうのカレンダー</h2><div class="cal" id="weekCal"></div>
+<div class="card incTap" onclick="openIncubator()"><h2><span class="icn" data-icn="egg" data-sz="20"></span> ふか器</h2><div id="incubator"></div></div>
+<div class="card houseCard" onclick="openHouse()"><h2><span class="icn" data-icn="home" data-sz="20"></span> おうち（いっしょに歩くねこ）</h2><div id="partyRow"></div><div class="sub" style="margin-top:6px">タップでおうちに入る</div></div><div style="text-align:center;margin-bottom:12px"><button class="ghost sm" onclick="toggleLock(true)"><span class="icn" data-icn="lock" data-sz="15"></span> タッチロック（歩くとき）</button></div>
+<div class="card"><h2><span class="icn" data-icn="calendar" data-sz="20"></span> こんしゅうのカレンダー</h2><div class="cal" id="weekCal"></div>
 <div class="sub" style="margin-top:8px">きろくは端末の中（このiPhone）に保存されます</div></div>
 </section>
 <section id="tab-map" class="tab">
-<div style="position:relative"><div id="map"></div><div class="weatherWidget" id="weatherWidget" style="display:none"></div><div class="destArrow" id="destArrow" style="display:none"></div></div><div style="margin-top:10px"><button style="width:100%" onclick="openSpotList()">📍 スポットを見る</button></div>
-<div class="card" style="margin-top:12px"><h2>🐱 現在地のねこの色</h2><div class="sub" style="margin-bottom:8px">地図に出る小さなねこの毛色を5種類から選べます</div><div id="playerCoatBox"></div></div>
+<div style="position:relative"><div id="map"></div><div class="weatherWidget" id="weatherWidget" style="display:none"></div><div class="destArrow" id="destArrow" style="display:none"></div></div><div style="margin-top:10px"><button style="width:100%" onclick="openSpotList()"><span class="icn" data-icn="pin" data-sz="16"></span> スポットを見る</button></div>
+<div class="card" style="margin-top:12px"><h2><span class="icn" data-icn="cat" data-sz="20"></span> 現在地のねこの色</h2><div class="sub" style="margin-bottom:8px">地図に出る小さなねこの毛色を5種類から選べます</div><div id="playerCoatBox"></div></div>
 <div id="eggNotice"></div><div id="fastInfo"></div>
-<div class="card" style="margin-top:12px"><h2>📍 目的地</h2><div id="destCard"></div></div>
+<div class="card" style="margin-top:12px"><h2><span class="icn" data-icn="pin" data-sz="20"></span> 目的地</h2><div id="destCard"></div></div>
 </section>
 <section id="tab-errand" class="tab">
-<div class="card"><h2>🔭 探索機（1日1回）</h2><div id="detectorBox"></div>
+<div class="card"><h2><span class="icn" data-icn="search" data-sz="20"></span> 探索機（1日1回）</h2><div id="detectorBox"></div>
 <div class="sub">使った場所の近くのスポットの卵と、フルーツが見つかります。</div></div>
-<div class="card"><h2>🧺 見つけたもの</h2><div id="discList"></div></div>
-<div class="card"><h2>🐾 おつかい中・帰ってきた猫</h2><div id="errandList"></div></div><div class="card"><h2>🏹 狩り</h2><div id="huntBox"></div></div>
+<div class="card"><h2><span class="icn" data-icn="basket" data-sz="20"></span> 見つけたもの</h2><div id="discList"></div></div>
+<div class="card"><h2><span class="icn" data-icn="paw" data-sz="20"></span> おつかい中・帰ってきた猫</h2><div id="errandList"></div></div><div class="card"><h2><span class="icn" data-icn="hunt" data-sz="20"></span> 狩り</h2><div id="huntBox"></div></div>
 </section>
 <section id="tab-cats" class="tab">
-<div class="card"><h2>🐱 うちのねこ</h2><div id="catSortBox"></div><div id="catList"></div></div>
-<div class="card"><h2>🍚 カリカリをあげる</h2><div id="feedBox"></div></div>
-<div class="card"><h2>📖 ねこずかん</h2><div id="zukan"></div></div>
+<div class="card"><h2><span class="icn" data-icn="cat" data-sz="20"></span> うちのねこ</h2><div id="catSortBox"></div><div id="catList"></div></div>
+<div class="card"><h2><span class="icn" data-icn="bowl" data-sz="20"></span> ご飯をあげる</h2><div id="feedBox"></div></div>
+<div class="card"><h2><span class="icn" data-icn="book" data-sz="20"></span> ねこずかん</h2><div id="zukan"></div></div>
 </section>
 <section id="tab-bag" class="tab">
-<div class="card"><h2>🎒 もちもの</h2><div id="bagBox"></div></div>
+<div class="card"><h2><span class="icn" data-icn="bag" data-sz="20"></span> もちもの</h2><div id="bagBox"></div></div>
 </section>
 <section id="tab-mission" class="tab">
-<div class="card"><h2>⭐ デイリーミッション</h2><div id="dailyM"></div></div>
-<div class="card"><h2>🌙 ウィークリーミッション</h2><div id="weeklyM"></div></div>
-<div class="card"><h2>🏆 累計ミッション</h2><div id="cumMissions"></div></div>
+<div class="card"><h2><span class="icn" data-icn="star" data-sz="20"></span> デイリーミッション</h2><div id="dailyM"></div></div>
+<div class="card"><h2><span class="icn" data-icn="moon" data-sz="20"></span> ウィークリーミッション</h2><div id="weeklyM"></div></div>
+<div class="card"><h2><span class="icn" data-icn="trophy" data-sz="20"></span> 累計ミッション</h2><div id="cumMissions"></div></div>
 </section>
 </main>
 <div class="sheet" id="sheet"></div>
 <div class="tutOverlay" id="tutOverlay"></div>
 <div class="tutBanner" id="tutBanner"></div>
-<div class="toast" id="toast"></div><div class="lockOverlay" id="lockOverlay"><div style="font-size:44px">🔒</div><div><b>タッチロック中</b><div class="sub" id="lockSteps"></div></div><button class="ghost" id="lockUnlockBtn">長押しで解除</button></div>
+<div class="toast" id="toast"></div><div class="lockOverlay" id="lockOverlay"><div><span class="icn" data-icn="lock" data-sz="46"></span></div><div><b>タッチロック中</b><div class="sub" id="lockSteps"></div></div><button class="ghost" id="lockUnlockBtn">長押しで解除</button></div>
 <nav>
-<a href="#" data-tab="home" class="on"><span>🏠</span>ホーム</a>
-<a href="#" data-tab="map"><span>🗺️</span>おさんぽ</a>
-<a href="#" data-tab="errand"><span>🧺</span>おつかい</a>
-<a href="#" data-tab="cats"><span>🐱</span>ねこ</a>
-<a href="#" data-tab="bag"><span>🎒</span>もちもの</a>
-<a href="#" data-tab="mission"><span>⭐</span>ミッション</a>
+<a href="#" data-tab="home" class="on"><span><span class="icn" data-icn="home" data-sz="21"></span></span>ホーム</a>
+<a href="#" data-tab="map"><span><span class="icn" data-icn="map" data-sz="21"></span></span>おさんぽ</a>
+<a href="#" data-tab="errand"><span><span class="icn" data-icn="basket" data-sz="21"></span></span>おつかい</a>
+<a href="#" data-tab="cats"><span><span class="icn" data-icn="cat" data-sz="21"></span></span>ねこ</a>
+<a href="#" data-tab="bag"><span><span class="icn" data-icn="bag" data-sz="21"></span></span>もちもの</a>
+<a href="#" data-tab="mission"><span><span class="icn" data-icn="star" data-sz="21"></span></span>ミッション</a>
 </nav>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
+/* ===== v13 original illustrations (no emoji) ===== */
+function coinSVG(size){const s=size||18;return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 48 48" role="img" aria-label="コイン"><defs><radialGradient id="cgold" cx="0.35" cy="0.3" r="0.9"><stop offset="0%" stop-color="#fff3b0"/><stop offset="45%" stop-color="#ffd94d"/><stop offset="100%" stop-color="#f0a81c"/></radialGradient></defs><circle cx="24" cy="24" r="21" fill="url(#cgold)" stroke="#c07f10" stroke-width="2.6"/><circle cx="24" cy="24" r="16.5" fill="none" stroke="#e8b62a" stroke-width="1.8" stroke-dasharray="3 2.4"/><ellipse cx="17" cy="14" rx="6" ry="3.6" fill="#ffffff" opacity=".55" transform="rotate(-24 17 14)"/><g fill="#c07f10"><ellipse cx="24" cy="28.5" rx="5.2" ry="4.4"/><ellipse cx="15.8" cy="21.5" rx="2.5" ry="3.2" transform="rotate(-18 15.8 21.5)"/><ellipse cx="20.6" cy="18.6" rx="2.5" ry="3.3" transform="rotate(-6 20.6 18.6)"/><ellipse cx="26.2" cy="18.4" rx="2.5" ry="3.3" transform="rotate(6 26.2 18.4)"/><ellipse cx="31" cy="21.2" rx="2.5" ry="3.2" transform="rotate(18 31 21.2)"/></g></svg>';}
+function coinHTML(n){return '<span class="coinTxt">'+coinSVG(15)+' '+(Number(n)||0).toLocaleString()+'</span>';}
+function illuSVG(kind,size){const s=size||24;const o='width="'+s+'" height="'+s+'" viewBox="0 0 48 48"';let b="";
+const P="#ff8fb8",D="#e5639a",B="#8a5a34",G="#7ec850";
+switch(kind){
+case "flower":b='<g><circle cx="24" cy="13" r="7" fill="'+P+'"/><circle cx="35" cy="20" r="7" fill="#ffb3cd"/><circle cx="31" cy="32" r="7" fill="'+P+'"/><circle cx="17" cy="32" r="7" fill="#ffb3cd"/><circle cx="13" cy="20" r="7" fill="'+P+'"/><circle cx="24" cy="22" r="5.4" fill="#ffcf4d"/></g>';break;
+case "home":b='<path d="M6 25 L24 9 L42 25" fill="none" stroke="'+D+'" stroke-width="4.4" stroke-linecap="round"/><path d="M11 24 L11 41 L37 41 L37 24 Z" fill="#ffe9c9" stroke="'+B+'" stroke-width="2.2"/><rect x="20" y="30" width="8" height="11" rx="2" fill="'+P+'"/><rect x="13" y="26" width="6" height="6" rx="1.6" fill="#a8dcf2"/><rect x="29" y="26" width="6" height="6" rx="1.6" fill="#a8dcf2"/>';break;
+case "map":b='<path d="M7 12 L17 8 L31 13 L41 9 L41 36 L31 40 L17 35 L7 39 Z" fill="#cdeea0" stroke="#57a85f" stroke-width="2.2" stroke-linejoin="round"/><path d="M17 8 L17 35 M31 13 L31 40" stroke="#ffffff" stroke-width="2.6"/><path d="M24 15 a6 6 0 0 1 6 6 c0 4.4-6 10-6 10 s-6-5.6-6-10 a6 6 0 0 1 6-6 Z" fill="#ff5c93"/><circle cx="24" cy="21" r="2.4" fill="#fff"/>';break;
+case "basket":b='<path d="M10 20 L38 20 L34 40 Q24 44 14 40 Z" fill="#d9a05f" stroke="'+B+'" stroke-width="2.2" stroke-linejoin="round"/><path d="M17 20 Q24 7 31 20" fill="none" stroke="'+B+'" stroke-width="2.6"/><path d="M13 27 L35 27 M15 34 L33 34" stroke="#b07a3f" stroke-width="2.2"/><circle cx="19" cy="15" r="3.4" fill="'+P+'"/><circle cx="27" cy="13" r="3" fill="#ffb3cd"/>';break;
+case "cat":b='<path d="M13 17 L11 6 L21 11 Z M35 17 L37 6 L27 11 Z" fill="#fff" stroke="#e0a9bf" stroke-width="2" stroke-linejoin="round"/><circle cx="24" cy="26" r="15" fill="#fff" stroke="#e0a9bf" stroke-width="2"/><circle cx="18.6" cy="25" r="1.9" fill="#5a3d4a"/><circle cx="29.4" cy="25" r="1.9" fill="#5a3d4a"/><ellipse cx="24" cy="29.4" rx="2.1" ry="1.6" fill="'+P+'"/><circle cx="13.6" cy="29.6" r="3" fill="#ffc9da"/><circle cx="34.4" cy="29.6" r="3" fill="#ffc9da"/>';break;
+case "bag":b='<path d="M13 16 L35 16 L38 42 L10 42 Z" fill="#ff9ec6" stroke="'+D+'" stroke-width="2.2" stroke-linejoin="round"/><path d="M18 16 Q18 7 24 7 Q30 7 30 16" fill="none" stroke="'+D+'" stroke-width="2.8"/><g fill="#fff"><ellipse cx="24" cy="31" rx="3.6" ry="3"/><ellipse cx="18.4" cy="26.6" rx="1.8" ry="2.2"/><ellipse cx="22" cy="25.2" rx="1.8" ry="2.3"/><ellipse cx="26" cy="25.2" rx="1.8" ry="2.3"/><ellipse cx="29.6" cy="26.6" rx="1.8" ry="2.2"/></g>';break;
+case "star":b='<path d="M24 5 L29.4 17.6 L43 19 L32.8 28.2 L35.8 41.6 L24 34.8 L12.2 41.6 L15.2 28.2 L5 19 L18.6 17.6 Z" fill="#ffcf4d" stroke="#e8a81c" stroke-width="2" stroke-linejoin="round"/>';break;
+case "moon":b='<path d="M33 6 A17 17 0 1 0 42 31 A13.5 13.5 0 0 1 33 6 Z" fill="#ffe98a" stroke="#e8c33c" stroke-width="2" stroke-linejoin="round"/><path d="M36 8 l1.4 3.4 3.4 1.4-3.4 1.4L36 17.6l-1.4-3.4-3.4-1.4 3.4-1.4Z" fill="#ffcf4d"/>';break;
+case "trophy":b='<path d="M15 7 L33 7 L33 19 Q33 27 24 27 Q15 27 15 19 Z" fill="#ffcf4d" stroke="#d99a16" stroke-width="2.2"/><path d="M15 10 Q6 10 8 16 Q9.6 21 16 20 M33 10 Q42 10 40 16 Q38.4 21 32 20" fill="none" stroke="#d99a16" stroke-width="2.4"/><rect x="21" y="27" width="6" height="6" fill="#e8b62a"/><path d="M14 39 L34 39 L31 33 L17 33 Z" fill="#f0a81c"/>';break;
+case "egg":b='<ellipse cx="24" cy="26" rx="14" ry="18" fill="#fff7ee" stroke="#e8b98a" stroke-width="2.2"/><path d="M11 26 Q18 21 24 26 Q30 31 37 26 L37 31 Q30 36 24 31 Q18 26 11 31 Z" fill="'+P+'" opacity=".65"/><circle cx="24" cy="16" r="2.2" fill="#ffb3cd"/>';break;
+case "calendar":b='<rect x="8" y="11" width="32" height="30" rx="4" fill="#fff" stroke="'+D+'" stroke-width="2.2"/><path d="M8 19 L40 19" stroke="'+D+'" stroke-width="2.2"/><rect x="8" y="11" width="32" height="8" rx="4" fill="'+P+'"/><rect x="15" y="6" width="4" height="8" rx="2" fill="'+D+'"/><rect x="29" y="6" width="4" height="8" rx="2" fill="'+D+'"/><g fill="#ffd0e0"><circle cx="15" cy="26" r="2"/><circle cx="24" cy="26" r="2"/><circle cx="33" cy="26" r="2"/><circle cx="15" cy="34" r="2"/><circle cx="24" cy="34" r="2"/><circle cx="33" cy="34" r="2"/></g>';break;
+case "lock":b='<rect x="11" y="21" width="26" height="19" rx="5" fill="#ffcf4d" stroke="#d99a16" stroke-width="2.2"/><path d="M17 21 L17 15 a7 7 0 0 1 14 0 L31 21" fill="none" stroke="#b08954" stroke-width="3.4"/><circle cx="24" cy="29" r="3" fill="#8a5f10"/><rect x="22.8" y="29" width="2.4" height="5.4" rx="1.2" fill="#8a5f10"/>';break;
+case "pin":b='<path d="M24 4 a13 13 0 0 1 13 13 c0 9.4-13 27-13 27 S11 26.4 11 17 A13 13 0 0 1 24 4 Z" fill="#ff5c93" stroke="'+D+'" stroke-width="2"/><circle cx="24" cy="17" r="5.4" fill="#fff"/>';break;
+case "search":b='<circle cx="21" cy="21" r="12" fill="#cdeef7" stroke="#57a8c9" stroke-width="2.6"/><path d="M30 30 L41 41" stroke="'+B+'" stroke-width="5" stroke-linecap="round"/><path d="M21 13 l1.6 3.8 3.8 1.6-3.8 1.6L21 23.8l-1.6-3.8-3.8-1.6 3.8-1.6Z" fill="#ffcf4d"/>';break;
+case "paw":b='<g fill="'+D+'"><ellipse cx="24" cy="29" rx="6.4" ry="5.4"/><ellipse cx="13.8" cy="21.6" rx="3" ry="3.9" transform="rotate(-18 13.8 21.6)"/><ellipse cx="19.8" cy="17.8" rx="3" ry="4"/><ellipse cx="26.4" cy="17.6" rx="3" ry="4"/><ellipse cx="32.6" cy="21.2" rx="3" ry="3.9" transform="rotate(18 32.6 21.2)"/></g>';break;
+case "hunt":b='<circle cx="24" cy="24" r="16" fill="none" stroke="#e5639a" stroke-width="3"/><circle cx="24" cy="24" r="9" fill="none" stroke="#ff9ec6" stroke-width="3"/><circle cx="24" cy="24" r="3.4" fill="#ff5c93"/><path d="M24 2 L24 10 M24 38 L24 46 M2 24 L10 24 M38 24 L46 24" stroke="#e5639a" stroke-width="3" stroke-linecap="round"/>';break;
+case "book":b='<path d="M10 9 Q17 5 24 9 L24 40 Q17 36 10 40 Z" fill="#fff" stroke="#8fb8d8" stroke-width="2.2" stroke-linejoin="round"/><path d="M38 9 Q31 5 24 9 L24 40 Q31 36 38 40 Z" fill="#eef6ff" stroke="#8fb8d8" stroke-width="2.2" stroke-linejoin="round"/><path d="M14 15 Q18 13 21 15 M14 21 Q18 19 21 21 M27 15 Q31 13 34 15 M27 21 Q31 19 34 21" stroke="#b9cfe2" stroke-width="1.8" fill="none"/>';break;
+case "bowl":b='<path d="M6 24 L42 24 L38 39 Q24 44 10 39 Z" fill="#ffd9e8" stroke="'+D+'" stroke-width="2.2" stroke-linejoin="round"/><circle cx="16" cy="19" r="4.6" fill="#e59a5f"/><circle cx="24" cy="16" r="5" fill="#c97e45"/><circle cx="32" cy="19" r="4.6" fill="#e59a5f"/><circle cx="20" cy="22" r="4" fill="#d98d4e"/><circle cx="28" cy="22" r="4" fill="#b96f36"/>';break;
+case "grass":b='<path d="M24 42 Q22 24 12 14 Q24 16 25 30 Q27 16 38 10 Q37 26 28 34 Q34 30 40 32 Q33 42 24 42 Z" fill="'+G+'" stroke="#4f9a44" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 42 L38 42" stroke="#4f9a44" stroke-width="2.6" stroke-linecap="round"/>';break;
+case "meat":b='<path d="M14 12 a10 10 0 1 1 8 16 L31 37 a5.4 5.4 0 1 1-6 6 a5.4 5.4 0 1 1-6-6 Z" fill="#e2704d" stroke="#b94f30" stroke-width="2"/><ellipse cx="16" cy="17" rx="4.4" ry="3" fill="#ff9d7a" transform="rotate(-30 16 17)"/><circle cx="33" cy="39" r="2.4" fill="#fff3e6"/><circle cx="27" cy="43" r="2.4" fill="#fff3e6"/>';break;
+case "pencil":b='<path d="M9 39 L11 30 L31 10 L38 17 L18 37 Z" fill="#ffcf4d" stroke="#d99a16" stroke-width="2" stroke-linejoin="round"/><path d="M31 10 L38 17 L34 21 L27 14 Z" fill="#ffb3cd"/><path d="M11 30 L9 39 L18 37" fill="#fff" stroke="#d99a16" stroke-width="1.6"/>';break;
+case "music":b='<path d="M20 34 L20 12 L38 8 L38 30" fill="none" stroke="'+D+'" stroke-width="3" stroke-linejoin="round"/><circle cx="14" cy="34" r="6" fill="'+P+'" stroke="'+D+'" stroke-width="2"/><circle cx="32" cy="30" r="6" fill="#ffb3cd" stroke="'+D+'" stroke-width="2"/>';break;
+case "gift":b='<rect x="9" y="19" width="30" height="22" rx="3" fill="'+P+'" stroke="'+D+'" stroke-width="2"/><rect x="6" y="12" width="36" height="8" rx="3" fill="#ffb3cd" stroke="'+D+'" stroke-width="2"/><rect x="21.6" y="12" width="4.8" height="29" fill="#fff0f6"/><path d="M24 12 Q14 12 15 6 Q16 1 21 4 Q24 6 24 12 Q24 6 27 4 Q32 1 33 6 Q34 12 24 12 Z" fill="none" stroke="'+D+'" stroke-width="2.2"/>';break;
+default:b='<circle cx="24" cy="24" r="17" fill="#ffd9e8" stroke="'+D+'" stroke-width="2.2"/><path d="M24 14 l2.2 5 5 2.2-5 2.2L24 28.4l-2.2-5-5-2.2 5-2.2Z" fill="#ffcf4d"/>';
+}
+return '<svg '+o+' role="img">'+b+'</svg>';}
+function meatSVG(mid,size){const s=size||30;const acc={usagi:"#ffb3cd",nezumi:"#b9c6d4",tori:"#a8dcf2",kaeru:"#8fd694"}[mid]||"#ffb3cd";
+return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 48 48" role="img"><path d="M13 11 a10.5 10.5 0 1 1 8.4 16.8 L31 37.4 a5.6 5.6 0 1 1-6.2 6.2 a5.6 5.6 0 1 1-6.2-6.2 Z" fill="#e2704d" stroke="#b94f30" stroke-width="2"/><ellipse cx="15" cy="16" rx="4.6" ry="3" fill="#ff9d7a" transform="rotate(-30 15 16)"/><circle cx="17" cy="33" r="8" fill="'+acc+'" stroke="#ffffff" stroke-width="2"/><circle cx="14.6" cy="31.4" r="1.3" fill="#5a3d4a"/><circle cx="19.4" cy="31.4" r="1.3" fill="#5a3d4a"/><ellipse cx="17" cy="34.6" rx="1.7" ry="1.2" fill="#ff8fb8"/></svg>';}
+function pickupSVG(pid,size){const s=size||30;const M={koishi:["#b9c6d4","#8a97a5"],kusa:["#7ec850","#4f9a44"],donguri:["#b07a3f","#7a4a21"],eda:["#b08954","#7a4a21"],happa:["#8fd694","#4f9a44"],maruishi:["#dfe6ec","#aab3bd"],dorodango:["#a5713f","#7a4a21"],futa:["#c0c8d4","#8a97a5"],matsubokkuri:["#8a5a34","#5f3c1e"],botan:["#7ab8e8","#4a86c4"],kaigara:["#ffd9e8","#e58ab0"],sakuraP:["#ffb3cd","#e58ab0"],watage:["#ffffff","#b9c6d4"],kiNoMi:["#7a7fd0","#4a4f9e"],suna:["#ffe98a","#d9b83c"],clover:["#57b06a","#35763f"],garasu:["#a8dcf2","#57a8c9"],nezumiO:["#c9ced6","#8a97a5"],hane:["#ffffff","#c9a3b5"],akikan:["#d98d4e","#a85f24"],okashi:["#ff9ec6","#d95f92"],keshigomu:["#ffb3cd","#d98aa8"],kagi:["#ffcf4d","#c07f10"],ginBotan:["#e8edf2","#aab3bd"],coinOld:["#f0c95e","#b8860b"],yubiwa:["#ffd94d","#c07f10"],hoshi:["#ffe98a","#d9a83c"],okashiFull:["#b06a3b","#7a4322"],kinHane:["#ffd94d","#d99a16"],nijiiro:["#ff9ec6","#7ab8e8"]};const c=M[pid]||["#ffd9e8","#e5639a"];
+let inner="";
+if(pid==="kusa"||pid==="happa"||pid==="clover")inner='<path d="M24 40 Q22 22 12 12 Q24 14 25 27 Q27 14 38 8 Q37 24 28 32 Q34 27 40 30 Q33 40 24 40 Z" fill="'+c[0]+'" stroke="'+c[1]+'" stroke-width="2" stroke-linejoin="round"/>';
+else if(pid==="hane"||pid==="kinHane")inner='<path d="M36 6 Q18 12 12 30 Q10 38 14 42 Q30 40 38 24 Q43 13 36 6 Z" fill="'+c[0]+'" stroke="'+c[1]+'" stroke-width="2"/><path d="M14 40 Q22 26 34 12" stroke="'+c[1]+'" stroke-width="2" fill="none"/>';
+else if(pid==="kagi")inner='<circle cx="17" cy="17" r="9" fill="none" stroke="'+c[1]+'" stroke-width="4.4"/><path d="M23 23 L38 38 M31 31 L37 25 M35 35 L41 29" stroke="'+c[1]+'" stroke-width="4.4" stroke-linecap="round"/>';
+else if(pid==="yubiwa")inner='<circle cx="24" cy="29" r="11" fill="none" stroke="'+c[1]+'" stroke-width="4"/><path d="M24 5 L30 12 L24 19 L18 12 Z" fill="#a8dcf2" stroke="#57a8c9" stroke-width="1.8" stroke-linejoin="round"/>';
+else if(pid==="hoshi")inner='<path d="M24 6 L29 17 L41 18 L31.6 26.4 L34.8 38.4 L24 31.8 L13.2 38.4 L16.4 26.4 L7 18 L19 17 Z" fill="'+c[0]+'" stroke="'+c[1]+'" stroke-width="2" stroke-linejoin="round"/>';
+else if(pid==="coinOld")inner='<circle cx="24" cy="24" r="16" fill="'+c[0]+'" stroke="'+c[1]+'" stroke-width="2.6"/><circle cx="24" cy="24" r="11" fill="none" stroke="'+c[1]+'" stroke-width="1.8" stroke-dasharray="3 2.4"/>';
+else if(pid==="kaigara"||pid==="sakuraP")inner='<path d="M24 40 Q8 30 12 17 Q15 7 24 8 Q33 7 36 17 Q40 30 24 40 Z" fill="'+c[0]+'" stroke="'+c[1]+'" stroke-width="2"/><path d="M24 12 L24 36 M17 14 Q19 26 20 37 M31 14 Q29 26 28 37" stroke="'+c[1]+'" stroke-width="1.6" fill="none" opacity=".7"/>';
+else inner='<ellipse cx="24" cy="27" rx="15" ry="13" fill="'+c[0]+'" stroke="'+c[1]+'" stroke-width="2.2"/><ellipse cx="18" cy="21" rx="5" ry="3.4" fill="#ffffff" opacity=".55" transform="rotate(-22 18 21)"/><path d="M24 14 Q26 8 32 7" stroke="'+c[1]+'" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
+return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 48 48" role="img">'+inner+'</svg>';}
+function furnSVG(f,size){const s=size||34;const col=(f&&f.color)||"#ff8fb8";const base=(f&&f.base)||(f&&f.id)||"sara";let b="";
+if(base==="sara"){b='<path d="M5 25 L43 25 L38 39 Q24 44 10 39 Z" fill="#ffffff" stroke="#c9a3b5" stroke-width="2.2" stroke-linejoin="round"/><ellipse cx="24" cy="25" rx="17" ry="4.6" fill="'+col+'"/><circle cx="18" cy="20" r="3.6" fill="#c97e45"/><circle cx="25" cy="18.4" r="4" fill="#e59a5f"/><circle cx="31" cy="20.4" r="3.4" fill="#b96f36"/>';if(f&&f.pattern==="flower")b+='<circle cx="24" cy="34" r="3" fill="#ff9ec6"/><circle cx="14" cy="32" r="2.2" fill="#ffb3cd"/><circle cx="34" cy="32" r="2.2" fill="#ffb3cd"/>';}
+else if(base==="bed"){b='<path d="M6 32 L42 32 L42 40 L6 40 Z" fill="'+col+'" stroke="#c98aa8" stroke-width="2"/><path d="M6 32 L6 20 Q6 15 11 15 L15 15 L15 32" fill="#ffffff" stroke="#c98aa8" stroke-width="2"/><ellipse cx="24" cy="27" rx="11" ry="4.6" fill="#ffffff" stroke="#e8c9d8" stroke-width="1.6"/><circle cx="20" cy="24" r="1.4" fill="#5a3d4a"/><circle cx="28" cy="24" r="1.4" fill="#5a3d4a"/>';if(f&&f.pattern==="star")b+='<path d="M33 34 l1.2 2.6 2.8.3-2.1 1.9.6 2.8-2.5-1.5-2.5 1.5.6-2.8-2.1-1.9 2.8-.3Z" fill="#ffcf4d"/>';}
+else if(base==="tsume"){b='<path d="M14 42 L18 12 Q24 8 30 12 L34 42 Z" fill="'+col+'" stroke="#a5713f" stroke-width="2.2"/><path d="M17 20 L31 20 M16 27 L32 27 M15.4 34 L32.6 34" stroke="#8a5a2e" stroke-width="2.2"/><ellipse cx="24" cy="42" rx="13" ry="3.4" fill="#8a5a34"/>';}
+else if(base==="clock"){b='<circle cx="24" cy="24" r="17" fill="#fff8ec" stroke="'+col+'" stroke-width="3.4"/><circle cx="24" cy="24" r="2.2" fill="#5a3d4a"/><path d="M24 24 L24 14 M24 24 L31 28" stroke="#5a3d4a" stroke-width="2.6" stroke-linecap="round"/><path d="M17 6 Q24 1 31 6" fill="none" stroke="'+col+'" stroke-width="2.6"/>';}
+else if(base==="tower"){b='<rect x="20" y="18" width="8" height="22" fill="#d9b98f" stroke="#a5713f" stroke-width="2"/><ellipse cx="24" cy="14" rx="13" ry="6" fill="'+col+'" stroke="#a5713f" stroke-width="2"/><ellipse cx="24" cy="29" rx="10" ry="5" fill="'+col+'" opacity=".75" stroke="#a5713f" stroke-width="1.8"/><path d="M8 42 L40 42" stroke="#a5713f" stroke-width="3" stroke-linecap="round"/>';}
+else if(f&&(f.wall!==undefined||base.indexOf("wp")===0)){b='<rect x="7" y="9" width="34" height="30" rx="4" fill="'+(f.wall||col)+'" stroke="#c9a3b5" stroke-width="2.2"/>';if(f.pattern==="sakura")b+='<circle cx="16" cy="18" r="3.4" fill="#ff9ec6"/><circle cx="30" cy="26" r="3.8" fill="#ffb3cd"/><circle cx="20" cy="32" r="2.8" fill="#ff9ec6"/>';else if(f.pattern==="star")b+='<path d="M15 14 l1.4 3 3 .4-2.3 2 .7 3-2.8-1.7-2.8 1.7.7-3-2.3-2 3-.4Z M31 26 l1.2 2.6 2.6.3-2 1.8.6 2.6-2.4-1.5-2.4 1.5.6-2.6-2-1.8 2.6-.3Z" fill="#ffcf4d"/>';else if(f.pattern==="dot")b+='<g fill="#ffffff" opacity=".8"><circle cx="15" cy="17" r="2"/><circle cx="26" cy="22" r="2"/><circle cx="34" cy="15" r="2"/><circle cx="19" cy="31" r="2"/><circle cx="32" cy="32" r="2"/></g>';else if(f.pattern==="stripe")b+='<path d="M15 9 L15 39 M24 9 L24 39 M33 9 L33 39" stroke="#ffffff" stroke-width="3.4" opacity=".55"/>';else if(f.pattern==="check")b+='<path d="M16 9 L16 39 M24 9 L24 39 M32 9 L32 39 M7 18 L41 18 M7 27 L41 27 M7 35 L41 35" stroke="#ffffff" stroke-width="2" opacity=".5"/>';}
+else if(f&&(f.floor!==undefined||base.indexOf("fl")===0)){b='<path d="M6 30 L42 18 L42 38 L6 42 Z" fill="'+(f.floor||col)+'" stroke="#a5713f" stroke-width="2.2" stroke-linejoin="round"/><path d="M6 34 L42 24 M14 31 L14 40 M26 27 L26 39 M36 23 L36 38" stroke="#8a5a2e" stroke-width="1.6" opacity=".55"/>';if(f.pattern==="flower")b+='<circle cx="18" cy="33" r="2.6" fill="#ff9ec6"/><circle cx="31" cy="28" r="2.6" fill="#ffb3cd"/>';}
+else b='<circle cx="24" cy="24" r="16" fill="'+col+'" stroke="#c98aa8" stroke-width="2.2"/>';
+return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 48 48" role="img">'+b+'</svg>';}
+
 const COATS=[
 {id:"mike",name:"三毛",body:"#ffffff",patch:"#e8862e",patch2:"#4a3a32"},
 {id:"white",name:"白",body:"#ffffff",patch:null},
@@ -329,37 +404,39 @@ case "gloves":return '<path d="M30 18 Q32 2 50 2 Q68 2 70 18 L58 14 Q50 18 42 14
 case "halloween":return '<ellipse cx="50" cy="13" rx="19" ry="13" fill="#ef7d2e"/><path d="M38 3 Q40 13 38 24 M50 1 L50 26 M62 3 Q60 13 62 24" stroke="#d9661f" stroke-width="2" fill="none"/><path d="M50 1 Q52 -5 58 -4" stroke="#5da85f" stroke-width="2.6" fill="none"/><path d="M41 11 L46 11 L43.5 15 Z M54 11 L59 11 L56.5 15 Z" fill="#3a2a1a"/><path d="M42 19 Q50 23 58 19 L56 22 Q50 25 44 22 Z" fill="#3a2a1a"/><path d="M28 84 L24 98 L32 94 L36 104 L40 92 L28 84 Z" fill="#3a3348"/>';
 case "valentine":return '<path d="M16 18 L34 26 L18 36 Q6 26 16 18 Z M84 18 L66 26 L82 36 Q94 26 84 18 Z" fill="#ff8fb8"/><circle cx="50" cy="26" r="5.4" fill="#e5639a"/><path d="M50 108 C30 92 26 80 34 73 C41 67 48 72 50 78 C52 72 59 67 66 73 C74 80 70 92 50 108 Z" fill="#ff5c93"/><path d="M40 78 Q36 84 40 90" stroke="#ff9ec6" stroke-width="2.4" fill="none"/>';
 case "newyear":return '<ellipse cx="50" cy="17" rx="14" ry="6" fill="#ffffff" stroke="#e0d8cc" stroke-width="1.4"/><ellipse cx="50" cy="9" rx="10" ry="5.5" fill="#ffffff" stroke="#e0d8cc" stroke-width="1.4"/><circle cx="50" cy="2.5" r="4.4" fill="#f28c4d"/><path d="M30 68 L50 80 L70 68 L70 78 L50 90 L30 78 Z" fill="#d63c4d"/><path d="M38 74 L50 81 L62 74" fill="none" stroke="#ffffff" stroke-width="2"/>';
-default:return '<path d="M30 114 Q34 102 30 96 M40 116 Q42 106 40 100 M62 114 Q60 104 64 98" stroke="#5da85f" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="72" cy="20" r="3" fill="#ff9ec6"/>';
+default:return '<path d="M14 110 Q18 100 14 94 M21 111 Q23 102 21 97 M90 110 Q86 100 90 94 M83 111 Q81 102 83 97" stroke="#5da85f" stroke-width="2.4" fill="none" stroke-linecap="round"/><circle cx="72" cy="20" r="3" fill="#ff9ec6"/>';
 }
 }
 
 function catSVG(coatId,designId,size){
- const c=coatById(coatId),s=size||72,h=Math.round(s*1.25);
- let patHead="",patBody="";
- if(c.id==="mike"){patHead='<path d="M26 30 Q36 16 50 22 Q40 32 30 36 Z" fill="#e8862e"/><path d="M64 18 Q76 24 74 36 Q64 34 61 26 Z" fill="#4a3a32"/>';patBody='<path d="M28 84 Q38 76 44 86 Q36 94 29 92 Z" fill="#e8862e"/><path d="M64 96 Q74 100 72 110 Q62 108 61 100 Z" fill="#4a3a32"/>';}
- if(c.stripe){patHead='<path d="M38 16 L40 26 M50 14 L50 24 M62 16 L60 26" stroke="#d97f26" stroke-width="3" stroke-linecap="round"/>';patBody='<path d="M30 82 Q40 86 30 90 M70 82 Q60 86 70 90 M32 100 Q40 104 32 108 M68 100 Q60 104 68 108" stroke="#d97f26" stroke-width="2.4" fill="none"/>';}
+ const c=coatById(coatId),s=size||72,h=Math.round(s*1.08);
  const dark=c.id==="black";
+ const line=dark?"#6b5a68":"#d9a8bc";
  const faceCol=dark?"#ffe9f2":"#5a3d4a";
- const eyeCol=dark?"#ffd94d":"#5a3d4a";
- return '<svg width="'+s+'" height="'+h+'" viewBox="0 0 100 125" role="img" aria-label="'+designById(designId).name+'のねこ">'
- +'<path d="M72 92 Q94 88 89 66" fill="none" stroke="#e0b3c4" stroke-width="10.5" stroke-linecap="round"/>'
- +'<path d="M72 92 Q94 88 89 66" fill="none" stroke="'+c.body+'" stroke-width="8" stroke-linecap="round"/>'
- +'<path d="M72 92 Q94 88 89 66" fill="none" stroke="rgba(0,0,0,.08)" stroke-width="2" stroke-linecap="round"/>'
- +'<ellipse cx="50" cy="92" rx="27" ry="29" fill="'+c.body+'" stroke="#e0b3c4" stroke-width="1.4"/>'
+ const eyeCol=dark?"#ffd94d":"#4a3542";
+ let patHead="",patBody="";
+ if(c.id==="mike"){patHead='<path d="M30 26 Q38 12 52 17 Q43 28 33 32 Z" fill="#e8862e" opacity=".92"/><path d="M70 14 Q82 21 79 34 Q69 31 66 22 Z" fill="#4a3a32" opacity=".92"/>';patBody='<path d="M31 84 Q40 76 46 86 Q38 95 30 93 Z" fill="#e8862e" opacity=".9"/><path d="M66 92 Q75 96 73 104 Q64 102 63 95 Z" fill="#4a3a32" opacity=".85"/>';}
+ if(c.stripe){patHead='<path d="M40 13 L42 23 M52 11 L52 21 M64 13 L62 23" stroke="#d97f26" stroke-width="3.2" stroke-linecap="round"/>';patBody='<path d="M29 80 Q39 84 29 88 M75 80 Q65 84 75 88 M31 95 Q39 99 31 103 M73 95 Q65 99 73 103" stroke="#d97f26" stroke-width="2.4" fill="none" stroke-linecap="round"/>';}
+ return '<svg width="'+s+'" height="'+h+'" viewBox="0 0 104 112" role="img" aria-label="'+designById(designId).name+'のねこ">'
+ +'<ellipse cx="52" cy="106" rx="34" ry="4.6" fill="rgba(90,61,74,.14)"/>'
+ +'<path d="M74 84 Q98 82 95 58" fill="none" stroke="'+line+'" stroke-width="11" stroke-linecap="round"/>'
+ +'<path d="M74 84 Q98 82 95 58" fill="none" stroke="'+c.body+'" stroke-width="8.4" stroke-linecap="round"/>'
+ +'<path d="M28 30 L19 4 L48 15 Z" fill="'+c.body+'" stroke="'+line+'" stroke-width="1.6" stroke-linejoin="round"/>'
+ +'<path d="M76 30 L85 4 L56 15 Z" fill="'+c.body+'" stroke="'+line+'" stroke-width="1.6" stroke-linejoin="round"/>'
+ +'<path d="M30 25 L25 12 L42 18 Z" fill="#ffb3cd"/><path d="M74 25 L79 12 L62 18 Z" fill="#ffb3cd"/>'
+ +'<ellipse cx="52" cy="82" rx="26" ry="24" fill="'+c.body+'" stroke="'+line+'" stroke-width="1.5"/>'
  +patBody
- +'<ellipse cx="35" cy="119" rx="10" ry="5" fill="'+c.body+'" stroke="#e0b3c4" stroke-width="1.2"/>'
- +'<ellipse cx="65" cy="119" rx="10" ry="5" fill="'+c.body+'" stroke="#e0b3c4" stroke-width="1.2"/>'
- +'<path d="M27 32 L20 6 L45 17 Z" fill="'+c.body+'" stroke="#e0b3c4" stroke-width="1.4"/>'
- +'<path d="M73 32 L80 6 L55 17 Z" fill="'+c.body+'" stroke="#e0b3c4" stroke-width="1.4"/>'
- +'<path d="M29 27 L25 14 L40 20 Z" fill="#ffb3cd"/><path d="M71 27 L75 14 L60 20 Z" fill="#ffb3cd"/>'
- +'<ellipse cx="50" cy="42" rx="32" ry="29" fill="'+c.body+'" stroke="#e0b3c4" stroke-width="1.4"/>'
+ +'<ellipse cx="33" cy="103" rx="11" ry="4.8" fill="'+c.body+'" stroke="'+line+'" stroke-width="1.3"/>'
+ +'<ellipse cx="71" cy="103" rx="11" ry="4.8" fill="'+c.body+'" stroke="'+line+'" stroke-width="1.3"/>'
+ +'<path d="M40 96 L40 101 M64 96 L64 101" stroke="'+line+'" stroke-width="1.4" stroke-linecap="round"/>'
+ +'<ellipse cx="52" cy="40" rx="34" ry="30" fill="'+c.body+'" stroke="'+line+'" stroke-width="1.5"/>'
  +patHead
- +'<circle cx="38" cy="42" r="3.8" fill="'+eyeCol+'"/><circle cx="62" cy="42" r="3.8" fill="'+eyeCol+'"/>'
- +'<circle cx="39.4" cy="40.6" r="1.2" fill="#fff"/><circle cx="63.4" cy="40.6" r="1.2" fill="#fff"/>'
- +'<ellipse cx="50" cy="50" rx="3.6" ry="2.7" fill="#ff8fb8"/>'
- +'<path d="M50 53 Q50 58 44 58 M50 53 Q50 58 56 58" stroke="'+faceCol+'" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
- +'<path d="M14 48 L28 50 M15 56 L28 54 M86 48 L72 50 M85 56 L72 54" stroke="'+(dark?"#cbb3c0":"#c9a3b5")+'" stroke-width="1.3" stroke-linecap="round"/>'
- +'<circle cx="27" cy="53" r="5" fill="#ffc7da" opacity=".85"/><circle cx="73" cy="53" r="5" fill="#ffc7da" opacity=".85"/>'
+ +'<ellipse cx="39" cy="40" rx="4.6" ry="5.2" fill="'+eyeCol+'"/><ellipse cx="65" cy="40" rx="4.6" ry="5.2" fill="'+eyeCol+'"/>'
+ +'<circle cx="40.6" cy="38.2" r="1.6" fill="#fff"/><circle cx="66.6" cy="38.2" r="1.6" fill="#fff"/>'
+ +'<ellipse cx="52" cy="49" rx="3.8" ry="2.8" fill="#ff8fb8"/>'
+ +'<path d="M52 52 Q52 57 45.5 56.6 M52 52 Q52 57 58.5 56.6" stroke="'+faceCol+'" stroke-width="1.9" fill="none" stroke-linecap="round"/>'
+ +'<path d="M13 46 L28 48 M14 54 L28 52 M91 46 L76 48 M90 54 L76 52" stroke="'+(dark?"#cbb3c0":"#d9a8bc")+'" stroke-width="1.3" stroke-linecap="round"/>'
+ +'<ellipse cx="27" cy="51" rx="6" ry="4.4" fill="#ffc2d6" opacity=".9"/><ellipse cx="77" cy="51" rx="6" ry="4.4" fill="#ffc2d6" opacity=".9"/>'
  +costumeSVG(designId)
  +'</svg>';}
 function eggSVG(designId,coatId,size){if(typeof coatId==="number"){size=coatId;coatId=null;}
@@ -509,12 +586,12 @@ function rollDay(){const tk=todayKey(),wk=weekKey();
  if(typeof recordLoginDay==="function")recordLoginDay();
  S.log[tk]={steps:S.today.steps,dist:Math.round(S.today.dist)};}
 function gainXP(n){S.xp+=n;let need=xpNeed(S.level);
- while(S.xp>=need){S.xp-=need;S.level++;need=xpNeed(S.level);toast("🎉 レベルアップ！ Lv."+S.level+" になったよ");}
+ while(S.xp>=need){S.xp-=need;S.level++;need=xpNeed(S.level);toast(" レベルアップ！ Lv."+S.level+" になったよ");}
  renderHeader();}
 function renderHeader(){const ll=$("lvLabel");if(ll)ll.textContent="Lv."+S.level;
  const need=xpNeed(S.level);const xf=$("xpFill");if(xf)xf.style.width=Math.min(100,S.xp/need*100)+"%";
  const xl=$("xpLabel");if(xl)xl.textContent="XP "+S.xp+" / "+need;
- const cl=$("coinLabel");if(cl)cl.textContent="🪙 "+(S.coins||0).toLocaleString();}
+ const cl=$("coinLabel");if(cl)cl.innerHTML=coinSVG(16)+" "+(S.coins||0).toLocaleString();}
 function friendGain(cat,base){return base/(1+cat.fp/60);}
 function unownedDesignEgg(){
  const owned=new Set(S.cats.map(c=>c.design));
@@ -527,10 +604,10 @@ function eggTitle(e){if(!e)return "";if(eggIsHidden(e))return eggColorName(e.coa
 function unownedComboEgg(hidden){const owned=new Set(S.cats.map(c=>c.design+"|"+c.coat));if(S.prefId&&Math.random()<0.25){const gc=COATS.filter(function(c){return !owned.has("gotochi_"+S.prefId+"|"+c.id);});const gco=gc.length?pick(gc):pick(COATS);return{id:uid(),design:"gotochi_"+S.prefId,need:3000,coat:gco.id,hidden:!!hidden};}const wid2=maybeWeatherDesign(0.35);if(wid2){const wc=COATS.filter(function(c){return !owned.has(wid2+"|"+c.id);});const wco=wc.length?pick(wc):pick(COATS);return{id:uid(),design:wid2,need:3000,coat:wco.id,hidden:!!hidden};}const combos=[];DESIGNS.filter(d=>designAvailable(d)).forEach(d=>{COATS.forEach(c=>{if(!owned.has(d.id+"|"+c.id))combos.push({design:d.id,coat:c.id});});});let cm;if(combos.length){const pref=combos.filter(x=>x.design!=="normal");cm=pick(pref.length?pref:combos);}else cm={design:pick(DESIGNS.filter(d=>designAvailable(d))).id,coat:pick(COATS).id};return {id:uid(),design:cm.design,need:cm.design==="normal"?1000:3000,coat:cm.coat,hidden:!!hidden};}
 function normalEgg(){return {id:uid(),design:"normal",need:1000,coat:pick(COATS).id};}
 function designEgg(id,coatId){const d=designById(id);return {id:uid(),design:d.id,need:d.id==="normal"?1000:3000,coat:coatId||pick(COATS).id};}
-function grantEgg(egg,why){if(!egg.coat)egg.coat=pick(COATS).id;S.eggs.push(egg);toast("🥚 "+eggColorName(egg.coat)+"（"+designById(egg.design).name+"）をゲット！"+(why||""));save();}
+function grantEgg(egg,why){if(!egg.coat)egg.coat=pick(COATS).id;S.eggs.push(egg);toast(" "+eggColorName(egg.coat)+"（"+designById(egg.design).name+"）をゲット！"+(why||""));save();}
 function rollDestRewards(){const items=[];if(Math.random()<0.5){const egg=(Math.random()<0.5?unownedDesignEgg():normalEgg());if(S.prefId&&Math.random()<0.25){egg.design="gotochi_"+S.prefId;egg.need=3000;}items.push({kind:"egg",design:egg.design,coat:egg.coat,need:egg.need});}else{const cols=Object.keys(KARINAME);for(let i=0;i<2;i++){items.push({kind:"kari",color:pick(cols),n:3});}}return {xp:20,items:items};}
 function ensureDestRewards(){if(!S||!S.destination)return null;const r=S.destination.rewards;if(!r||!Array.isArray(r.items)||!r.items.length){S.destination.rewards=rollDestRewards();}else{r.items.forEach(function(it){if(it.kind==="egg"){if(!it.coat)it.coat=pick(COATS).id;if(!it.design)it.design="normal";if(!it.need)it.need=it.design==="normal"?1000:3000;}});if(typeof r.xp!=="number")r.xp=20;}return S.destination.rewards;}
-function destRewardRowsHTML(rw){if(!rw)return "";let h=rw.items.map(function(it){if(it.kind==="egg")return '<div class="row" style="margin-bottom:6px"><div>'+eggSVG(it.design,it.coat,36)+'</div><div class="grow">'+eggColorName(it.coat)+'</div></div>';if(it.kind==="kari")return '<div class="row" style="margin-bottom:6px"><div>'+karikariSVG(it.color,36)+'</div><div class="grow">'+KARINAME[it.color]+' ×'+(it.n||3)+'</div></div>';const f=fruitById(it.fruit);return f?'<div class="row" style="margin-bottom:6px"><div>'+karikariSVG(f.color,36)+'</div><div class="grow">'+KARINAME[f.color]+' ×'+f.kari+'</div></div>':"";}).join("");if(rw.xp)h+='<div class="row" style="margin-bottom:6px"><div style="width:36px;text-align:center;font-size:20px">⭐</div><div class="grow">XP +'+rw.xp+'</div></div>';return h;}
+function destRewardRowsHTML(rw){if(!rw)return "";let h=rw.items.map(function(it){if(it.kind==="egg")return '<div class="row" style="margin-bottom:6px"><div>'+eggSVG(it.design,it.coat,36)+'</div><div class="grow">'+eggColorName(it.coat)+'</div></div>';if(it.kind==="kari")return '<div class="row" style="margin-bottom:6px"><div>'+karikariSVG(it.color,36)+'</div><div class="grow">'+KARINAME[it.color]+' ×'+(it.n||3)+'</div></div>';const f=fruitById(it.fruit);return f?'<div class="row" style="margin-bottom:6px"><div>'+karikariSVG(f.color,36)+'</div><div class="grow">'+KARINAME[f.color]+' ×'+f.kari+'</div></div>':"";}).join("");if(rw.xp)h+='<div class="row" style="margin-bottom:6px"><div style="width:36px;text-align:center;font-size:20px">★</div><div class="grow">XP +'+rw.xp+'</div></div>';return h;}
 function migrateEggs(){if(!S)return;const ensure=function(o){if(o&&!o.coat)o.coat=pick(COATS).id;};(S.eggs||[]).forEach(ensure);if(S.incubating)ensure(S.incubating);syncIncubators();(S.incubators||[]).forEach(ensure);(S.discoveries||[]).forEach(function(d){if(d.type==="egg")ensure(d);});(S.errands||[]).forEach(function(d){if(d.type==="egg")ensure(d);});if(S.destination)ensureDestRewards();}
 const DAILY_POOL=[
 {k:"steps",t:"今日 {n} 歩あるく",n:1000,xp:30,rw:"egg"},
@@ -558,7 +635,7 @@ function giveKari(n){const cols=Object.keys(KARINAME);for(let i=0;i<n;i++){const
 function giveReward(rw){const eggsN={egg:1,eggFruit:1,eggFruit2:1,egg2:2}[rw]||0;const kariN={fruit:6,eggFruit:6,eggFruit2:12}[rw]||0;
  for(let i=0;i<eggsN;i++)S.eggs.push(unownedComboEgg(true));
  if(kariN)giveKari(kariN);
- toast("🎁 報酬ゲット！ "+rewardLabel(rw));}
+ toast(" 報酬ゲット！ "+rewardLabel(rw));}
 function claimMission(scope,idx){const list=scope==="today"?S.dailyM:S.weeklyM;const m=list[idx];
  if(!m||m.claimed||missionProgress(m)<m.n)return;
  m.claimed=true;m.done=true;if(typeof sePlay==="function")sePlay("decide");giveReward(m.rw);gainXP(m.xp);save();renderMissions();renderBag();renderHome();}
@@ -572,7 +649,7 @@ function claimAllMissions(){let n=0;
  [["today",S.dailyM],["week",S.weeklyM]].forEach(function(pair){(pair[1]||[]).forEach(function(m){if(!m.claimed&&missionProgress(m)>=m.n){m.claimed=true;m.done=true;giveRewardSilent(m.rw);gainXP(m.xp);n++;}});});
  if(!S.cumClaimed)S.cumClaimed={};
  cumDefs().forEach(function(d){if(!S.cumClaimed[d.id]&&cumValue(d.metric)>=d.target){S.cumClaimed[d.id]=true;for(let i=0;i<d.eggs;i++)S.eggs.push(unownedComboEgg(true));if(d.fruits)giveKari(d.fruits*3);if(d.xp)gainXP(d.xp);n++;}});
- if(n>0){if(typeof sePlay==="function")sePlay("decide");toast("🎁 "+n+"件の報酬を受け取ったよ");}else toast("受け取れる報酬はまだないよ");
+ if(n>0){if(typeof sePlay==="function")sePlay("decide");toast(" "+n+"件の報酬を受け取ったよ");}else toast("受け取れる報酬はまだないよ");
  save();renderMissions();renderBag();renderHome();}
 
 function giveRewardSilent(rw){const eggsN={egg:1,eggFruit:1,eggFruit2:1,egg2:2}[rw]||0;const kariN={fruit:6,eggFruit:6,eggFruit2:12}[rw]||0;
@@ -586,7 +663,7 @@ function renderHome(){rollDay();
  const compIds=companionIds();
  $("partyRow").innerHTML=compIds.length?'<div class="partyGrid">'+compIds.map(function(id){const c=S.cats.find(function(x){return x.id===id;});if(!c)return "";const b=typeof catBusy==="function"?catBusy(id):null;
   if(b)return '<div class="partyCat busyCat" style="cursor:pointer" onclick="event.stopPropagation();toast(busyLabel(\''+c.id+'\'))">'+catSVG(c.coat,c.design,64)+'<div>'+(c.name||coatById(c.coat).name)+'<br><span class="sub">'+(b.type==="errand"?"おつかい中":"狩り中")+'</span></div></div>';
-  return '<div class="partyCat" style="cursor:pointer" onclick="event.stopPropagation();openCatPop(\''+c.id+'\')">'+catFxSVG(c,64)+'<div>'+(c.name||coatById(c.coat).name)+'<br><span class="sub">'+designById(c.design).name+'</span></div></div>';}).join("")+'</div>':'<span class="sub">「ねこ」タブで ⭐ お気に入りに登録してね</span>';
+  return '<div class="partyCat" style="cursor:pointer" onclick="event.stopPropagation();openCatPop(\''+c.id+'\')">'+catFxSVG(c,64)+'<div>'+(c.name||coatById(c.coat).name)+'<br><span class="sub">'+designById(c.design).name+'</span></div></div>';}).join("")+'</div>':'<span class="sub">「ねこ」タブで ★ お気に入りに登録してね</span>';
  syncIncubators();
  $("incubator").innerHTML='<div class="incRow">'+S.incubators.map(function(e,i){return '<div style="text-align:center;width:96px">'+incubatorStageHTML(e,false,i)+(e?'<div class="sub">'+(e.ready?"ふか準備OK！":"あと "+Math.max(0,e.need-e.prog).toLocaleString()+" 歩")+'</div>':"")+'</div>';}).join("")+'</div>';
  const days=["日","月","火","水","木","金","土"];const now=new Date();
@@ -594,15 +671,15 @@ function renderHome(){rollDay();
   const k=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();const log=S.log[k];
   cal+='<div class="'+(i===0?"today":"")+'">'+days[d.getDay()]+'<br>'+(d.getMonth()+1)+"/"+d.getDate()+'<br>'+(log?log.steps.toLocaleString()+"歩":"-")+'</div>';}
  $("weekCal").innerHTML=cal;
- const lk=$("lockSteps");if(lk&&$("lockOverlay")&&$("lockOverlay").classList.contains("on"))lk.textContent="今日 "+S.today.steps.toLocaleString()+" 歩 ・ 🪙 "+(S.coins||0).toLocaleString();}
+ const lk=$("lockSteps");if(lk&&$("lockOverlay")&&$("lockOverlay").classList.contains("on"))lk.innerHTML="今日 "+S.today.steps.toLocaleString()+" 歩 ・ "+coinHTML(S.coins||0);}
 
 function heartsHTML(fp){const v=Math.max(0,Math.min(10,(fp||0)/12));let h="";
  for(let i=0;i<5;i++){let fill,base;
   if(v<=5){const f=Math.max(0,Math.min(1,v-i));fill="#ff5c93";base="#ead9e0";var pct=f*100;}
   else{const g=Math.max(0,Math.min(1,v-5-i));fill="#f5b921";base="#ff5c93";var pct=g*100;}
-  const gid="hg"+i+"_"+Math.round(pct)+"_"+(v<=5?"p":"g");
-  h+='<svg width="15" height="14" viewBox="0 0 24 22" style="vertical-align:-2px"><defs><linearGradient id="'+gid+'" x1="0" x2="1"><stop offset="'+pct+'%" stop-color="'+fill+'"/><stop offset="'+pct+'%" stop-color="'+base+'"/></linearGradient></defs><path d="M12 20 C4 14 2.5 9 5 5.6 C7 3 11 3.4 12 6.4 C13 3.4 17 3 19 5.6 C21.5 9 20 14 12 20 Z" fill="url(#'+gid+')"/></svg>';}
- return h;}
+  const gid="hg"+i+"_"+Math.round(pct)+"_"+(v<=5?"p":"g")+"_"+Math.floor(Math.random()*1e9);
+  h+='<svg width="15" height="14" viewBox="0 0 24 22"><defs><linearGradient id="'+gid+'" x1="0" x2="1"><stop offset="'+pct+'%" stop-color="'+fill+'"/><stop offset="'+pct+'%" stop-color="'+base+'"/></linearGradient></defs><path d="M12 20 C4 14 2.5 9 5 5.6 C7 3 11 3.4 12 6.4 C13 3.4 17 3 19 5.6 C21.5 9 20 14 12 20 Z" fill="url(#'+gid+')"/></svg>';}
+ return '<span class="heartsRow">'+h+'</span>';}
 function hearts(fp){return heartsHTML(fp);}
 function feedCountToday(c){return c&&c.feedDay===todayKey()?(c.feeds||0):0;}
 function fxClass(c){const n=feedCountToday(c);return n>=2?"fxH":n===1?"fxS":"";}
@@ -695,30 +772,47 @@ function renderCats(){
  const list=sortedCats();
  if(!list.length)$("catList").innerHTML='<div class="sub">この毛色のねこはまだいません。</div>';
  else $("catList").innerHTML='<div class="partyGrid">'+list.map(c=>{const busy=S.errands.some(e=>e.catIds.includes(c.id)&&!e.collected);
-  return '<div class="catTile" onclick="openCatPop(\''+c.id+'\')">'+catFxSVG(c,64)+'<div>'+(c.name||coatById(c.coat).name)+(c.fav?' ⭐':'')+'</div><div style="font-size:10px;letter-spacing:-1px">'+heartsHTML(c.fp)+'</div>'+(busy?'<div class="sub">おつかい中</div>':'')+'</div>';}).join("")+'</div>';
+  return '<div class="catTile" onclick="openCatPop(\''+c.id+'\')">'+catFxSVG(c,64)+'<div>'+(c.name||coatById(c.coat).name)+(c.fav?' ★':'')+'</div><div style="font-size:10px;">'+heartsHTML(c.fp)+'</div>'+(busy?'<div class="sub">おつかい中</div>':'')+'</div>';}).join("")+'</div>';
  renderFeedBox();
  renderZukan();}
 let feedColorSel="pink";
+let feedCatSel="kari";
+let feedMeatSel="usagi";
 function setFeedColor(col){feedColorSel=col;renderFeedBox();}
+function setFeedCat(k){feedCatSel=k;renderFeedBox();}
+function setFeedMeat(id){feedMeatSel=id;renderFeedBox();}
+function feedCatGrid(onclickFn,size){return '<div class="partyGrid">'+S.cats.map(function(c){const n=feedCountToday(c);return '<div class="catTile" onclick="'+onclickFn.replace(/__ID__/g,c.id)+'">'+catFxSVG(c,size||64)+'<div>'+(c.name||coatById(c.coat).name)+'</div><div class="sub">今日 '+n+' / 2</div></div>';}).join("")+'</div>';}
 function renderFeedBox(){const box=$("feedBox");if(!box||!S)return;
- let h='<div class="row" style="flex-wrap:wrap;gap:4px;margin-bottom:10px">'+Object.keys(KARINAME).map(function(col){return '<button class="sm feedTab '+(feedColorSel===col?"":"ghost")+'" onclick="setFeedColor(\''+col+'\')"><span style="color:'+KARIDOT[col]+'">●</span> '+KARINAME[col].replace("のカリカリ","")+' ×'+S.karikari[col]+'</button>';}).join("")+'</div>';
- if(!S.cats.length)h+='<div class="sub">ねこはまだいません。</div>';
- else h+='<div class="partyGrid">'+S.cats.map(function(c){const n=feedCountToday(c);return '<div class="catTile" onclick="feedCat(\''+c.id+'\',feedColorSel)">'+catFxSVG(c,64)+'<div>'+(c.name||coatById(c.coat).name)+'</div><div class="sub">今日 '+n+' / 2</div></div>';}).join("")+'</div>';
+ const kariTotal=Object.keys(KARINAME).reduce(function(a,c){return a+(S.karikari[c]||0);},0);
  const meatTotal=MEATS.reduce(function(a,m){return a+(S.meats[m.id]||0);},0);
- h+='<div style="margin-top:12px"><b style="font-size:13px">🍖 肉・草（肉 ×'+meatTotal+' ・ 草 ×'+(S.pickups.kusa||0)+'）</b><div class="partyGrid" style="margin-top:6px">'+S.cats.map(function(c){return '<div class="catTile" onclick="openHouseFeed(\''+c.id+'\')">'+catFxSVG(c,56)+'<div>'+(c.name||coatById(c.coat).name)+'</div><div class="sub">肉・草をあげる</div></div>';}).join("")+'</div></div>';
+ let h='<div class="catBtnRow">'
+ +'<div class="bigCatBtn" style="'+(feedCatSel==="kusa"?"border-color:#7ec850;background:#f2fbe9":"")+'" onclick="setFeedCat(\'kusa\')"><div>'+illuSVG("grass",30)+'</div><b>草</b><div class="sub">× '+(S.pickups.kusa||0)+'</div></div>'
+ +'<div class="bigCatBtn" style="'+(feedCatSel==="kari"?"border-color:#ff5c93;background:#fff0f6":"")+'" onclick="setFeedCat(\'kari\')"><div>'+illuSVG("bowl",30)+'</div><b>カリカリ</b><div class="sub">× '+kariTotal+'</div></div>'
+ +'<div class="bigCatBtn" style="'+(feedCatSel==="meat"?"border-color:#e2704d;background:#fff3ec":"")+'" onclick="setFeedCat(\'meat\')"><div>'+illuSVG("meat",30)+'</div><b>肉</b><div class="sub">× '+meatTotal+'</div></div></div>';
+ if(!S.cats.length){h+='<div class="sub">ねこはまだいません。</div>';box.innerHTML=h;return;}
+ if(feedCatSel==="kusa"){
+  h+='<div class="shopRow"><div>'+illuSVG("grass",30)+'</div><div class="grow"><b>草</b><div class="sub">持っている数 × '+(S.pickups.kusa||0)+'</div></div></div>';
+  h+=feedCatGrid("feedGrass('__ID__');renderCats()");
+ } else if(feedCatSel==="meat"){
+  h+='<div class="row" style="flex-wrap:wrap;gap:4px;margin-bottom:10px">'+MEATS.map(function(m){return '<button class="sm feedTab '+(feedMeatSel===m.id?"":"ghost")+'" onclick="setFeedMeat(\''+m.id+'\')">'+meatSVG(m.id,20)+' '+m.name.replace("のお肉","")+' ×'+(S.meats[m.id]||0)+'</button>';}).join("")+'</div>';
+  h+=feedCatGrid("feedMeat('__ID__',feedMeatSel)");
+ } else {
+  h+='<div class="row" style="flex-wrap:wrap;gap:4px;margin-bottom:10px">'+Object.keys(KARINAME).map(function(col){return '<button class="sm feedTab '+(feedColorSel===col?"":"ghost")+'" onclick="setFeedColor(\''+col+'\')">'+karikariSVG(col,20)+' '+KARINAME[col].replace("のカリカリ","")+' ×'+(S.karikari[col]||0)+'</button>';}).join("")+'</div>';
+  h+=feedCatGrid("feedCat('__ID__',feedColorSel)");
+ }
  box.innerHTML=h;}
 function openCatPop(id){const c=S.cats.find(function(x){return x.id===id;});if(!c)return;const n=feedCountToday(c);
- showSheet('<div style="text-align:center;cursor:pointer" onclick="openCatDetail(\''+c.id+'\')">'+catFxSVG(c,130)+'<div style="font-size:17px;font-weight:800;margin-top:4px">'+(c.name||coatById(c.coat).name)+'</div><div style="font-size:15px;letter-spacing:1px;margin-top:2px">'+heartsHTML(c.fp)+'</div><div class="sub" style="margin-top:4px">今日のカリカリ '+n+' / 2</div></div><div style="margin-top:12px;text-align:center"><button class="sm" onclick="openCatDetail(\''+c.id+'\')">詳細を見る</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+ showSheet('<div style="text-align:center;cursor:pointer" onclick="openCatDetail(\''+c.id+'\')">'+catFxSVG(c,130)+'<div style="font-size:17px;font-weight:800;margin-top:4px">'+(c.name||coatById(c.coat).name)+'</div><div style="font-size:15px;letter-spacing:1px;margin-top:2px">'+heartsHTML(c.fp)+'</div><div class="sub" style="margin-top:4px">今日のご飯 '+n+' / 2</div></div><div style="margin-top:12px;text-align:center"><button class="sm" onclick="openCatDetail(\''+c.id+'\')">詳細を見る</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 function openCatDetail(id){const c=S.cats.find(function(x){return x.id===id;});if(!c)return;const n=feedCountToday(c);
  const fd=c.foundAt?new Date(c.foundAt):null;const fds=fd?(fd.getFullYear()+"/"+(fd.getMonth()+1)+"/"+fd.getDate()):"―";
  showSheet('<h3 style="margin-top:0;text-align:center">ねこの詳細</h3><div style="text-align:center">'+catFxSVG(c,110)+'</div>'
  +'<div style="font-size:13px;line-height:2;margin-top:8px">名前：<input type="text" value="'+(c.name||"").replace(/"/g,"&quot;")+'" placeholder="'+coatById(c.coat).name+'" onchange="renameCat(\''+c.id+'\',this.value)" style="width:140px"><br>'
  +'なかよし度：<span style="letter-spacing:1px">'+heartsHTML(c.fp)+'</span><br>'
- +'今日のカリカリ：'+n+' / 2<br>'
+ +'今日のご飯：'+n+' / 2<br>'
  +'いっしょに歩いた歩数：'+(c.walkSteps||0).toLocaleString()+' 歩<br>'
  +'見つけた日：'+fds+'<br>見つけた場所：'+(c.foundPlace||"おうちの近く")+'<br>'
  +'デザイン：'+designById(c.design).name+'<br>毛色：'+coatById(c.coat).name+'</div>'
- +'<div style="margin-top:12px;text-align:center"><button class="sm '+(c.fav?"ghost":"")+'" onclick="toggleFav(\''+c.id+'\');openCatDetail(\''+c.id+'\')">'+(c.fav?"⭐ お気に入りを解除":"☆ お気に入りに登録")+'</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+ +'<div style="margin-top:12px;text-align:center"><button class="sm '+(c.fav?"ghost":"")+'" onclick="toggleFav(\''+c.id+'\');openCatDetail(\''+c.id+'\')">'+(c.fav?"★ お気に入りを解除":"☆ お気に入りに登録")+'</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 function renameCat(id,v){const c=S.cats.find(x=>x.id===id);if(c){c.name=v.trim();save();toast("名前をつけたよ");}}
 function toggleParty(id){toggleFav(id);}
 function feedCat(id,col){const c=S.cats.find(x=>x.id===id);if(!c)return;
@@ -726,39 +820,63 @@ function feedCat(id,col){const c=S.cats.find(x=>x.id===id);if(!c)return;
  if(c.feeds>=2){toast("今日はもう2回あげたよ。また明日ね");return;}
  if(S.karikari[col]<=0){toast(KARINAME[col]+"がないよ");return;}
  S.karikari[col]--;c.feeds++;c.fp+=friendGain(c,6);S.today.feeds++;S.week.feeds++;
- if(typeof sePlay==="function")sePlay("feed");toast("😋 "+(c.name||coatById(c.coat).name)+" が "+KARINAME[col]+" を食べた！ なかよしアップ");
+ if(typeof sePlay==="function")sePlay("feed");toast(" "+(c.name||coatById(c.coat).name)+" が "+KARINAME[col]+" を食べた！ なかよしアップ");
  gainXP(3);save();renderCats();renderBag();renderHome();tutAfter("feed");}
+let shopCatSel=null,shopSubSel=null;
+function setShopCat(k){shopCatSel=(shopCatSel===k?null:k);shopSubSel=null;renderBag();}
+function setShopSub(k){shopSubSel=(shopSubSel===k?null:k);renderBag();}
+function shopPriceRow(iconHTML,name,price,onclick,own){return '<div class="shopRow"><div>'+iconHTML+'</div><div class="grow">'+name+'</div>'+(own?'<span class="pill">所持済み</span>':'<b>'+coinHTML(price)+'</b><button class="sm" onclick="'+onclick+'">買う</button>')+'</div>';}
 function renderBag(){syncIncubators();v12Migrate();
  const kariTotal=Object.keys(KARINAME).reduce(function(a,c){return a+(S.karikari[c]||0);},0);
  const eggTotal=(S.eggs||[]).length+incEggs().length;
  const meatTotal=MEATS.reduce(function(a,m){return a+(S.meats[m.id]||0);},0);
- let h='<div style="display:flex;gap:10px;margin-bottom:12px"><div class="bigCatBtn" onclick="openKariSheet()"><div style="font-size:30px">🍚</div><b>カリカリ</b><div class="sub">× '+kariTotal+'</div></div><div class="bigCatBtn" onclick="openEggSheet()"><div style="font-size:30px">🥚</div><b>卵</b><div class="sub">× '+eggTotal+'</div></div><div class="bigCatBtn" onclick="openMeatSheet()"><div style="font-size:30px">🍖</div><b>肉・草</b><div class="sub">× '+(meatTotal+(S.pickups.kusa||0))+'</div></div></div>';
- h+='<h3 style="margin:10px 0 6px">🧺 拾い物（売る）</h3>';
+ let h='<div style="display:flex;gap:10px;margin-bottom:12px"><div class="bigCatBtn" onclick="openKariSheet()"><div>'+karikariSVG("pink",34)+'</div><b>カリカリ</b><div class="sub">× '+kariTotal+'</div></div><div class="bigCatBtn" onclick="openEggSheet()"><div>'+illuSVG("egg",34)+'</div><b>卵</b><div class="sub">× '+eggTotal+'</div></div><div class="bigCatBtn" onclick="openMeatSheet()"><div>'+illuSVG("meat",34)+'</div><b>肉・草</b><div class="sub">× '+(meatTotal+(S.pickups.kusa||0))+'</div></div></div>';
+ h+='<h3 style="margin:10px 0 6px">'+illuSVG("basket",20)+' 拾い物（売る）</h3>';
  const owned=PICKUPS.filter(function(p){return (S.pickups[p.id]||0)>0;});
- h+=owned.length?owned.map(function(p){return '<div class="shopRow"><div style="font-size:26px">'+p.icon+'</div><div class="grow">'+p.name+(p.edible?' <span class="sub">（猫が食べられる）</span>':'')+'</div><b>× '+(S.pickups[p.id]||0)+'</b><span class="sub">🪙'+p.price+'</span><button class="sm" onclick="sellPickup(\''+p.id+'\',false)">売る</button><button class="sm ghost" onclick="sellPickup(\''+p.id+'\',true)">全部</button></div>';}).join(""):'<div class="sub">まだ何も拾っていません</div>';
+ h+=owned.length?owned.map(function(p){return '<div class="shopRow"><div>'+p.icon+'</div><div class="grow">'+p.name+(p.edible?' <span class="sub">（猫が食べられる）</span>':'')+'</div><b>× '+(S.pickups[p.id]||0)+'</b><span class="sub">'+coinHTML(p.price)+'</span><button class="sm" onclick="sellPickup(\''+p.id+'\',false)">売る</button><button class="sm ghost" onclick="sellPickup(\''+p.id+'\',true)">全部</button></div>';}).join(""):'<div class="sub">まだ何も拾っていません</div>';
  if(owned.some(function(p){return !p.edible;}))h+='<div style="margin:6px 0"><button class="sm ghost" onclick="sellAllPickups()">草以外をまとめて売る</button></div>';
- h+='<h3 style="margin:14px 0 6px">🛒 ショップ（🪙 '+(S.coins||0).toLocaleString()+'）</h3>';
- h+='<div class="shopRow"><div style="font-size:24px">🌿</div><div class="grow">草</div><b>🪙5</b><button class="sm" onclick="buyItem(\'kusa\')">買う</button></div>';
- h+='<div class="shopRow"><div>'+karikariSVG("pink",34)+'</div><div class="grow">カリカリ（ランダム3個）</div><b>🪙20</b><button class="sm" onclick="buyItem(\'kari\')">買う</button></div>';
- h+='<div class="shopRow"><div style="font-size:24px">🍖</div><div class="grow">肉（ランダム）</div><b>🪙50</b><button class="sm" onclick="buyItem(\'meat\')">買う</button></div>';
- h+=FURN.map(function(f){const own=!!S.furnOwned[f.id];return '<div class="shopRow"><div style="font-size:24px">'+f.icon+'</div><div class="grow">'+f.name+'</div>'+(own?'<span class="pill">所持済み</span>':'<b>🪙'+f.price+'</b><button class="sm" onclick="buyItem(\'furn\',\''+f.id+'\')">買う</button>')+'</div>';}).join("");
+ h+='<h3 style="margin:14px 0 6px">'+illuSVG("gift",20)+' ショップ（'+coinHTML(S.coins||0)+'）</h3>';
+ h+='<div class="catBtnRow">'
+ +'<div class="bigCatBtn" style="'+(shopCatSel==="food"?"border-color:#ff5c93;background:#fff0f6":"")+'" onclick="setShopCat(\'food\')"><div>'+illuSVG("bowl",30)+'</div><b>食べ物</b></div>'
+ +'<div class="bigCatBtn" style="'+(shopCatSel==="interior"?"border-color:#ff5c93;background:#fff0f6":"")+'" onclick="setShopCat(\'interior\')"><div>'+illuSVG("home",30)+'</div><b>インテリア</b></div>'
+ +'<div class="bigCatBtn" style="'+(shopCatSel==="wallfloor"?"border-color:#ff5c93;background:#fff0f6":"")+'" onclick="setShopCat(\'wallfloor\')"><div>'+furnSVG({id:"wpPlain",base:"wp",wall:"#e8d7bd",pattern:"dot"},30)+'</div><b>壁・床</b></div></div>';
+ if(shopCatSel==="food"){
+  h+='<div class="shopSubGrid">'
+  +'<button class="sm '+(shopSubSel==="kusa"?"":"ghost")+'" onclick="setShopSub(\'kusa\')">'+illuSVG("grass",18)+' 草</button>'
+  +'<button class="sm '+(shopSubSel==="kari"?"":"ghost")+'" onclick="setShopSub(\'kari\')">'+illuSVG("bowl",18)+' カリカリ</button>'
+  +'<button class="sm '+(shopSubSel==="meat"?"":"ghost")+'" onclick="setShopSub(\'meat\')">'+illuSVG("meat",18)+' 肉</button></div>';
+  if(shopSubSel==="kusa")h+=shopPriceRow(illuSVG("grass",30),"草",5,"buyItem('kusa')",false);
+  else if(shopSubSel==="kari")h+=Object.keys(KARINAME).map(function(col){return shopPriceRow(karikariSVG(col,32),KARINAME[col]+"（1個）",20,"buyItem('kariColor','"+col+"')",false);}).join("");
+  else if(shopSubSel==="meat")h+=MEATS.map(function(m){return shopPriceRow(meatSVG(m.id,32),m.name+"（1個）",50,"buyItem('meatKind','"+m.id+"')",false);}).join("");
+  else h+='<div class="sub">草・カリカリ・肉から選んでね</div>';
+ } else if(shopCatSel==="interior"){
+  h+='<div class="shopSubGrid">'+FURN_BASES.map(function(b){return '<button class="sm '+(shopSubSel===b.id?"":"ghost")+'" onclick="setShopSub(\''+b.id+'\')">'+b.name+'</button>';}).join("")+'</div>';
+  if(shopSubSel)h+=FURN.filter(function(f){return f.base===shopSubSel;}).map(function(f){const own=!!S.furnOwned[f.id];return shopPriceRow(furnSVG(f,34),f.name,f.price,"buyItem('furn','"+f.id+"')",own);}).join("");
+  else h+='<div class="sub">インテリアの種類を選んでね</div>';
+ } else if(shopCatSel==="wallfloor"){
+  h+='<div class="shopSubGrid">'
+  +'<button class="sm '+(shopSubSel==="wp"?"":"ghost")+'" onclick="setShopSub(\'wp\')">壁紙</button>'
+  +'<button class="sm '+(shopSubSel==="fl"?"":"ghost")+'" onclick="setShopSub(\'fl\')">床</button></div>';
+  if(shopSubSel)h+=FURN.filter(function(f){return f.base===shopSubSel;}).map(function(f){const own=!!S.furnOwned[f.id];return shopPriceRow(furnSVG(f,34),f.name,f.price,"buyItem('furn','"+f.id+"')",own);}).join("");
+  else h+='<div class="sub">壁紙・床から選んでね</div>';
+ }
  $("bagBox").innerHTML=h;}
-function openKariSheet(){let h='<h3 style="margin-top:0">🍚 カリカリ</h3>'+Object.keys(KARINAME).map(function(col){return '<div class="bagRow"><div>'+karikariSVG(col,40)+'</div><div class="grow">'+KARINAME[col]+'</div><b>× '+(S.karikari[col]||0)+'</b></div>';}).join("")+'<div style="margin-top:10px;text-align:center"><button class="sm" onclick="closeSheet();goTab(\'cats\')">あげにいく</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';showSheet(h);}
-function openEggSheet(){syncIncubators();let h='<h3 style="margin-top:0">🥚 卵</h3><div class="bagRow" style="cursor:pointer" onclick="openIncubator()"><div>'+incubatorBaseSVG(72)+'</div><div class="grow">ふか器</div><b>'+incEggs().length+' / 3</b></div>';
+function openKariSheet(){let h='<h3 style="margin-top:0">'+illuSVG("bowl",20)+' カリカリ</h3>'+Object.keys(KARINAME).map(function(col){return '<div class="bagRow"><div>'+karikariSVG(col,40)+'</div><div class="grow">'+KARINAME[col]+'</div><b>× '+(S.karikari[col]||0)+'</b></div>';}).join("")+'<div style="margin-top:10px;text-align:center"><button class="sm" onclick="closeSheet();goTab(\'cats\')">あげにいく</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';showSheet(h);}
+function openEggSheet(){syncIncubators();let h='<h3 style="margin-top:0">'+illuSVG("egg",20)+' 卵</h3><div class="bagRow" style="cursor:pointer" onclick="openIncubator()"><div>'+incubatorBaseSVG(72)+'</div><div class="grow">ふか器</div><b>'+incEggs().length+' / 3</b></div>';
  const groups={};(S.eggs||[]).forEach(function(e){const k="b_"+e.design+"_"+(e.coat||"white")+"_"+(e.hidden?1:0);if(!groups[k])groups[k]={e:e,n:0,bag:true};groups[k].n++;});
  (S.incubators||[]).forEach(function(e,i){if(!e)return;const k="i_"+e.design+"_"+(e.coat||"white")+"_"+(e.hidden?1:0);if(!groups[k])groups[k]={e:e,n:0,bag:false,idx:i};groups[k].n++;});
  const gk=Object.keys(groups);if(!gk.length)h+='<div class="sub">卵はまだありません</div>';
  else h+=gk.map(function(k){const g=groups[k];const e=g.e;if(g.bag)return '<div class="bagRow"><div style="cursor:pointer" onclick="openBagEggDetail(\''+e.id+'\')">'+eggSVG(e.design,e.coat,44)+'</div><div class="grow" style="cursor:pointer" onclick="openBagEggDetail(\''+e.id+'\')">'+eggColorName(e.coat||"white")+'<div class="sub">'+(eggIsHidden(e)?"":designById(e.design).name+" ・ ")+'ふかまで '+e.need+' 歩</div></div><b>× '+g.n+'</b>'+(incFreeSlot()>=0?'<button class="sm" onclick="setIncubator(\''+e.id+'\');openEggSheet()">ふか器にセット</button>':'')+'</div>';
   return '<div class="bagRow"><div style="cursor:pointer" onclick="openIncubator()">'+eggSVG(e.design,e.coat,44)+'</div><div class="grow">'+eggColorName(e.coat||"white")+'<div class="sub">'+(e.ready?"ふか準備OK！":"ふか器の中 ・ あと "+Math.max(0,e.need-e.prog)+" 歩")+'</div></div><b>× '+g.n+'</b></div>';}).join("");
  h+='<div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';showSheet(h);}
-function openMeatSheet(){let h='<h3 style="margin-top:0">🍖 肉・草</h3>'+MEATS.map(function(m){return '<div class="bagRow"><div style="font-size:26px">'+m.icon+'</div><div class="grow">'+m.name+'</div><b>× '+(S.meats[m.id]||0)+'</b></div>';}).join("")+'<div class="bagRow"><div style="font-size:26px">🌿</div><div class="grow">草</div><b>× '+(S.pickups.kusa||0)+'</b></div><div class="sub" style="margin-top:6px">おうちや「ねこ」から あげられます。</div><div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';showSheet(h);}
+function openMeatSheet(){let h='<h3 style="margin-top:0">'+illuSVG("meat",20)+' 肉・草</h3>'+MEATS.map(function(m){return '<div class="bagRow"><div>'+meatSVG(m.id,30)+'</div><div class="grow">'+m.name+'</div><b>× '+(S.meats[m.id]||0)+'</b></div>';}).join("")+'<div class="bagRow"><div>'+illuSVG("grass",30)+'</div><div class="grow">草</div><b>× '+(S.pickups.kusa||0)+'</b></div><div class="sub" style="margin-top:6px">おうちや「ねこ」から あげられます。</div><div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';showSheet(h);}
 function setIncubator(id){syncIncubators();const slot=incFreeSlot();if(slot<0){toast("ふか器はいっぱいだよ");return;}const i=S.eggs.findIndex(e=>e.id===id);if(i<0)return;
- const e=S.eggs.splice(i,1)[0];S.incubators[slot]={design:e.design,need:e.need,prog:0,coat:e.coat||pick(COATS).id,hidden:!!e.hidden,id:e.id};S.incubating=S.incubators[0]||null;save();renderBag();renderHome();toast("🥚 ふか器にセット！ 歩いてあたためよう");tutAfter("incub");}
+ const e=S.eggs.splice(i,1)[0];S.incubators[slot]={design:e.design,need:e.need,prog:0,coat:e.coat||pick(COATS).id,hidden:!!e.hidden,id:e.id};S.incubating=S.incubators[0]||null;save();renderBag();renderHome();toast(" ふか器にセット！ 歩いてあたためよう");tutAfter("incub");}
 function convertFruit(id){const f=fruitById(id);if(!f||!S.fruits[id])return;S.fruits[id]--;S.karikari[f.color]=(S.karikari[f.color]||0)+f.kari;toast(f.name+" → "+KARINAME[f.color]+" ×"+f.kari);save();renderBag();tutAfter("convert");}
 function hatchEgg(slot){syncIncubators();const e=S.incubators[slot];if(!e)return;S.incubators[slot]=null;S.incubating=S.incubators[0]||null;
  const coat=e.coat||pick(COATS).id;const maxSeq=S.cats.reduce(function(m,c){return Math.max(m,c.seq||0);},0);const cat={id:uid(),coat,design:e.design,name:"",fp:0,feeds:0,feedDay:"",seq:maxSeq+1,fav:false,foundAt:Date.now(),walkSteps:0,foundPlace:(S.prefName||"おうちの近く")};
  S.cats.push(cat);S.today.hatch++;S.week.hatch++;if(!S.stats)S.stats={hatch:0,errands:0,dest:0};S.stats.hatch++;gainXP(25);
- if(typeof sePlay==="function")sePlay("hatch");toast("🐣 ふか！ "+coatById(coat).name+"（"+designById(e.design).name+"）が生まれたよ");save();}
+ if(typeof sePlay==="function")sePlay("hatch");toast(" ふか！ "+coatById(coat).name+"（"+designById(e.design).name+"）が生まれたよ");save();}
 function discW(d){return d.type==="egg"?(d.design==="normal"?2:4):fruitById(d.fruit).kari;}
 function discTitle(d){return d.type==="egg"?designById(d.design).name+"の卵 ・ "+eggColorName(d.coat||"white"):fruitById(d.fruit).name;}
 
@@ -784,12 +902,12 @@ function useDetector(){if(S.detectorDay===todayKey()){toast("探索機は1日1�
  const nf=2+Math.floor(Math.random()*2);
  for(let i=0;i<nf;i++){const f=pick(FRUITS);const a=rnd(0,Math.PI*2),dist=rnd(60,350);
   S.discoveries.push({id:uid(),type:"fruit",fruit:f.id,lat:base.lat+Math.cos(a)*dist/111000,lng:base.lng+Math.sin(a)*dist/(111000*Math.cos(base.lat*Math.PI/180)),dist,found:todayKey()});}
- toast("🔭 探索機！ 卵"+eggCats.length+"種類とフルーツ"+nf+"種類が見つかったよ");gainXP(10);save();renderErrands();drawMapPins();}
+ toast(" 探索機！ 卵"+eggCats.length+"種類とフルーツ"+nf+"種類が見つかったよ");gainXP(10);save();renderErrands();drawMapPins();}
 
 function sendErrand(id){openPicker("errand",id);}
 function collectErrand(id){const e=S.errands.find(function(x){return x.id===id;});if(!e||Date.now()<e.returnAt)return;
  S.errands=S.errands.filter(function(x){return x.id!==id;});S.today.errands++;S.week.errands++;if(!S.stats)S.stats={hatch:0,errands:0,dest:0};S.stats.errands++;
- if(e.type==="egg"){const eg=designEgg(e.design,e.coat);S.eggs.push(eg);if(typeof sePlay==="function")sePlay("pickup");toast("🥚 "+eggColorName(eg.coat)+"（"+designById(e.design).name+"）を受け取ったよ");}
+ if(e.type==="egg"){const eg=designEgg(e.design,e.coat);S.eggs.push(eg);if(typeof sePlay==="function")sePlay("pickup");toast(" "+eggColorName(eg.coat)+"（"+designById(e.design).name+"）を受け取ったよ");}
  else{const f=fruitById(e.fruit);S.karikari[f.color]=(S.karikari[f.color]||0)+f.kari;toast(f.name+" → "+KARINAME[f.color]+" ×"+f.kari+" に変わったよ");}
  gainXP(15);save();renderErrands();renderBag();renderHome();}
 
@@ -807,7 +925,7 @@ function pickerMinutes(){const cats=pickerTargetCats();const P=Math.max(1,cats.l
  const sp=(S.huntSpots||[]).find(function(x){return x.id===picker.id;});if(!sp)return 0;return huntMinutes(sp,cats);}
 function openPicker(kind,id){picker={kind:kind,id:id,sel:[],sort:catSortKey||"found",asc:!!catSortAsc,coat:null};renderPicker();}
 function togglePick(id){const b=catBusy(id);if(b){toast(busyLabel(id));return;}const i=picker.sel.indexOf(id);if(i>=0)picker.sel.splice(i,1);else{if(picker.kind==="hunt"&&picker.sel.length>=10){toast("狩りは10匹までだよ");return;}if(picker.kind==="errand"){const d=S.discoveries.find(function(x){return x.id===picker.id;});if(d&&picker.sel.length>=discW(d)){toast("このおつかいは最大"+discW(d)+"匹までだよ");return;}}picker.sel.push(id);}renderPicker();}
-function renderPicker(){const isHunt=picker.kind==="hunt";const title=isHunt?"🏹 狩りに行くねこ":("🧺 おつかいに行くねこ");
+function renderPicker(){const isHunt=picker.kind==="hunt";const title=isHunt?" 狩りに行くねこ":(" おつかいに行くねこ");
  let head="";if(isHunt){const sp=(S.huntSpots||[]).find(function(x){return x.id===picker.id;});if(sp)head='<div class="sub" style="margin-bottom:6px">'+huntSizeById(sp.size).name+' ・ 色：'+coatById(sp.color).name+'（同じ毛色で短縮）</div>';}
  else{const d=S.discoveries.find(function(x){return x.id===picker.id;});if(d)head='<div style="margin-bottom:6px"><b>'+discTitle(d)+'</b> <span class="sub">約'+Math.round(d.dist)+'m</span></div>';}
  let h='<h3 style="margin-top:0">'+title+'</h3>'+head;
@@ -823,7 +941,7 @@ function renderPicker(){const isHunt=picker.kind==="hunt";const title=isHunt?"�
 function confirmPicker(){if(!picker.sel.length)return;if(picker.kind==="errand")sendErrandPicked(picker.id,picker.sel.slice());else startHunt(picker.id,picker.sel.slice());}
 function sendErrandPicked(id,catIds){const d=S.discoveries.find(function(x){return x.id===id;});if(!d)return;const W=discW(d);const mins=errandMinutes(d.dist,W,catIds.length);
  S.errands.push({id:uid(),type:d.type,design:d.design,coat:d.coat,fruit:d.fruit,catIds:catIds,returnAt:Date.now()+mins*60000,dist:d.dist});
- S.discoveries=S.discoveries.filter(function(x){return x.id!==id;});closeSheet();toast("🐾 おつかいに出発！ 約"+mins+"分で帰ってくるよ");save();renderErrands();renderHome();drawMapPins();}
+ S.discoveries=S.discoveries.filter(function(x){return x.id!==id;});closeSheet();toast(" おつかいに出発！ 約"+mins+"分で帰ってくるよ");save();renderErrands();renderHome();drawMapPins();}
 const HUNT_SIZES=[{id:"small",name:"小さい狩り場",base:30},{id:"normal",name:"普通の狩り場",base:60},{id:"large",name:"大きい狩り場",base:120}];
 const huntSizeById=function(id){return HUNT_SIZES.find(function(x){return x.id===id;})||HUNT_SIZES[1];};
 function huntMinutes(spot,cats){const sz=huntSizeById(spot.size);const list=(cats||[]).filter(Boolean);const n=Math.max(1,list.length);
@@ -841,20 +959,20 @@ function huntTodayReset(){if(S.huntDay!==todayKey()){S.huntDay=todayKey();S.hunt
 function startHunt(spotId,catIds){huntTodayReset();if(S.huntCount>=3){toast("狩りは1日3回までだよ");return;}const sp=(S.huntSpots||[]).find(function(x){return x.id===spotId;});if(!sp)return;
  const cats=catIds.map(function(id){return S.cats.find(function(c){return c.id===id;});}).filter(Boolean);const mins=huntMinutes(sp,cats);
  S.hunts.push({id:uid(),spotId:spotId,size:sp.size,color:sp.color,catIds:catIds,returnAt:Date.now()+mins*60000,collected:false});
- S.huntSpots=S.huntSpots.filter(function(x){return x.id!==spotId;});S.huntCount++;closeSheet();toast("🏹 狩りに出発！ 約"+mins+"分で終わるよ");save();renderErrands();renderHome();drawMapPins();}
+ S.huntSpots=S.huntSpots.filter(function(x){return x.id!==spotId;});S.huntCount++;closeSheet();toast(" 狩りに出発！ 約"+mins+"分で終わるよ");save();renderErrands();renderHome();drawMapPins();}
 function collectHunt(id){const h=(S.hunts||[]).find(function(x){return x.id===id;});if(!h||Date.now()<h.returnAt)return;S.hunts=S.hunts.filter(function(x){return x.id!==id;});
  const mult=h.size==="large"?4:(h.size==="normal"?2:1);const coins=(4+Math.floor(Math.random()*4))*mult;gainCoins(coins);gainXP(10*mult);
- const msgs=["🪙"+coins,"XP+"+(10*mult)];const nP=1+(h.size==="large"?2:(h.size==="normal"?1:0));
+ const msgs=[""+coins,"XP+"+(10*mult)];const nP=1+(h.size==="large"?2:(h.size==="normal"?1:0));
  for(let i=0;i<nP;i++){const p=rollPickup();S.pickups[p.id]=(S.pickups[p.id]||0)+1;S.pickupSeen[p.id]=true;msgs.push(p.name);}
  if(h.size==="large"){const m=rollMeat();S.meats[m.id]++;msgs.push(m.name);}
- toast("🏹 狩り完了！ "+msgs.join("・"));save();renderErrands();renderBag();renderHeader();}
+ toast(" 狩り完了！ "+msgs.join("・"));save();renderErrands();renderBag();renderHeader();}
 function renderHunts(){const box=$("huntBox");if(!box||!S)return;huntTodayReset();ensureHuntSpots();
  let h='<div class="sub" style="margin-bottom:8px">今日あと '+(3-(S.huntCount||0))+' 回</div>';
  if(S.lastPos&&(S.huntSpots||[]).length){h+=(S.huntSpots||[]).map(function(sp){const sz=huntSizeById(sp.size);const dist=S.lastPos?Math.round(hav(S.lastPos.lat,S.lastPos.lng,sp.lat,sp.lng)):sp.dist;const cc=coatById(sp.color);const dot=sp.color==="white"?"#ffffff":sp.color==="black"?"#4a4048":sp.color==="mike"?"#e8862e":sp.color==="chatora"?"#f2a54a":"#aab3bd";
-  return '<div class="row" style="margin-bottom:10px"><div style="font-size:26px">🏹</div><div class="grow"><b>'+sz.name+'</b><div class="sub">約'+dist+'m ・ <span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:'+dot+';border:2px solid #e0b3c4;vertical-align:-1px"></span> '+cc.name+'色</div></div><button class="sm" onclick="openPicker(\'hunt\',\''+sp.id+'\')">狩りに行く</button></div>';}).join("");}
+  return '<div class="row" style="margin-bottom:10px"><div>'+illuSVG("hunt",26)+'</div><div class="grow"><b>'+sz.name+'</b><div class="sub">約'+dist+'m ・ <span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:'+dot+';border:2px solid #e0b3c4;vertical-align:-1px"></span> '+cc.name+'色</div></div><button class="sm" onclick="openPicker(\'hunt\',\''+sp.id+'\')">狩りに行く</button></div>';}).join("");}
  else h+='<div class="sub">位置情報が取れると狩り場が出ます。</div>';
  if((S.hunts||[]).length){h+='<div style="margin-top:8px">'+S.hunts.map(function(x){const back=Date.now()>=x.returnAt;const names=x.catIds.map(function(id){const c=S.cats.find(function(y){return y.id===id;});return c?(c.name||coatById(c.coat).name):"";}).join("、");
-  return '<div class="row" style="margin-bottom:8px"><div style="font-size:22px">🐾</div><div class="grow"><b>'+huntSizeById(x.size).name+'</b><div class="sub">'+names+(back?" ・ 終わったよ！":" ・ あと "+fmtRemain(x.returnAt-Date.now()))+'</div></div>'+(back?'<button class="sm" onclick="collectHunt(\''+x.id+'\')">受け取る</button>':'<span class="pill">狩り中</span>')+'</div>';}).join("")+'</div>';}
+  return '<div class="row" style="margin-bottom:8px"><div>'+illuSVG("paw",24)+'</div><div class="grow"><b>'+huntSizeById(x.size).name+'</b><div class="sub">'+names+(back?" ・ 終わったよ！":" ・ あと "+fmtRemain(x.returnAt-Date.now()))+'</div></div>'+(back?'<button class="sm" onclick="collectHunt(\''+x.id+'\')">受け取る</button>':'<span class="pill">狩り中</span>')+'</div>';}).join("")+'</div>';}
  box.innerHTML=h;}
 
 function showSheet(h){$("sheet").innerHTML=h;$("sheet").classList.add("on");}
@@ -946,30 +1064,30 @@ function initLeafletMap(){if(map||!window.L)return;mapGL=false;
  pathLine=L.polyline([],{color:"#ffb9d2",weight:6,opacity:.9}).addTo(map);
  updateTrail();updateCatMarker();drawMapPins();drawFlowers();}
 function resizeMap(){if(!map)return;if(mapGL){try{map.resize();}catch(e){}}else if(map.invalidateSize){map.invalidateSize();}}
-function playerCatSVG(s,coatId){s=s||40;coatId=coatId||(typeof S!=="undefined"&&S&&S.playerCoat)||"white";const co=coatById(coatId);const h=Math.round(s*65/60);
- const body=co.body;const dark=co.id==="black";const stroke=dark?"#2f2830":"#eec9d8";const eyeCol=dark?"#ffd94d":"#4a3542";
+function playerCatSVG(s,coatId){s=s||40;coatId=coatId||(typeof S!=="undefined"&&S&&S.playerCoat)||"white";const co=coatById(coatId);const h=Math.round(s*1.08);
+ const body=co.body;const dark=co.id==="black";const stroke=dark?"#6b5a68":"#d9a8bc";const eyeCol=dark?"#ffd94d":"#4a3542";
  let patch="";
- if(co.id==="mike")patch='<path d="M17 13 Q23 5 31 8 Q25 15 19 18 Z" fill="#e8862e"/><path d="M43 7 Q49 11 48 18 Q42 16 40 11 Z" fill="#4a3a32"/>';
- if(co.id==="chatora")patch='<path d="M23 8 L24 14 M30 6 L30 12 M37 8 L36 14" stroke="#d97f26" stroke-width="2" stroke-linecap="round"/>';
- if(co.id==="gray")patch='<ellipse cx="21" cy="12" rx="5" ry="3" fill="#ccd4db" opacity=".9"/>';
- return '<svg width="'+s+'" height="'+h+'" viewBox="0 0 60 65" role="img" aria-label="現在地のねこ">'
- +'<ellipse cx="30" cy="61" rx="14" ry="3.6" fill="rgba(90,61,74,.18)"/>'
- +'<path d="M40 50 Q54 50 52 38" fill="none" stroke="'+stroke+'" stroke-width="7" stroke-linecap="round"/>'
- +'<path d="M40 50 Q54 50 52 38" fill="none" stroke="'+body+'" stroke-width="5" stroke-linecap="round"/>'
- +'<ellipse cx="30" cy="51" rx="11" ry="9" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.5"/>'
- +'<ellipse cx="22" cy="58" rx="5" ry="2.6" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.1"/>'
- +'<ellipse cx="38" cy="58" rx="5" ry="2.6" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.1"/>'
- +'<path d="M13 17 L10 3 L25 9 Z" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.5" stroke-linejoin="round"/>'
- +'<path d="M47 17 L50 3 L35 9 Z" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.5" stroke-linejoin="round"/>'
- +'<path d="M14.5 14 L13 7 L21 10.5 Z" fill="#ffb3cd"/><path d="M45.5 14 L47 7 L39 10.5 Z" fill="#ffb3cd"/>'
- +'<circle cx="30" cy="25" r="19" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.6"/>'
+ if(co.id==="mike")patch='<path d="M19 15 Q25 6 33 9 Q27 16 21 19 Z" fill="#e8862e"/><path d="M42 8 Q48 12 47 19 Q41 17 39.4 12 Z" fill="#4a3a32"/>';
+ if(co.id==="chatora")patch='<path d="M24 7 L25 13 M31 6 L31 12 M38 7 L37 13" stroke="#d97f26" stroke-width="2" stroke-linecap="round"/>';
+ if(co.id==="gray")patch='<ellipse cx="22" cy="12" rx="5" ry="3" fill="#ccd4db" opacity=".9"/>';
+ return '<svg width="'+s+'" height="'+h+'" viewBox="0 0 62 67" role="img" aria-label="現在地のねこ">'
+ +'<ellipse cx="31" cy="63" rx="19" ry="3" fill="rgba(90,61,74,.18)"/>'
+ +'<path d="M43 49 Q57 48 55.4 35" fill="none" stroke="'+stroke+'" stroke-width="6.4" stroke-linecap="round"/>'
+ +'<path d="M43 49 Q57 48 55.4 35" fill="none" stroke="'+body+'" stroke-width="4.8" stroke-linecap="round"/>'
+ +'<path d="M16 18 L12.4 3 L27 9 Z" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.4" stroke-linejoin="round"/>'
+ +'<path d="M46 18 L49.6 3 L35 9 Z" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.4" stroke-linejoin="round"/>'
+ +'<path d="M17.4 15 L15.4 7.4 L23.4 10.6 Z" fill="#ffb3cd"/><path d="M44.6 15 L46.6 7.4 L38.6 10.6 Z" fill="#ffb3cd"/>'
+ +'<ellipse cx="31" cy="49" rx="14.6" ry="13" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.3"/>'
+ +'<ellipse cx="20" cy="60" rx="6.2" ry="2.8" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.1"/>'
+ +'<ellipse cx="42" cy="60" rx="6.2" ry="2.8" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.1"/>'
+ +'<ellipse cx="31" cy="24" rx="19.4" ry="17" fill="'+body+'" stroke="'+stroke+'" stroke-width="1.4"/>'
  +patch
- +'<circle cx="22.5" cy="25" r="2.3" fill="'+eyeCol+'"/><circle cx="37.5" cy="25" r="2.3" fill="'+eyeCol+'"/>'
- +'<circle cx="23.3" cy="24.2" r=".8" fill="#fff"/><circle cx="38.3" cy="24.2" r=".8" fill="#fff"/>'
- +'<ellipse cx="30" cy="29.6" rx="2.3" ry="1.7" fill="#ff9ebb"/>'
- +'<path d="M30 31.2 Q30 33.4 26.8 33.2 M30 31.2 Q30 33.4 33.2 33.2" stroke="'+(dark?"#ffe9f2":"#4a3542")+'" stroke-width="1.3" fill="none" stroke-linecap="round"/>'
- +'<circle cx="17.5" cy="30.5" r="3.6" fill="#ffc9da" opacity=".85"/><circle cx="42.5" cy="30.5" r="3.6" fill="#ffc9da" opacity=".85"/>'
- +'<g transform="translate(44,2)"><circle cx="0" cy="0" r="2.2" fill="#ff9ec6"/><circle cx="3.4" cy="1.6" r="2.2" fill="#ffb3cd"/><circle cx="1.4" cy="3.8" r="2.2" fill="#ff9ec6"/><circle cx="-1.8" cy="3.2" r="2.2" fill="#ffc9da"/><circle cx=".8" cy="1.8" r="1.2" fill="#ffcf4d"/></g>'
+ +'<ellipse cx="23.6" cy="23.6" rx="2.6" ry="3" fill="'+eyeCol+'"/><ellipse cx="38.4" cy="23.6" rx="2.6" ry="3" fill="'+eyeCol+'"/>'
+ +'<circle cx="24.4" cy="22.6" r=".9" fill="#fff"/><circle cx="39.2" cy="22.6" r=".9" fill="#fff"/>'
+ +'<ellipse cx="31" cy="28.8" rx="2.2" ry="1.6" fill="#ff9ebb"/>'
+ +'<path d="M31 30.4 Q31 32.6 27.8 32.4 M31 30.4 Q31 32.6 34.2 32.4" stroke="'+(dark?"#ffe9f2":"#4a3542")+'" stroke-width="1.2" fill="none" stroke-linecap="round"/>'
+ +'<ellipse cx="17" cy="29.6" rx="3.4" ry="2.6" fill="#ffc2d6" opacity=".9"/><ellipse cx="45" cy="29.6" rx="3.4" ry="2.6" fill="#ffc2d6" opacity=".9"/>'
+ +'<g transform="translate(47,1)"><circle cx="0" cy="0" r="2.1" fill="#ff9ec6"/><circle cx="3.2" cy="1.5" r="2.1" fill="#ffb3cd"/><circle cx="1.3" cy="3.6" r="2.1" fill="#ff9ec6"/><circle cx="-1.7" cy="3" r="2.1" fill="#ffc9da"/><circle cx=".7" cy="1.7" r="1.1" fill="#ffcf4d"/></g>'
  +'</svg>';}
 function renderPlayerCoatPicker(){const box=$("playerCoatBox");if(!box||!S)return;let h='<div class="row" style="flex-wrap:wrap;gap:8px">';
  COATS.forEach(function(co){const on=S.playerCoat===co.id;h+='<div style="text-align:center;cursor:pointer" onclick="setPlayerCoat(\''+co.id+'\')"><div style="border:3px solid '+(on?"#ff5c93":"#ffe3ee")+';border-radius:16px;padding:4px 6px;background:#fff">'+playerCatSVG(36,co.id)+'</div><div class="sub" style="font-weight:'+(on?"800":"400")+'">'+co.name+(on?" ✓":"")+'</div></div>';});
@@ -988,7 +1106,7 @@ function drawMapPins(){if(!map)return;
  (S.discoveries||[]).forEach(function(dv){const col=dv.type==="egg"?"#ff5c93":"#57b06a";const bg=dv.type==="egg"?"#fff0f6":"#eef9ee";const html='<span style="display:inline-flex;background:'+bg+';border:3px solid '+col+';border-radius:50%;width:42px;height:42px;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.25)">'+discSVG(dv,32)+'</span>';
   const m=mkMarker(dv.lat,dv.lng,html,42,42,21,21,function(){openDiscSheet(dv.id);},"center");if(m)pinMarkers.push(m);});
  (S.huntSpots||[]).forEach(function(sp){const co=coatById(sp.color);const bg=sp.color==="white"?"#ffffff":sp.color==="black"?"#4a4048":sp.color==="mike"?"#e8862e":sp.color==="chatora"?"#f2a54a":"#aab3bd";
-  const html='<span style="display:inline-flex;background:'+bg+';border:3px solid #fff;outline:2px solid #8a6d3b;border-radius:50%;width:40px;height:40px;align-items:center;justify-content:center;font-size:19px;box-shadow:0 2px 6px rgba(0,0,0,.3)">🏹</span>';
+  const html='<span style="display:inline-flex;background:'+bg+';border:3px solid #fff;outline:2px solid #8a6d3b;border-radius:50%;width:40px;height:40px;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.3)">'+illuSVG("hunt",20)+'</span>';
   const m=mkMarker(sp.lat,sp.lng,html,40,40,20,20,function(){openPicker("hunt",sp.id);},"center");if(m)pinMarkers.push(m);});
  if(S.destination){const dt=S.destination;const m=mkMarker(dt.lat,dt.lng,'<span style="display:inline-block;animation:catbob 1.2s ease-in-out infinite">'+destPinSVG(52)+'</span>',52,56,26,54,function(){openDestSheet();},"bottom");if(m)pinMarkers.push(m);}}
 function spotCatZukanHTML(designId){const d=designById(designId);const cats=(S&&S.cats)?S.cats:[];
@@ -1041,7 +1159,7 @@ function renderDest(){const box=$("destCard");if(!box)return;
 ;}
 function arriveDestination(){const rw=ensureDestRewards();S.today.dest++;S.week.dest++;if(!S.stats)S.stats={hatch:0,errands:0,dest:0};S.stats.dest++;
  const msgs=[];(rw?rw.items:[]).forEach(function(it){if(it.kind==="egg"){S.eggs.push({id:uid(),design:it.design,coat:it.coat||pick(COATS).id,need:it.need||(it.design==="normal"?1000:3000),hidden:true});msgs.push(eggColorName(it.coat||"white"));}else if(it.kind==="kari"){S.karikari[it.color]=(S.karikari[it.color]||0)+(it.n||3);msgs.push(KARINAME[it.color]);}else if(it.fruit){const f=fruitById(it.fruit);if(f){S.karikari[f.color]=(S.karikari[f.color]||0)+f.kari;msgs.push(KARINAME[f.color]);}}});
- if(typeof sePlay==="function")sePlay("decide");toast("🎁 目的地とうちゃく！ "+(msgs.length?msgs.join("・"):"")+" ゲット");
+ if(typeof sePlay==="function")sePlay("decide");toast(" 目的地とうちゃく！ "+(msgs.length?msgs.join("・"):"")+" ゲット");
  if(rw&&rw.xp)gainXP(rw.xp);
  newDestination(S.lastPos);save();renderBag();renderHome();updateDestIndicator();}
 function recordTrailSpots(lat,lng){if(!S||!Array.isArray(S.spots))return;if(!Array.isArray(S.trailSpots))S.trailSpots=[];
@@ -1071,7 +1189,7 @@ function spawnWalkEgg(){
  }
  const wwid=maybeWeatherDesign(0.30);if(wwid)designId=wwid;
  const disc={id:uid(),type:"egg",design:designId,coat:pick(COATS).id,lat:lat,lng:lng,dist:Math.max(20,Math.round(dist)),found:todayKey(),spotName:spotName};
- S.discoveries.push(disc);S.lastEggNotice="🥚 卵が見つかったよ！「おつかい」画面から猫を取りに行かせてね（"+designById(designId).name+"・"+eggColorName(disc.coat)+"）";
+ S.discoveries.push(disc);S.lastEggNotice=" 卵が見つかったよ！「おつかい」画面から猫を取りに行かせてね（"+designById(designId).name+"・"+eggColorName(disc.coat)+"）";
  toast(S.lastEggNotice);drawMapPins();renderEggNotice();}
 /* ===== v12: fast-move eggs (20km) + gotochi cats (47 prefectures) ===== */
 const GOTOCHI_REGIONS=["北海道","東北","関東","中部","近畿","中国","四国","九州沖縄"];
@@ -1230,7 +1348,7 @@ function spawnFastEgg(){
  }else{designId="normal";const base=S.lastPos||((S.fastPath&&S.fastPath.length)?{lat:S.fastPath[S.fastPath.length-1][0],lng:S.fastPath[S.fastPath.length-1][1]}:null);if(!base)return;const a=rnd(0,Math.PI*2),off=rnd(30,80);lat=base.lat+Math.cos(a)*off/111000;lng=base.lng+Math.sin(a)*off/(111000*Math.cos(base.lat*Math.PI/180));dist=off;}
  if(!useGoto){const fwid=maybeWeatherDesign(0.30);if(fwid)designId=fwid;}
  const disc={id:uid(),type:"egg",design:designId,coat:pick(COATS).id,lat:lat,lng:lng,dist:Math.max(20,Math.round(dist)),found:todayKey(),spotName:spotName};
- S.discoveries.push(disc);S.lastEggNotice="🥚 卵が見つかったよ！速い移動20kmで見つけたよ。「おつかい」画面から猫を取りに行かせてね（"+designById(designId).name+"・"+eggColorName(disc.coat)+"）";
+ S.discoveries.push(disc);S.lastEggNotice=" 卵が見つかったよ！速い移動20kmで見つけたよ。「おつかい」画面から猫を取りに行かせてね（"+designById(designId).name+"・"+eggColorName(disc.coat)+"）";
  toast(S.lastEggNotice);drawMapPins();renderEggNotice();}
 function addFast(distM,lat,lng){if(!S)return;S.fastProg=(S.fastProg||0)+distM;S.fastTotal=(S.fastTotal||0)+distM;
  if(!Array.isArray(S.fastPath))S.fastPath=[];S.fastPath.push([lat,lng]);if(S.fastPath.length>600)S.fastPath=S.fastPath.slice(-600);
@@ -1246,15 +1364,15 @@ function maybeFetchPref(lat,lng){if(!S||typeof fetch!=="function")return;const c
  .then(function(r){return r.json();})
  .then(function(j){prefFetchBusy=false;const st=j&&j.address?(j.address.state||j.address.province||""):"";const g=st?gotochiByPrefName(st):null;S.prefCell=cell;
   if(g){const changed=g.id!==S.prefId;S.prefId=g.id;S.prefName=g.pref;
-   if(changed){try{spotsFetched=false;}catch(e){}toast("🗾 "+g.pref+" にとうちゃく！ ご当地ねこ「"+g.short+"・"+g.motif+"」の卵が出ることがあるよ");}}
+   if(changed){try{spotsFetched=false;}catch(e){}toast(" "+g.pref+" にとうちゃく！ ご当地ねこ「"+g.short+"・"+g.motif+"」の卵が出ることがあるよ");}}
   save();if(typeof renderFastInfo==="function")renderFastInfo();if(typeof renderZukan==="function"&&typeof zukanMode!=="undefined"&&zukanMode==="gotochi")renderZukan();})
  .catch(function(){prefFetchBusy=false;S.prefCell=cell;save();});}
 function renderFastInfo(){const box=$("fastInfo");if(!box||!S)return;const prog=(S.fastProg||0);const remain=Math.max(0,20000-prog);const pct=Math.min(100,Math.round(prog/20000*100));
  const g=S.prefId?gotochiById(S.prefId):null;
- box.innerHTML='<div class="card" style="margin-top:12px"><h2>🚗 速い移動と ご当地</h2>'
+ box.innerHTML='<div class="card" style="margin-top:12px"><h2> 速い移動と ご当地</h2>'
  +'<div class="sub" style="font-size:13px;line-height:1.8">あと <b>'+(remain/1000).toFixed(1)+' km</b> 速い移動をすると卵が1つ見つかります。</div>'
  +'<div class="bar" style="margin:8px 0 4px"><i style="width:'+pct+'%"></i></div><div class="sub">'+(prog/1000).toFixed(1)+' / 20.0 km（速い移動の累計 '+(Math.round((S.fastTotal||0)/100)/10).toLocaleString()+' km）</div>'
- +'<div class="sub" style="font-size:13px;margin-top:8px">'+(g?("🗾 現在地："+S.prefName+" ・ ご当地ねこは「"+g.short+"・"+g.motif+"」だよ。歩行・速い移動・探索機などの卵の一部が ご当地デザインになります。"):"🗾 現在地の都道府県はまだ分かっていません（位置情報が取れると自動で判定します）。")+'</div></div>';}
+ +'<div class="sub" style="font-size:13px;margin-top:8px">'+(g?(" 現在地："+S.prefName+" ・ ご当地ねこは「"+g.short+"・"+g.motif+"」だよ。歩行・速い移動・探索機などの卵の一部が ご当地デザインになります。"):" 現在地の都道府県はまだ分かっていません（位置情報が取れると自動で判定します）。")+'</div></div>';}
 function clearEggNotice(){S.lastEggNotice="";save();renderEggNotice();}
 function renderEggNotice(){const box=$("eggNotice");if(!box)return;if(S.lastEggNotice){box.innerHTML='<div class="card" style="border-color:#ff8fb8"><b>'+S.lastEggNotice+'</b><div style="margin-top:6px"><button class="sm ghost" onclick="clearEggNotice()">閉じる</button></div></div>';}else box.innerHTML="";}
 let watchId=null;
@@ -1263,7 +1381,7 @@ function startGPS(){if(!navigator.geolocation)return;
  watchId=navigator.geolocation.watchPosition(onPos,err=>{$("gpsState").textContent="位置情報を許可すると、スポットや目的地が出ます";},{enableHighAccuracy:true,maximumAge:3000,timeout:15000});}
 function isFastSegment(prev,lat,lng,ts){if(!prev||typeof ts!=="number"||!isFinite(ts)||typeof prev.t!=="number")return false;const dt=(ts-prev.t)/1000;if(!(dt>0))return false;const d=hav(prev.lat,prev.lng,lat,lng);return (d/dt)*3.6>20;}
 function onPos(p){const lat=p.coords.latitude,lng=p.coords.longitude;
- $("gpsState").textContent="📍 位置情報を取得中（GPS推定で歩数を数えています）";
+ $("gpsState").textContent=" 位置情報を取得中（GPS推定で歩数を数えています）";
  const ts=(typeof p.timestamp==="number"&&isFinite(p.timestamp))?p.timestamp:null;
  const prev=S.lastPos;
  const fast=prev?isFastSegment(prev,lat,lng,ts):false;
@@ -1283,7 +1401,7 @@ function addWalk(distM){const steps=Math.max(1,Math.round(distM/0.65));
  S.today.dist+=distM;S.week.dist+=distM;S.totalDist+=distM;
  S.xpCarrySteps+=steps;const xpAdd=Math.floor(S.xpCarrySteps/100);if(xpAdd>0){S.xpCarrySteps-=xpAdd*100;gainXP(xpAdd);}
  companionIds().filter(function(id){return !catBusy(id);}).forEach(id=>{const c=S.cats.find(x=>x.id===id);if(c){c.fp+=friendGain(c,distM*0.004);c.walkSteps=(c.walkSteps||0)+steps;}});
- syncIncubators();for(let _slot=0;_slot<3;_slot++){const _e=S.incubators[_slot];if(_e){_e.prog+=steps;if(_e.prog>=_e.need&&!_e.ready){_e.ready=true;toast("🥚 卵がふかしそう！ ふか器をタップしてね");}}}S.incubating=S.incubators[0]||null;
+ syncIncubators();for(let _slot=0;_slot<3;_slot++){const _e=S.incubators[_slot];if(_e){_e.prog+=steps;if(_e.prog>=_e.need&&!_e.ready){_e.ready=true;toast(" 卵がふかしそう！ ふか器をタップしてね");}}}S.incubating=S.incubators[0]||null;
  const mile=Math.floor(S.totalSteps/3000);
  if(mile>S.lastMile){S.lastMile=mile;spawnWalkEgg();}
  const fmile=Math.floor(S.totalSteps/1000);
@@ -1295,63 +1413,119 @@ function addWalk(distM){const steps=Math.max(1,Math.round(distM/0.65));
 
 /* ===== v12: coins / pickups / shop / house / lock ===== */
 const PICKUPS=[
-{id:"koishi",name:"小石",icon:"🪨",price:3,w:100},{id:"kusa",name:"草",icon:"🌿",price:2,w:100,edible:true},
-{id:"donguri",name:"どんぐり",icon:"🌰",price:4,w:90},{id:"eda",name:"木の枝",icon:"🪵",price:4,w:85},
-{id:"happa",name:"はっぱ",icon:"🍃",price:3,w:85},{id:"maruishi",name:"丸い石",icon:"⚪",price:4,w:70},
-{id:"dorodango",name:"泥団子",icon:"🟤",price:5,w:75},{id:"futa",name:"ふた",icon:"🔘",price:5,w:70},
-{id:"matsubokkuri",name:"松ぼっくり",icon:"🌲",price:6,w:60},{id:"botan",name:"ボタン",icon:"🔵",price:8,w:55},
-{id:"kaigara",name:"貝がら",icon:"🐚",price:8,w:50},{id:"sakuraP",name:"花びら",icon:"🌸",price:5,w:50},
-{id:"watage",name:"たんぽぽの綿毛",icon:"💮",price:6,w:45},{id:"kiNoMi",name:"木の実",icon:"🫐",price:7,w:45},
-{id:"suna",name:"きれいな砂",icon:"✨",price:6,w:40},{id:"clover",name:"クローバー",icon:"🍀",price:12,w:35},
-{id:"garasu",name:"ガラス玉",icon:"🔮",price:18,w:28},{id:"nezumiO",name:"ねずみの置物",icon:"🐭",price:15,w:22},
-{id:"hane",name:"白い羽",icon:"🪶",price:20,w:16},{id:"akikan",name:"空き缶",icon:"🥫",price:12,w:15},
-{id:"okashi",name:"お菓子の袋",icon:"🍬",price:10,w:13},{id:"keshigomu",name:"消しゴム",icon:"🧽",price:9,w:12},
-{id:"kagi",name:"なくした鍵",icon:"🔑",price:25,w:10},{id:"ginBotan",name:"銀のボタン",icon:"⚪",price:30,w:8},
-{id:"coinOld",name:"古いコイン",icon:"🪙",price:35,w:7},{id:"yubiwa",name:"指輪",icon:"💍",price:40,w:6},
-{id:"hoshi",name:"星の砂",icon:"⭐",price:45,w:5},{id:"okashiFull",name:"中身入りお菓子",icon:"🍫",price:60,w:3},
-{id:"kinHane",name:"金色の羽",icon:"🌟",price:100,w:2},{id:"nijiiro",name:"虹色の石",icon:"🌈",price:80,w:2}];
+{id:"koishi",name:"小石",icon:pickupSVG("koishi"),price:3,w:100},{id:"kusa",name:"草",icon:pickupSVG("kusa"),price:2,w:100,edible:true},
+{id:"donguri",name:"どんぐり",icon:pickupSVG("donguri"),price:4,w:90},{id:"eda",name:"木の枝",icon:pickupSVG("eda"),price:4,w:85},
+{id:"happa",name:"はっぱ",icon:pickupSVG("happa"),price:3,w:85},{id:"maruishi",name:"丸い石",icon:pickupSVG("maruishi"),price:4,w:70},
+{id:"dorodango",name:"泥団子",icon:pickupSVG("dorodango"),price:5,w:75},{id:"futa",name:"ふた",icon:pickupSVG("futa"),price:5,w:70},
+{id:"matsubokkuri",name:"松ぼっくり",icon:pickupSVG("matsubokkuri"),price:6,w:60},{id:"botan",name:"ボタン",icon:pickupSVG("botan"),price:8,w:55},
+{id:"kaigara",name:"貝がら",icon:pickupSVG("kaigara"),price:8,w:50},{id:"sakuraP",name:"花びら",icon:pickupSVG("sakuraP"),price:5,w:50},
+{id:"watage",name:"たんぽぽの綿毛",icon:pickupSVG("watage"),price:6,w:45},{id:"kiNoMi",name:"木の実",icon:pickupSVG("kiNoMi"),price:7,w:45},
+{id:"suna",name:"きれいな砂",icon:pickupSVG("suna"),price:6,w:40},{id:"clover",name:"クローバー",icon:pickupSVG("clover"),price:12,w:35},
+{id:"garasu",name:"ガラス玉",icon:pickupSVG("garasu"),price:18,w:28},{id:"nezumiO",name:"ねずみの置物",icon:pickupSVG("nezumiO"),price:15,w:22},
+{id:"hane",name:"白い羽",icon:pickupSVG("hane"),price:20,w:16},{id:"akikan",name:"空き缶",icon:pickupSVG("akikan"),price:12,w:15},
+{id:"okashi",name:"お菓子の袋",icon:pickupSVG("okashi"),price:10,w:13},{id:"keshigomu",name:"消しゴム",icon:pickupSVG("keshigomu"),price:9,w:12},
+{id:"kagi",name:"なくした鍵",icon:pickupSVG("kagi"),price:25,w:10},{id:"ginBotan",name:"銀のボタン",icon:pickupSVG("ginBotan"),price:30,w:8},
+{id:"coinOld",name:"古いコイン",icon:pickupSVG("coinOld"),price:35,w:7},{id:"yubiwa",name:"指輪",icon:pickupSVG("yubiwa"),price:40,w:6},
+{id:"hoshi",name:"星の砂",icon:pickupSVG("hoshi"),price:45,w:5},{id:"okashiFull",name:"中身入りお菓子",icon:pickupSVG("okashiFull"),price:60,w:3},
+{id:"kinHane",name:"金色の羽",icon:pickupSVG("kinHane"),price:100,w:2},{id:"nijiiro",name:"虹色の石",icon:pickupSVG("nijiiro"),price:80,w:2}];
 const pickupById=function(id){return PICKUPS.find(function(x){return x.id===id;});};
 function rollPickup(){let tot=0;PICKUPS.forEach(function(p){tot+=p.w;});let r=Math.random()*tot;for(const p of PICKUPS){r-=p.w;if(r<=0)return p;}return PICKUPS[0];}
 function gainCoins(n,silent){if(n<=0)return;S.coins=(S.coins||0)+n;S.coinTotal=(S.coinTotal||0)+n;if(!silent){renderHeader();if(typeof sePlay==="function")sePlay("coin");}}
 function processCoinPickups(){if(!S)return;let changed=false,picked=false;
  const cs=Math.floor((S.totalSteps||0)/100);if(cs>(S.lastCoinStep||0)){const n=cs-(S.lastCoinStep||0);S.lastCoinStep=cs;gainCoins(n,true);changed=true;}
  const cd=Math.floor(totalMoveM()/1000);if(cd>(S.lastCoinDist||0)){const n=cd-(S.lastCoinDist||0);S.lastCoinDist=cd;gainCoins(n,true);changed=true;}
- const ps=Math.floor((S.totalSteps||0)/500);while((S.lastPickStep||0)<ps){S.lastPickStep=(S.lastPickStep||0)+1;const p=rollPickup();S.pickups[p.id]=(S.pickups[p.id]||0)+1;S.pickupSeen[p.id]=true;toast("✨ "+p.name+" を拾った！");picked=true;changed=true;}
- const pd=Math.floor(totalMoveM()/2000);while((S.lastPickDist||0)<pd){S.lastPickDist=(S.lastPickDist||0)+1;const p=rollPickup();S.pickups[p.id]=(S.pickups[p.id]||0)+1;S.pickupSeen[p.id]=true;toast("✨ "+p.name+" を拾った！");picked=true;changed=true;}
+ const ps=Math.floor((S.totalSteps||0)/500);while((S.lastPickStep||0)<ps){S.lastPickStep=(S.lastPickStep||0)+1;const p=rollPickup();S.pickups[p.id]=(S.pickups[p.id]||0)+1;S.pickupSeen[p.id]=true;toast(" "+p.name+" を拾った！");picked=true;changed=true;}
+ const pd=Math.floor(totalMoveM()/2000);while((S.lastPickDist||0)<pd){S.lastPickDist=(S.lastPickDist||0)+1;const p=rollPickup();S.pickups[p.id]=(S.pickups[p.id]||0)+1;S.pickupSeen[p.id]=true;toast(" "+p.name+" を拾った！");picked=true;changed=true;}
  if(picked&&typeof sePlay==="function")sePlay("pickup");if(changed){renderHeader();save();}}
 function resyncCoinCountersDown(){S.lastCoinStep=Math.floor((S.totalSteps||0)/100);S.lastCoinDist=Math.floor(totalMoveM()/1000);S.lastPickStep=Math.floor((S.totalSteps||0)/500);S.lastPickDist=Math.floor(totalMoveM()/2000);}
-const MEATS=[{id:"usagi",name:"ウサギのお肉",icon:"🐰",fp:8,w:50},{id:"nezumi",name:"ネズミのお肉",icon:"🐭",fp:12,w:30},{id:"tori",name:"小鳥のお肉",icon:"🐦",fp:18,w:15},{id:"kaeru",name:"カエルのお肉",icon:"🐸",fp:26,w:5}];
+const MEATS=[{id:"usagi",name:"ウサギのお肉",icon:meatSVG("usagi"),fp:8,w:50},{id:"nezumi",name:"ネズミのお肉",icon:meatSVG("nezumi"),fp:12,w:30},{id:"tori",name:"小鳥のお肉",icon:meatSVG("tori"),fp:18,w:15},{id:"kaeru",name:"カエルのお肉",icon:meatSVG("kaeru"),fp:26,w:5}];
 const meatById=function(id){return MEATS.find(function(x){return x.id===id;});};
 function rollMeat(){let tot=0;MEATS.forEach(function(m){tot+=m.w;});let r=Math.random()*tot;for(const m of MEATS){r-=m.w;if(r<=0)return m;}return MEATS[0];}
-const FURN=[{id:"sara",name:"餌の皿",icon:"🍽️",price:100,x:"8%",y:"62%"},{id:"bed",name:"猫のベッド",icon:"🛏️",price:200,x:"62%",y:"58%"},{id:"tsume",name:"爪とぎ",icon:"🪵",price:150,x:"30%",y:"60%"},{id:"clock",name:"時計",icon:"🕰️",price:180,x:"78%",y:"8%"},{id:"tower",name:"キャットタワー",icon:"🗼",price:500,x:"84%",y:"34%"},{id:"wpSakura",name:"壁紙・さくら",icon:"🌸",price:250,wall:"#ffe3ee"},{id:"wpHoshi",name:"壁紙・星空",icon:"🌌",price:300,wall:"#dfe8ff"},{id:"flWood",name:"床・木目",icon:"🪵",price:250,floor:"#f3ddba"},{id:"flPink",name:"床・ピンク",icon:"🎀",price:300,floor:"#ffd9e8"}];
+const FURN=[
+{id:"sara",base:"sara",name:"餌の皿・ピンク",color:"#ff8fb8",price:100,x:"8%",y:"64%"},
+{id:"saraBlue",base:"sara",name:"餌の皿・水色",color:"#7ab8e8",price:100,x:"8%",y:"64%"},
+{id:"saraYellow",base:"sara",name:"餌の皿・黄色",color:"#f5cf4d",price:100,x:"8%",y:"64%"},
+{id:"saraWhite",base:"sara",name:"餌の皿・白",color:"#ffffff",price:90,x:"8%",y:"64%"},
+{id:"saraFlower",base:"sara",name:"餌の皿・花柄",color:"#ff8fb8",pattern:"flower",price:130,x:"8%",y:"64%"},
+{id:"bed",base:"bed",name:"猫のベッド・ピンク",color:"#ff9ec6",price:200,x:"60%",y:"60%"},
+{id:"bedBlue",base:"bed",name:"猫のベッド・水色",color:"#8ec9e8",price:200,x:"60%",y:"60%"},
+{id:"bedMint",base:"bed",name:"猫のベッド・ミント",color:"#8fd6b4",price:200,x:"60%",y:"60%"},
+{id:"bedStar",base:"bed",name:"猫のベッド・星柄",color:"#b48ce0",pattern:"star",price:240,x:"60%",y:"60%"},
+{id:"tsume",base:"tsume",name:"爪とぎ・茶色",color:"#c98d54",price:150,x:"30%",y:"62%"},
+{id:"tsumePink",base:"tsume",name:"爪とぎ・ピンク",color:"#ff9ec6",price:170,x:"30%",y:"62%"},
+{id:"tsumeGray",base:"tsume",name:"爪とぎ・グレー",color:"#aab3bd",price:150,x:"30%",y:"62%"},
+{id:"clock",base:"clock",name:"時計・木目",color:"#b08954",price:180,x:"78%",y:"6%"},
+{id:"clockPink",base:"clock",name:"時計・ピンク",color:"#ff8fb8",price:180,x:"78%",y:"6%"},
+{id:"clockWhite",base:"clock",name:"時計・白",color:"#e8e2da",price:170,x:"78%",y:"6%"},
+{id:"tower",base:"tower",name:"キャットタワー・ベージュ",color:"#e3cfa8",price:500,x:"84%",y:"30%"},
+{id:"towerPink",base:"tower",name:"キャットタワー・ピンク",color:"#ffb3cd",price:520,x:"84%",y:"30%"},
+{id:"towerGray",base:"tower",name:"キャットタワー・グレー",color:"#b9c2cc",price:500,x:"84%",y:"30%"},
+{id:"wpPlain",base:"wp",name:"壁紙・無地ベージュ",wall:"#e8d7bd",pattern:"plain",price:150},
+{id:"wpBrown",base:"wp",name:"壁紙・無地の茶色",wall:"#cbb59a",pattern:"plain",price:150},
+{id:"wpSakura",base:"wp",name:"壁紙・さくら",wall:"#ffe3ee",pattern:"sakura",price:250},
+{id:"wpHoshi",base:"wp",name:"壁紙・星空",wall:"#dfe8ff",pattern:"star",price:300},
+{id:"wpDot",base:"wp",name:"壁紙・水玉",wall:"#fdf3e3",pattern:"dot",price:220},
+{id:"wpStripe",base:"wp",name:"壁紙・ストライプ",wall:"#e6f2e4",pattern:"stripe",price:220},
+{id:"wpCheck",base:"wp",name:"壁紙・チェック",wall:"#f3e8f7",pattern:"check",price:240},
+{id:"flPlain",base:"fl",name:"床・無地の茶色",floor:"#b08954",pattern:"plain",price:150},
+{id:"flWood",base:"fl",name:"床・木目",floor:"#d9b98f",pattern:"wood",price:250},
+{id:"flPink",base:"fl",name:"床・ピンク",floor:"#ffd9e8",pattern:"plain",price:300},
+{id:"flCheck",base:"fl",name:"床・チェック",floor:"#e8dcc8",pattern:"check",price:260},
+{id:"flFlower",base:"fl",name:"床・花柄",floor:"#c9a06a",pattern:"flower",price:280}];
+const FURN_BASES=[{id:"sara",name:"餌の皿"},{id:"bed",name:"猫のベッド"},{id:"tsume",name:"爪とぎ"},{id:"clock",name:"時計"},{id:"tower",name:"キャットタワー"}];
 const furnById=function(id){return FURN.find(function(x){return x.id===id;});};
-function sellPickup(id,all){const p=pickupById(id);if(!p)return;const n=all?(S.pickups[id]||0):1;if(n<=0)return;S.pickups[id]-=n;gainCoins(p.price*n);toast(p.name+" を売って 🪙"+(p.price*n));save();renderBag();renderHeader();}
-function sellAllPickups(){let total=0;PICKUPS.forEach(function(p){const n=S.pickups[p.id]||0;if(n>0&&!p.edible){total+=p.price*n;S.pickups[p.id]=0;}});if(total<=0){toast("売れるものがないよ");return;}gainCoins(total);toast("まとめて売って 🪙"+total);save();renderBag();renderHeader();}
-function buyItem(kind,id){if(kind==="kusa"){if(S.coins<5){toast("コインが足りないよ");return;}S.coins-=5;S.pickups.kusa=(S.pickups.kusa||0)+1;S.pickupSeen.kusa=true;toast("🌿 草を買ったよ");}
- else if(kind==="kari"){if(S.coins<20){toast("コインが足りないよ");return;}S.coins-=20;giveKari(3);toast("🍚 カリカリ（ランダム3個）を買ったよ");}
- else if(kind==="meat"){if(S.coins<50){toast("コインが足りないよ");return;}S.coins-=50;const m=rollMeat();S.meats[m.id]++;toast(m.icon+" "+m.name+" を買ったよ");}
- else if(kind==="furn"){const f=furnById(id);if(!f)return;if(S.furnOwned[id]){toast("もう持っているよ");return;}if(S.coins<f.price){toast("コインが足りないよ");return;}S.coins-=f.price;S.furnOwned[id]=true;S.furnPlaced[id]=true;toast(f.icon+" "+f.name+" を買ったよ");}
+function sellPickup(id,all){const p=pickupById(id);if(!p)return;const n=all?(S.pickups[id]||0):1;if(n<=0)return;S.pickups[id]-=n;gainCoins(p.price*n);toast(p.name+" を売って コイン "+(p.price*n));save();renderBag();renderHeader();}
+function sellAllPickups(){let total=0;PICKUPS.forEach(function(p){const n=S.pickups[p.id]||0;if(n>0&&!p.edible){total+=p.price*n;S.pickups[p.id]=0;}});if(total<=0){toast("売れるものがないよ");return;}gainCoins(total);toast("まとめて売って コイン "+total);save();renderBag();renderHeader();}
+function buyItem(kind,id){if(kind==="kusa"){if(S.coins<5){toast("コインが足りないよ");return;}S.coins-=5;S.pickups.kusa=(S.pickups.kusa||0)+1;S.pickupSeen.kusa=true;toast("草を買ったよ");}
+ else if(kind==="kariColor"){const col=KARINAME[id]?id:"pink";if(S.coins<20){toast("コインが足りないよ");return;}S.coins-=20;S.karikari[col]=(S.karikari[col]||0)+1;toast(KARINAME[col]+" を買ったよ");}
+ else if(kind==="meatKind"){const m=meatById(id)||MEATS[0];if(S.coins<50){toast("コインが足りないよ");return;}S.coins-=50;S.meats[m.id]++;toast(m.name+" を買ったよ");}
+ else if(kind==="kari"){if(S.coins<20){toast("コインが足りないよ");return;}S.coins-=20;giveKari(3);toast("カリカリ（ランダム3個）を買ったよ");}
+ else if(kind==="meat"){if(S.coins<50){toast("コインが足りないよ");return;}S.coins-=50;const m=rollMeat();S.meats[m.id]++;toast(m.name+" を買ったよ");}
+ else if(kind==="furn"){const f=furnById(id);if(!f)return;if(S.furnOwned[id]){toast("もう持っているよ");return;}if(S.coins<f.price){toast("コインが足りないよ");return;}S.coins-=f.price;S.furnOwned[id]=true;S.furnPlaced[id]=true;toast(f.name+" を買ったよ");}
  save();renderBag();renderHeader();}
-function openPickupZukan(){let h='<h3 style="margin-top:0">📖 拾ったもの図鑑</h3><div class="grid">';
- PICKUPS.forEach(function(p){const seen=!!S.pickupSeen[p.id];const n=S.pickups[p.id]||0;h+='<div class="zcell"><div style="font-size:30px" class="'+(seen?"":"sil")+'">'+p.icon+'</div><div>'+(seen?p.name:"？？？")+'</div><div class="sub">'+(seen?("×"+n+" ・ 売値 🪙"+p.price):"まだ")+'</div></div>';});
+function openPickupZukan(){let h='<h3 style="margin-top:0">'+illuSVG("book",20)+' 拾ったもの図鑑</h3><div class="grid">';
+ PICKUPS.forEach(function(p){const seen=!!S.pickupSeen[p.id];const n=S.pickups[p.id]||0;h+='<div class="zcell"><div style="font-size:30px" class="'+(seen?"":"sil")+'">'+p.icon+'</div><div>'+(seen?p.name:"？？？")+'</div><div class="sub">'+(seen?("×"+n+" ・ 売値 コイン "+p.price):"まだ")+'</div></div>';});
  h+='</div><div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';showSheet(h);}
 function feedMeat(id,mid){const c=S.cats.find(function(x){return x.id===id;});const m=meatById(mid);if(!c||!m)return;if((S.meats[mid]||0)<=0){toast(m.name+"がないよ");return;}if(c.feedDay!==todayKey()){c.feedDay=todayKey();c.feeds=0;}if(c.feeds>=2){toast("今日のお食事は2回までだよ");return;}S.meats[mid]--;c.feeds++;c.fp+=friendGain(c,m.fp);S.today.feeds++;S.week.feeds++;if(typeof sePlay==="function")sePlay("feed");toast(m.icon+" "+(c.name||coatById(c.coat).name)+" が "+m.name+" を食べた！ なかよしアップ");gainXP(4);save();renderAll();}
-function feedGrass(id){const c=S.cats.find(function(x){return x.id===id;});if(!c)return;if((S.pickups.kusa||0)<=0){toast("草がないよ");return;}S.pickups.kusa--;c.fp+=friendGain(c,3);if(typeof sePlay==="function")sePlay("feed");toast("🌿 "+(c.name||coatById(c.coat).name)+" が草を食べた");save();renderAll();}
+function feedGrass(id){const c=S.cats.find(function(x){return x.id===id;});if(!c)return;if((S.pickups.kusa||0)<=0){toast("草がないよ");return;}S.pickups.kusa--;c.fp+=friendGain(c,3);if(typeof sePlay==="function")sePlay("feed");toast(" "+(c.name||coatById(c.coat).name)+" が草を食べた");save();renderAll();}
 function openHouseFeed(id){const c=S.cats.find(function(x){return x.id===id;});if(!c)return;const n=feedCountToday(c);
- let h='<h3 style="margin-top:0;text-align:center">'+(c.name||coatById(c.coat).name)+' にあげる</h3><div style="text-align:center">'+catFxSVG(c,90)+'<div style="font-size:13px;letter-spacing:1px">'+heartsHTML(c.fp)+'</div><div class="sub">今日のお食事 '+n+' / 2</div></div>';
- h+='<div style="margin-top:10px">'+Object.keys(KARINAME).map(function(col){return '<div class="shopRow"><div>'+karikariSVG(col,34)+'</div><div class="grow">'+KARINAME[col]+' ×'+(S.karikari[col]||0)+'</div><button class="sm" onclick="closeSheet();feedCat(\''+id+'\',\''+col+'\')">あげる</button></div>';}).join("")+'</div>';
- h+=MEATS.map(function(m){return '<div class="shopRow"><div style="font-size:26px">'+m.icon+'</div><div class="grow">'+m.name+' ×'+(S.meats[m.id]||0)+'</div><button class="sm" onclick="feedMeat(\''+id+'\',\''+m.id+'\');openHouse()">あげる</button></div>';}).join("");
- h+='<div class="shopRow"><div style="font-size:26px">🌿</div><div class="grow">草 ×'+(S.pickups.kusa||0)+'</div><button class="sm" onclick="feedGrass(\''+id+'\');openHouse()">あげる</button></div>';
- h+='<div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="openHouse()">← おうちにもどる</button></div>';showSheet(h);}
-function roomWallFloor(){let wall="#fff5f9",floor="#ffeef5";FURN.forEach(function(f){if(S.furnPlaced[f.id]&&f.wall)wall=f.wall;if(S.furnPlaced[f.id]&&f.floor)floor=f.floor;});return{wall:wall,floor:floor};}
+ let h='<h3 style="margin-top:0;text-align:center">'+(c.name||coatById(c.coat).name)+' にあげる</h3><div style="text-align:center">'+catFxSVG(c,90)+'<div>'+heartsHTML(c.fp)+'</div><div class="sub">今日のご飯 '+n+' / 2</div></div>';
+ h+='<div class="catBtnRow" style="margin-top:10px">'
+ +'<div class="bigCatBtn" style="'+(feedCatSel==="kusa"?"border-color:#7ec850;background:#f2fbe9":"")+'" onclick="feedCatSel=\'kusa\';openHouseFeed(\''+id+'\')"><div>'+illuSVG("grass",26)+'</div><b>草</b></div>'
+ +'<div class="bigCatBtn" style="'+(feedCatSel==="kari"?"border-color:#ff5c93;background:#fff0f6":"")+'" onclick="feedCatSel=\'kari\';openHouseFeed(\''+id+'\')"><div>'+illuSVG("bowl",26)+'</div><b>カリカリ</b></div>'
+ +'<div class="bigCatBtn" style="'+(feedCatSel==="meat"?"border-color:#e2704d;background:#fff3ec":"")+'" onclick="feedCatSel=\'meat\';openHouseFeed(\''+id+'\')"><div>'+illuSVG("meat",26)+'</div><b>肉</b></div></div>';
+ if(feedCatSel==="kusa"){
+  h+='<div class="shopRow"><div>'+illuSVG("grass",30)+'</div><div class="grow">草 ×'+(S.pickups.kusa||0)+'</div><button class="sm" onclick="feedGrass(\''+id+'\');openHouse()">あげる</button></div>';
+ } else if(feedCatSel==="meat"){
+  h+=MEATS.map(function(m){return '<div class="shopRow"><div>'+meatSVG(m.id,30)+'</div><div class="grow">'+m.name+' ×'+(S.meats[m.id]||0)+'</div><button class="sm" onclick="feedMeat(\''+id+'\',\''+m.id+'\');openHouse()">あげる</button></div>';}).join("");
+ } else {
+  h+=Object.keys(KARINAME).map(function(col){return '<div class="shopRow"><div>'+karikariSVG(col,34)+'</div><div class="grow">'+KARINAME[col]+' ×'+(S.karikari[col]||0)+'</div><button class="sm" onclick="closeSheet();feedCat(\''+id+'\',\''+col+'\')">あげる</button></div>';}).join("");
+ }
+ h+='<div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="openHouse()">おうちにもどる</button></div>';showSheet(h);}
+function roomWallFloor(){let wall="#e8d7bd",floor="#b08954",wallF=null,floorF=null;FURN.forEach(function(f){if(S.furnPlaced[f.id]&&f.wall){wall=f.wall;wallF=f;}if(S.furnPlaced[f.id]&&f.floor){floor=f.floor;floorF=f;}});return{wall:wall,floor:floor,wallF:wallF,floorF:floorF};}
+function roomPatternOverlay(f,kind){if(!f||!f.pattern||f.pattern==="plain"||f.pattern==="wood")return "";
+ const pid=(kind==="wall"?"wpPat":"flPat");let shape="";
+ if(f.pattern==="sakura")shape='<circle cx="14" cy="12" r="7" fill="#ff9ec6" opacity=".5"/><circle cx="30" cy="26" r="5" fill="#ffb3cd" opacity=".5"/>';
+ else if(f.pattern==="star")shape='<path d="M20 6 l2.4 5.2 5.2.6-4 3.6 1.2 5.2-4.8-2.9-4.8 2.9 1.2-5.2-4-3.6 5.2-.6Z" fill="#ffcf4d" opacity=".55"/>';
+ else if(f.pattern==="dot")shape='<circle cx="12" cy="12" r="4" fill="#ffffff" opacity=".65"/><circle cx="32" cy="30" r="4" fill="#ffffff" opacity=".65"/>';
+ else if(f.pattern==="stripe")shape='<rect x="8" width="7" height="40" fill="#ffffff" opacity=".4"/><rect x="28" width="7" height="40" fill="#ffffff" opacity=".4"/>';
+ else if(f.pattern==="check")shape='<path d="M0 13 L44 13 M0 29 L44 29 M13 0 L13 40 M29 0 L29 40" stroke="#ffffff" stroke-width="3" opacity=".4"/>';
+ else if(f.pattern==="flower")shape='<circle cx="14" cy="13" r="4.4" fill="#ff9ec6" opacity=".6"/><circle cx="31" cy="28" r="4.4" fill="#ffb3cd" opacity=".6"/>';
+ const pos=kind==="wall"?'left:0;right:0;top:0;height:58%':'left:0;right:0;bottom:0;height:42%';
+ return '<svg style="position:absolute;'+pos+';width:100%" height="100%" preserveAspectRatio="none"><defs><pattern id="'+pid+'" width="44" height="40" patternUnits="userSpaceOnUse">'+shape+'</pattern></defs><rect width="100%" height="100%" fill="url(#'+pid+')"/></svg>';}
 function openHouse(){const wf=roomWallFloor();const comp=companionIds();
- let furn="";FURN.forEach(function(f){if(S.furnOwned[f.id]&&S.furnPlaced[f.id]&&f.x)furn+='<span class="furnIcon" style="left:'+f.x+';top:'+f.y+'">'+f.icon+'</span>';});
- let cats=comp.length?comp.map(function(id){const c=S.cats.find(function(x){return x.id===id;});return c?'<span style="display:inline-block;cursor:pointer" onclick="openHouseFeed(\''+c.id+'\')">'+catFxSVG(c,64)+'</span>':"";}).join(""):'<span class="sub">いっしょに歩くねこがいません</span>';
- let h='<h3 style="margin-top:0">🏠 おうち</h3><div class="roomBox" style="background:linear-gradient(180deg,'+wf.wall+' 58%,'+wf.floor+' 58%)">'+furn+'<div style="position:absolute;left:8px;bottom:8px;right:8px">'+cats+'</div></div>';
- h+='<div style="margin-top:10px">'+FURN.map(function(f){if(!S.furnOwned[f.id])return '<div class="shopRow"><div style="font-size:24px" class="sil">'+f.icon+'</div><div class="grow">'+f.name+'<div class="sub">未所持（ショップ 🪙'+f.price+'）</div></div></div>';const on=!!S.furnPlaced[f.id];return '<div class="shopRow"><div style="font-size:24px">'+f.icon+'</div><div class="grow">'+f.name+'</div><button class="sm '+(on?"ghost":"")+'" onclick="S.furnPlaced[\''+f.id+'\']='+(on?"false":"true")+';save();openHouse()">'+(on?"しまう":"置く")+'</button></div>';}).join("")+'</div>';
- h+='<div class="sub" style="margin-top:6px">ねこを押すと餌をあげられます。</div><div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';showSheet(h);}
+ let furn="";FURN.forEach(function(f){if(S.furnOwned[f.id]&&S.furnPlaced[f.id]&&f.x)furn+='<span class="furnIcon" style="left:'+f.x+';top:'+f.y+'">'+furnSVG(f,44)+'</span>';});
+ let cats=comp.length?comp.map(function(id){const c=S.cats.find(function(x){return x.id===id;});return c?'<span style="display:inline-block;cursor:pointer" onclick="openHouseFeed(\''+c.id+'\')">'+catFxSVG(c,64)+'</span>':"";}).join(""):'<span class="sub" style="background:rgba(255,255,255,.75);border-radius:8px;padding:2px 8px">いっしょに歩くねこがいません</span>';
+ let h='<h3 style="margin-top:0">'+illuSVG("home",22)+' おうち</h3><div class="roomBox"><div class="roomWall" style="background:'+wf.wall+'"></div><div class="roomFloor" style="background:'+wf.floor+'"></div>'+roomPatternOverlay(wf.wallF,"wall")+roomPatternOverlay(wf.floorF,"floor")+furn+'<div class="roomCats">'+cats+'</div></div>';
+ const rowFor=function(f){if(!S.furnOwned[f.id])return '<div class="shopRow"><div class="sil">'+furnSVG(f,34)+'</div><div class="grow">'+f.name+'<div class="sub">未所持（ショップ '+coinHTML(f.price)+')</div></div></div>';const on=!!S.furnPlaced[f.id];return '<div class="shopRow"><div>'+furnSVG(f,34)+'</div><div class="grow">'+f.name+'</div><button class="sm '+(on?"ghost":"")+'" onclick="S.furnPlaced[\''+f.id+'\']='+(on?"false":"true")+';save();openHouse()">'+(on?"しまう":"置く")+'</button></div>';};
+ h+='<div style="margin-top:10px"><b style="font-size:13px">家具</b>'+FURN.filter(function(f){return !!f.x;}).map(rowFor).join("")+'</div>';
+ h+='<div style="margin-top:10px"><b style="font-size:13px">壁紙</b>'+FURN.filter(function(f){return !!f.wall;}).map(rowFor).join("")+'</div>';
+ h+='<div style="margin-top:10px"><b style="font-size:13px">床</b>'+FURN.filter(function(f){return !!f.floor;}).map(rowFor).join("")+'</div>';
+ h+='<div class="sub" style="margin-top:6px">ねこを押すと ご飯をあげられます。</div><div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';showSheet(h);}
 let lockTimer=null;
-function toggleLock(on){const ov=$("lockOverlay");if(!ov)return;if(on){ov.classList.add("on");const ls=$("lockSteps");if(ls)ls.textContent="今日 "+(S.today?S.today.steps:0).toLocaleString()+" 歩 ・ 🪙 "+(S.coins||0);}else ov.classList.remove("on");}
+function toggleLock(on){const ov=$("lockOverlay");if(!ov)return;if(on){ov.classList.add("on");const ls=$("lockSteps");if(ls)ls.innerHTML="今日 "+(S.today?S.today.steps:0).toLocaleString()+" 歩 ・ "+coinHTML(S.coins||0);}else ov.classList.remove("on");}
+
+document.querySelectorAll("[data-icn]").forEach(function(el){el.innerHTML=illuSVG(el.getAttribute("data-icn"),parseInt(el.getAttribute("data-sz")||"20",10));});
 document.addEventListener("DOMContentLoaded",function(){const b=$("lockUnlockBtn");if(!b)return;const start=function(e){e.preventDefault();lockTimer=setTimeout(function(){toggleLock(false);toast("ロックを解除したよ");},1200);};const cancel=function(){if(lockTimer)clearTimeout(lockTimer);};b.addEventListener("pointerdown",start);b.addEventListener("pointerup",cancel);b.addEventListener("pointerleave",cancel);});
 
 /* ===== step manual edit ===== */
@@ -1362,7 +1536,7 @@ function openStepEditor(){rollDay();
  +'<div style="margin-top:14px;text-align:center"><button class="sm" onclick="applyStepEdit()">変更する</button> <button class="ghost sm" onclick="closeSheet()">キャンセル</button></div>');
  setTimeout(function(){const el=$("stepEditInput");if(el){el.focus();el.select();}},60);}
 function spawnManualEgg(){const before=(S.discoveries||[]).length;S.trailSpots=[];spawnWalkEgg();
- if((S.discoveries||[]).length===before){const eg=normalEgg();S.eggs.push(eg);S.lastEggNotice="🥚 卵が見つかったよ！ もちものに入ったよ（"+eggColorName(eg.coat)+"）";toast(S.lastEggNotice);if(typeof renderEggNotice==="function")renderEggNotice();}}
+ if((S.discoveries||[]).length===before){const eg=normalEgg();S.eggs.push(eg);S.lastEggNotice=" 卵が見つかったよ！ もちものに入ったよ（"+eggColorName(eg.coat)+"）";toast(S.lastEggNotice);if(typeof renderEggNotice==="function")renderEggNotice();}}
 function applyStepEdit(){const el=$("stepEditInput");if(!el)return;
  const raw=String(el.value||"").trim();const v=Math.floor(Number(raw));
  if(raw===""||!isFinite(v)){toast("数字を入れてね");return;}
@@ -1476,6 +1650,14 @@ function bgmInit(){ensureAudioSettings();
   if(!t||!t.closest)return;
   if(t.closest("input,select,textarea"))return;
   if(t.closest("button,nav a,.catTile,.partyCat,.zcell,.incTap,.bigCatBtn,.rainbowEgg,.crackEgg"))sePlay("tap");});}
+
+/* v13: stop BGM in background / when closed so it does not linger in Control Center */
+var bgmWasPlayingBeforeHide=false;
+function bgmPauseForHide(){if(!bgmEl)return;bgmWasPlayingBeforeHide=!!(bgmCur&&!bgmEl.paused);try{bgmEl.pause();}catch(e){}if(seCtx&&seCtx.state==="running"){try{seCtx.suspend();}catch(e){}}}
+function bgmResumeAfterShow(){if(document.hidden)return;if(seCtx&&seCtx.state==="suspended"&&S&&S.audio&&S.audio.seOn){try{seCtx.resume();}catch(e){}}if(!bgmWasPlayingBeforeHide)return;bgmWasPlayingBeforeHide=false;if(S&&S.audio&&S.audio.bgmOn)bgmApply();}
+document.addEventListener("visibilitychange",function(){if(document.hidden)bgmPauseForHide();else bgmResumeAfterShow();});
+window.addEventListener("pagehide",function(){bgmPauseForHide();if(bgmEl){try{bgmEl.pause();bgmEl.removeAttribute("src");bgmEl.load();}catch(e){}}});
+window.addEventListener("pageshow",function(){bgmResumeAfterShow();});
 var seCtx=null,seMaster=null,seLastSpecific=0;
 function seEnsureCtx(){if(!S||!S.audio||!S.audio.seOn)return null;
  if(!seCtx){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
@@ -1537,7 +1719,7 @@ function setSeVol(v){ensureAudioSettings();S.audio.seVol=Math.max(0,Math.min(1,(
  const el=$("seVolVal");if(el)el.textContent=Math.round(S.audio.seVol*100)+"%";}
 function openAudioSettings(){ensureAudioSettings();const a=S.audio;
  const want=bgmDesiredId();const wantT=want?bgmTrackById(want):null;
- let h='<h3 style="margin-top:0">🎵 BGM・効果音</h3>';
+ let h='<h3 style="margin-top:0"> BGM・効果音</h3>';
  h+='<div class="sub" style="margin-bottom:8px">いまのBGM：'+(a.bgmOn?(wantT?bgmTrackLabel(wantT):"（ファイルが見つかりません）"):"オフ")+(a.bgmOn&&a.mode==="auto"?" ・ 自動":"")+'</div>';
  h+='<div class="shopRow"><div class="grow"><b>BGM</b></div><button class="sm '+(a.bgmOn?"":"ghost")+'" onclick="setBgmOn(true)">オン</button><button class="sm '+(a.bgmOn?"ghost":"")+'" onclick="setBgmOn(false)">オフ</button></div>';
  h+='<div class="shopRow"><div class="grow"><b>効果音</b></div><button class="sm '+(a.seOn?"":"ghost")+'" onclick="setSeOn(true)">オン</button><button class="sm '+(a.seOn?"ghost":"")+'" onclick="setSeOn(false)">オフ</button></div>';
@@ -1574,7 +1756,7 @@ function openIncubator(){syncIncubators();
   else stages+='<div style="margin-top:4px"><button class="sm ghost" onclick="closeSheet();goTab(\'bag\')">卵をえらぶ</button></div>';
   stages+='</div>';}
  stages+='</div>';
- showSheet('<h3 style="margin-top:0;text-align:center">🥚 ふか器</h3>'+stages+'<div style="margin-top:12px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+ showSheet('<h3 style="margin-top:0;text-align:center"> ふか器</h3>'+stages+'<div style="margin-top:12px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 function eggDetailHTML(e,prog){
  let h='<div style="text-align:center">'+eggSVG(e.design,e.coat,84)+'</div>';
  if(eggIsHidden(e)){h+='<div class="sub" style="font-size:13px;line-height:1.9;margin-top:8px">種類：'+eggColorName(e.coat||"white")+'<br>毛色：'+coatById(e.coat||"white").name+'<br>ふかまで：'+e.need.toLocaleString()+' 歩';}
@@ -1590,9 +1772,9 @@ let crackState={slot:0,taps:0};
 function crackOverlaySVG(stage,coatId){if(stage<=0)return "";const col="#8a6a58";const p1='<path d="M50 18 L44 34 L54 44 L46 58" fill="none" stroke="'+col+'" stroke-width="2.4" stroke-linecap="round"/>';const p2='<path d="M30 40 L44 48 L38 62 M70 38 L58 50 L66 64 M50 58 L50 78" fill="none" stroke="'+col+'" stroke-width="2.4" stroke-linecap="round"/>';return '<svg style="position:absolute;left:50%;top:0;transform:translateX(-50%);pointer-events:none" width="120" height="138" viewBox="0 0 100 115">'+p1+(stage>=2?p2:"")+'</svg>';}
 function openCrack(slot){syncIncubators();const e=S.incubators[slot];if(!e||!e.ready){if(e)openIncEggDetail(slot);return;}crackState={slot:slot,taps:0};renderCrack();}
 function renderCrack(){const e=S.incubators[crackState.slot];if(!e){closeSheet();return;}
- showSheet('<h3 style="margin-top:0;text-align:center">🥚 ふか</h3><div style="text-align:center;position:relative"><span class="crackEgg" onclick="tapCrack()"><span style="position:relative;display:inline-block">'+eggSVG(e.design,e.coat,120)+crackOverlaySVG(crackState.taps,e.coat)+'</span></span><div class="sub" style="margin-top:8px">卵をタップしてね（'+crackState.taps+' / 3）</div></div><div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+ showSheet('<h3 style="margin-top:0;text-align:center"> ふか</h3><div style="text-align:center;position:relative"><span class="crackEgg" onclick="tapCrack()"><span style="position:relative;display:inline-block">'+eggSVG(e.design,e.coat,120)+crackOverlaySVG(crackState.taps,e.coat)+'</span></span><div class="sub" style="margin-top:8px">卵をタップしてね（'+crackState.taps+' / 3）</div></div><div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 function tapCrack(){if(typeof sePlay==="function")sePlay("tap");crackState.taps++;if(crackState.taps>=3){const slot=crackState.slot;const e=S.incubators[slot];hatchEgg(slot);const cat=S.cats[S.cats.length-1];save();renderAll();
-  showSheet('<h3 style="margin-top:0;text-align:center">🐣 誕生！</h3><div style="text-align:center"><span class="birthPop" style="display:inline-block;font-size:34px">✨</span><div class="birthPop">'+(cat?catSVG(cat.coat,cat.design,130):"")+'</div><div style="font-weight:800;margin-top:4px">'+(cat?(coatById(cat.coat).name+"（"+designById(cat.design).name+"）"):"")+'</div></div><div style="margin-top:12px;text-align:center"><button class="sm" onclick="closeSheet();renderAll()">やったー！</button></div>');return;}
+  showSheet('<h3 style="margin-top:0;text-align:center"> 誕生！</h3><div style="text-align:center"><span class="birthPop" style="display:inline-block;font-size:34px"></span><div class="birthPop">'+(cat?catSVG(cat.coat,cat.design,130):"")+'</div><div style="font-weight:800;margin-top:4px">'+(cat?(coatById(cat.coat).name+"（"+designById(cat.design).name+"）"):"")+'</div></div><div style="margin-top:12px;text-align:center"><button class="sm" onclick="closeSheet();renderAll()">やったー！</button></div>');return;}
  renderCrack();}
 
 /* ---- cumulative missions ---- */
@@ -1612,31 +1794,31 @@ function renderCumulative(){const box=$("cumMissions");if(!box||!S)return;
  Object.keys(CUM_TABLE).forEach(function(mk){const meta=CUM_TABLE[mk];const val=cumValue(mk);
   const rows=meta.rows;const claimedN=rows.filter(function(r){return S.cumClaimed&&S.cumClaimed[mk+"_"+r[0]];}).length;
   const curIdx=rows.findIndex(function(r){return !(S.cumClaimed&&S.cumClaimed[mk+"_"+r[0]]);});
-  h+='<div class="row" style="margin-bottom:12px"><div style="font-size:26px">🏆</div><div class="grow"><div><b>'+meta.label+'</b> <span class="lvBadge">Lv'+claimedN+'</span></div>';
+  h+='<div class="row" style="margin-bottom:12px"><div style="font-size:26px"></div><div class="grow"><div><b>'+meta.label+'</b> <span class="lvBadge">Lv'+claimedN+'</span></div>';
   if(curIdx<0){h+='<div class="sub">全て達成しました ✓</div></div></div>';}
   else{const r=rows[curIdx];const d={id:mk+"_"+r[0],metric:mk,target:r[0],eggs:r[1],fruits:r[2],xp:r[3]};const p=Math.min(val,r[0]);const done=val>=r[0];
    h+='<div style="font-size:13px;margin-top:2px">'+p.toLocaleString()+' <span class="sub">/ '+r[0].toLocaleString()+' '+meta.unit+'</span></div><div class="bar" style="margin:4px 0"><i style="width:'+(p/r[0]*100)+'%"></i></div><div class="sub">報酬：'+cumRewardLabel(d)+'</div></div>'+(done?'<button class="sm goldBtn" onclick="claimCum(\''+d.id+'\')">受け取る</button>':'<span class="pill">進行中</span>')+'</div>';}});
  box.innerHTML=h;}
 function claimCum(id){const d=cumDefs().find(function(x){return x.id===id;});if(!d)return;if(!S.cumClaimed)S.cumClaimed={};if(S.cumClaimed[id])return;if(cumValue(d.metric)<d.target){toast("まだ達成していません");return;}
  S.cumClaimed[id]=true;for(let i=0;i<d.eggs;i++)S.eggs.push(unownedComboEgg(true));if(d.fruits)giveKari(d.fruits*3);
- if(typeof sePlay==="function")sePlay("decide");toast("🏆 累計ミッション達成！ "+cumRewardLabel(d));if(d.xp)gainXP(d.xp);save();renderMissions();renderBag();renderHome();tutAfter("cum",id);}
+ if(typeof sePlay==="function")sePlay("decide");toast(" 累計ミッション達成！ "+cumRewardLabel(d));if(d.xp)gainXP(d.xp);save();renderMissions();renderBag();renderHome();tutAfter("cum",id);}
 /* ---- menu & help ---- */
 function goTab(name){const a=document.querySelector('nav a[data-tab="'+name+'"]');if(a)a.click();}
-function openMenu(){showSheet('<h3 style="margin-top:0">☰ メニュー</h3><button class="menuBtn" onclick="closeSheet();startTutorial(true)">🔁 チュートリアルをもう一度見る</button><button class="menuBtn" onclick="openAudioSettings()">🎵 BGM・効果音</button><button class="menuBtn ghost" onclick="openHelp()">📖 詳しい説明（ヘルプ）</button><button class="menuBtn ghost" onclick="closeSheet();openIncubator()">🥚 ふか器を見る</button><button class="menuBtn ghost" onclick="closeSheet();goTab(\'cats\')">📖 ねこずかん</button><button class="menuBtn ghost" onclick="closeSheet();openPickupZukan()">📖 拾ったもの図鑑</button><button class="menuBtn ghost" onclick="closeSheet();openHouse()">🏠 おうち</button><button class="menuBtn ghost" onclick="closeSheet();toggleLock(true)">🔒 タッチロック</button><div style="margin-top:10px"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
-function openHelp(){showSheet('<h3 style="margin-top:0">📖 詳しい説明</h3><div style="font-size:13px;line-height:1.8">'
-+'<div class="helpSec"><b>🐾 遊び方</b><br>アプリを開いたまま歩くと、GPSで距離と歩数（推定）が記録され、歩いた道にお花が咲きます。一緒に歩くねこ（お気に入り、最大5匹）は なかよし度が上がります。フレンド・ランキングなどの対人要素はありません。</div>'
-+'<div class="helpSec"><b>🥚 卵の出方</b><br>3000歩あるくごとに卵が1つ必ず見つかり、「おつかい」で取りに行けます。その間に通った道の近く（30m以内）にスポットがあったときは、そのスポットのデザインからランダム、なかったときはノーマルの卵が現在地の近くに出ます。探索機やミッション、目的地、累計ミッションでも卵がもらえます。卵の色・柄は、中のねこの毛色を表しています。</div>'
-+'<div class="helpSec"><b>🐣 ふか器</b><br>ふか器は3台あり、同時に3個までセットできます。ホームのふか器をタップすると3台並んで大きく見られます（空の台はふか器だけの絵です）。卵は「もちもの」からセットでき、ノーマル卵は1000歩、デザイン卵は3000歩歩くとふかします。ふか器の中の卵をタップすると、デザイン・毛色・残り歩数などの詳細が見られます。もちもの画面の卵の欄にあるふか器の絵をタップしても、ふか器の画面に飛べます。ふか器に入っている卵も、卵の所持数に数えます。</div>'
-+'<div class="helpSec"><b>🗺️ 地図の見かた</b><br>地図上の猫があなたと一緒に動きます。歩いた道には小さなお花が咲いていくよ（今日の分は保存されます）。スポットのピンを押すと、徒歩の目安が見られます。3000歩あるくごとに、卵が1つ必ず見つかり、おつかいで取りに行けます。通った道の近く（30m以内）にスポットがあったときは、そのスポットのデザインの中からランダムで1つ見つかります。スポットが1つもなかったときは、ノーマル（みちばた）の卵が現在地の近くに見つかります。見つけた卵やフルーツのピンを押すと、おつかいの時間が見られます。車・電車など速い移動（時速20km超）は歩数に入りませんが、20kmごとに卵が1つ見つかります。今いる都道府県のご当地ねこの卵が出ることもあるよ（ねこずかんの「ご当地」ページで確認できます）。</div>'
-+'<div class="helpSec"><b>🌦️ 天気</b><br>地図の左上に現在地の天気と気温が出ます。雨のときは「雨の日」、雪のときは「雪の日」デザインの卵が出ることがあります。</div>'
-+'<div class="helpSec"><b>🎵 BGM・効果音</b><br>☰ メニューの「BGM・効果音」から設定できます。自動では、水辺の近く→雨・雪・強風→季節（夏）→時間帯（早朝・朝・昼・夕方・夜・深夜）の順で曲が切り替わります。手動で固定すると、好きな曲をずっと流せます（雨の日の曲を晴れの日にも聞けます）。BGMと効果音のオン／オフと音量も変えられます。曲のファイル（bgmフォルダ）は index.html と一緒にアップロードしてください。音は、画面を最初にタップしたあとから流れます。</div>'
-+'<div class="helpSec"><b>🐱 ねこの詳細</b><br>「うちのねこ」やホームの「いっしょに歩くねこ」でねこの絵を押すと、ねこの絵と名前、なかよし度（ハート）が大きく出ます。そこをもう一度押すと詳細が見られ、名前の変更、なかよし度、いっしょに歩いた歩数、見つけた日と場所、お気に入りの登録・解除、デザインの種類が確認できます。なかよし度は数字ではなくハートで表示され、たまった分だけハートに色がつきます。その日にカリカリを1個あげたねこにはキラキラ、2個（上限）あげたねこにはハートのエフェクトがつきます。</div>'
-+'<div class="helpSec"><b>🧺 おつかい・探索機</b><br>見つけた卵やフルーツは、ねこをおつかいに行かせて持って帰ってきます。行かせる匹数が多いほど速く帰ります。探索機は1日1回、その場所の近くのスポットの卵（1〜2種類）とフルーツ（2〜3種類）が見つかります。</div>'
-+'<div class="helpSec"><b>📍 目的地</b><br>現在地から500〜800mの範囲に出ます。旗をタップすると、もらえるものが全部（1個ずつ）見られます。約30m以内まで近づくと自動で報酬がもらえ、次の目的地が出ます。「更新」で引き直せます。</div>'
-+'<div class="helpSec"><b>🍓 フルーツとカリカリ</b><br>おつかいで猫がフルーツを持ち帰ったら、その猫をタップすると自動でカリカリに変わります。ミッションなどの報酬もカリカリで届きます。カリカリは「ねこ」画面の「カリカリをあげる」欄や おうち であげられます（1匹につき1日2回まで）。肉はカリカリより なかよし度が上がりやすいです。</div>'
-+'<div class="helpSec"><b>👣 歩数の編集</b><br>ホームの「きょうのおさんぽ」の歩数の横にある ✏️ から、今日の歩数を直接変更できます。変更すると累計歩数・距離・ふか器の進みぐあいにも反映されます（減らすこともできます）。増えた分でも、3000歩ごとの卵の判定をします。</div>'
-+'<div class="helpSec"><b>🏆 累計ミッション</b><br>期限なしで、アプリを使い始めてからの累計（ログイン日数・累計歩数・ねこゲット数・ふか回数・おつかい回数・目的地到着回数）で達成します。カテゴリごとに今の段階だけが表示され、達成して受け取ると次の段階に切り替わります。クリアした段階数は「Lv」で分かります（例：ログイン1日目クリアでLv1）。報酬は卵・フルーツ・XPで、歩数など難しいものほど大きくなります。卵は まだ持っていないデザイン×毛色からランダムで優先して出ます。デイリー・ウィークリー・累計は「まとめて受け取る」で一括受け取りできます。</div>'
-+'<div class="helpSec"><b>🚗 速い移動の卵</b><br>車や電車など時速20kmを超える速い移動は歩数には数えませんが、その距離は別に数えています。20km進むごとに卵が1つ見つかり、「おつかい」で取りに行けます。その20kmの間に通った道の近く（軌跡から30m以内）にあったスポットのデザインからランダムで決まり、スポットが無かった区間はノーマルの卵が軌跡上の点に出ます。20km未満の端数は次回に持ち越します。</div>'+'<div class="helpSec"><b>🗾 ご当地ねこ</b><br>47都道府県ごとに名物のねこがいます（例：大阪＝たこ焼き、山口＝ふぐ、愛知＝金のシャチホコ、京都＝寺、北海道＝乳牛、沖縄＝シーサー）。今いる都道府県はGPSから自動で判定します。その県にいる間に見つかる卵（3000歩の卵・速い移動の卵・探索機の卵など）の一部が、その土地のご当地デザインになります。集めたご当地ねこは、ねこずかんの「ご当地」ページで地方ごとに確認できます（通常の図鑑のコンプリートには含めません）。</div>'+'<div class="helpSec"><b>ℹ️ 注意</b><br>Webアプリのため、開いている間のみ記録されます。スマホを閉じた間の歩数・位置の反映と、iPhoneの歩数計（ヘルスケア）との連動はできません。記録は端末の中（このiPhone）に保存されます。車や電車での移動は歩数に数えません（時速20kmを超える速さの区間は、歩数・距離・XP・お花には入りません）。ただし速い移動の距離は別に数えて、20km進むごとに卵が1つ見つかります（その間に通った道の近くのスポットのデザイン、無ければノーマル）。今いる都道府県の「ご当地ねこ」の卵が出ることもあります。</div>'
+function openMenu(){showSheet('<h3 style="margin-top:0">☰ メニュー</h3><button class="menuBtn" onclick="closeSheet();startTutorial(true)"> チュートリアルをもう一度見る</button><button class="menuBtn" onclick="openAudioSettings()"> BGM・効果音</button><button class="menuBtn ghost" onclick="openHelp()"> 詳しい説明（ヘルプ）</button><button class="menuBtn ghost" onclick="closeSheet();openIncubator()"> ふか器を見る</button><button class="menuBtn ghost" onclick="closeSheet();goTab(\'cats\')"> ねこずかん</button><button class="menuBtn ghost" onclick="closeSheet();openPickupZukan()"> 拾ったもの図鑑</button><button class="menuBtn ghost" onclick="closeSheet();openHouse()"> おうち</button><button class="menuBtn ghost" onclick="closeSheet();toggleLock(true)"> タッチロック</button><div style="margin-top:10px"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+function openHelp(){showSheet('<h3 style="margin-top:0"> 詳しい説明</h3><div style="font-size:13px;line-height:1.8">'
++'<div class="helpSec"><b> 遊び方</b><br>アプリを開いたまま歩くと、GPSで距離と歩数（推定）が記録され、歩いた道にお花が咲きます。一緒に歩くねこ（お気に入り、最大5匹）は なかよし度が上がります。フレンド・ランキングなどの対人要素はありません。</div>'
++'<div class="helpSec"><b> 卵の出方</b><br>3000歩あるくごとに卵が1つ必ず見つかり、「おつかい」で取りに行けます。その間に通った道の近く（30m以内）にスポットがあったときは、そのスポットのデザインからランダム、なかったときはノーマルの卵が現在地の近くに出ます。探索機やミッション、目的地、累計ミッションでも卵がもらえます。卵の色・柄は、中のねこの毛色を表しています。</div>'
++'<div class="helpSec"><b> ふか器</b><br>ふか器は3台あり、同時に3個までセットできます。ホームのふか器をタップすると3台並んで大きく見られます（空の台はふか器だけの絵です）。卵は「もちもの」からセットでき、ノーマル卵は1000歩、デザイン卵は3000歩歩くとふかします。ふか器の中の卵をタップすると、デザイン・毛色・残り歩数などの詳細が見られます。もちもの画面の卵の欄にあるふか器の絵をタップしても、ふか器の画面に飛べます。ふか器に入っている卵も、卵の所持数に数えます。</div>'
++'<div class="helpSec"><b> 地図の見かた</b><br>地図上の猫があなたと一緒に動きます。歩いた道には小さなお花が咲いていくよ（今日の分は保存されます）。スポットのピンを押すと、徒歩の目安が見られます。3000歩あるくごとに、卵が1つ必ず見つかり、おつかいで取りに行けます。通った道の近く（30m以内）にスポットがあったときは、そのスポットのデザインの中からランダムで1つ見つかります。スポットが1つもなかったときは、ノーマル（みちばた）の卵が現在地の近くに見つかります。見つけた卵やフルーツのピンを押すと、おつかいの時間が見られます。車・電車など速い移動（時速20km超）は歩数に入りませんが、20kmごとに卵が1つ見つかります。今いる都道府県のご当地ねこの卵が出ることもあるよ（ねこずかんの「ご当地」ページで確認できます）。</div>'
++'<div class="helpSec"><b> 天気</b><br>地図の左上に現在地の天気と気温が出ます。雨のときは「雨の日」、雪のときは「雪の日」デザインの卵が出ることがあります。</div>'
++'<div class="helpSec"><b> BGM・効果音</b><br>☰ メニューの「BGM・効果音」から設定できます。自動では、水辺の近く→雨・雪・強風→季節（夏）→時間帯（早朝・朝・昼・夕方・夜・深夜）の順で曲が切り替わります。手動で固定すると、好きな曲をずっと流せます（雨の日の曲を晴れの日にも聞けます）。BGMと効果音のオン／オフと音量も変えられます。曲のファイル（bgmフォルダ）は index.html と一緒にアップロードしてください。音は、画面を最初にタップしたあとから流れます。</div>'
++'<div class="helpSec"><b> ねこの詳細</b><br>「うちのねこ」やホームの「いっしょに歩くねこ」でねこの絵を押すと、ねこの絵と名前、なかよし度（ハート）が大きく出ます。そこをもう一度押すと詳細が見られ、名前の変更、なかよし度、いっしょに歩いた歩数、見つけた日と場所、お気に入りの登録・解除、デザインの種類が確認できます。なかよし度は数字ではなくハートで表示され、たまった分だけハートに色がつきます。その日にカリカリを1個あげたねこにはキラキラ、2個（上限）あげたねこにはハートのエフェクトがつきます。</div>'
++'<div class="helpSec"><b> おつかい・探索機</b><br>見つけた卵やフルーツは、ねこをおつかいに行かせて持って帰ってきます。行かせる匹数が多いほど速く帰ります。探索機は1日1回、その場所の近くのスポットの卵（1〜2種類）とフルーツ（2〜3種類）が見つかります。</div>'
++'<div class="helpSec"><b> 目的地</b><br>現在地から500〜800mの範囲に出ます。旗をタップすると、もらえるものが全部（1個ずつ）見られます。約30m以内まで近づくと自動で報酬がもらえ、次の目的地が出ます。「更新」で引き直せます。</div>'
++'<div class="helpSec"><b> フルーツとカリカリ</b><br>おつかいで猫がフルーツを持ち帰ったら、その猫をタップすると自動でカリカリに変わります。ミッションなどの報酬もカリカリで届きます。カリカリは「ねこ」画面の「ご飯をあげる」欄や おうち であげられます（1匹につき1日2回まで）。肉はカリカリより なかよし度が上がりやすいです。</div>'
++'<div class="helpSec"><b> 歩数の編集</b><br>ホームの「きょうのおさんぽ」の歩数の横にある  から、今日の歩数を直接変更できます。変更すると累計歩数・距離・ふか器の進みぐあいにも反映されます（減らすこともできます）。増えた分でも、3000歩ごとの卵の判定をします。</div>'
++'<div class="helpSec"><b> 累計ミッション</b><br>期限なしで、アプリを使い始めてからの累計（ログイン日数・累計歩数・ねこゲット数・ふか回数・おつかい回数・目的地到着回数）で達成します。カテゴリごとに今の段階だけが表示され、達成して受け取ると次の段階に切り替わります。クリアした段階数は「Lv」で分かります（例：ログイン1日目クリアでLv1）。報酬は卵・フルーツ・XPで、歩数など難しいものほど大きくなります。卵は まだ持っていないデザイン×毛色からランダムで優先して出ます。デイリー・ウィークリー・累計は「まとめて受け取る」で一括受け取りできます。</div>'
++'<div class="helpSec"><b> 速い移動の卵</b><br>車や電車など時速20kmを超える速い移動は歩数には数えませんが、その距離は別に数えています。20km進むごとに卵が1つ見つかり、「おつかい」で取りに行けます。その20kmの間に通った道の近く（軌跡から30m以内）にあったスポットのデザインからランダムで決まり、スポットが無かった区間はノーマルの卵が軌跡上の点に出ます。20km未満の端数は次回に持ち越します。</div>'+'<div class="helpSec"><b> ご当地ねこ</b><br>47都道府県ごとに名物のねこがいます（例：大阪＝たこ焼き、山口＝ふぐ、愛知＝金のシャチホコ、京都＝寺、北海道＝乳牛、沖縄＝シーサー）。今いる都道府県はGPSから自動で判定します。その県にいる間に見つかる卵（3000歩の卵・速い移動の卵・探索機の卵など）の一部が、その土地のご当地デザインになります。集めたご当地ねこは、ねこずかんの「ご当地」ページで地方ごとに確認できます（通常の図鑑のコンプリートには含めません）。</div>'+'<div class="helpSec"><b>ℹ 注意</b><br>Webアプリのため、開いている間のみ記録されます。スマホを閉じた間の歩数・位置の反映と、iPhoneの歩数計（ヘルスケア）との連動はできません。記録は端末の中（このiPhone）に保存されます。車や電車での移動は歩数に数えません（時速20kmを超える速さの区間は、歩数・距離・XP・お花には入りません）。ただし速い移動の距離は別に数えて、20km進むごとに卵が1つ見つかります（その間に通った道の近くのスポットのデザイン、無ければノーマル）。今いる都道府県の「ご当地ねこ」の卵が出ることもあります。</div>'
 +'</div><div style="margin-top:10px"><button class="ghost sm" onclick="openMenu()">← メニューにもどる</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 /* ---- tutorial ---- */
 function tutStarter(){return S.cats.reduce(function(a,b){return (!a||(b.seq||0)<(a.seq||0))?b:a;},null);}
@@ -1645,12 +1827,12 @@ function startTutorial(replay){if(replay){S.tutReplay=true;S.tutStep="egg";}else
 function skipTutorial(){const wasReplay=S.tutReplay;S.tutorialDone=true;S.tutStep="done";S.tutReplay=false;
  if(!wasReplay){const st=tutStarter();if(st&&companionIds().length===0){st.fav=true;S.party=[st.id];syncCompanions();}}
  save();renderAll();renderTut();toast("チュートリアルをスキップしました。右上の ☰ からいつでも見られます");}
-function finishTutorial(){S.tutorialDone=true;S.tutStep="done";S.tutReplay=false;save();renderAll();renderTut();toast("🎉 チュートリアル完了！ おさんぽを楽しんでね");}
+function finishTutorial(){S.tutorialDone=true;S.tutStep="done";S.tutReplay=false;save();renderAll();renderTut();toast(" チュートリアル完了！ おさんぽを楽しんでね");}
 function tutAdvance(next){S.tutStep=next;save();renderTut();}
 function tutAfter(action,arg){if(!S||S.tutorialDone||S.tutReplay)return;const step=S.tutStep;
  if(action==="fav"&&step==="fav"){const st=tutStarter();if(st&&st.fav)tutAdvance("cum");}
  else if(action==="cum"&&step==="cum"&&arg==="login_1"){tutAdvance("incub");}
- else if(action==="incub"&&step==="incub"){S.karikari.pink=(S.karikari.pink||0)+2;toast("🍚 チュートリアル用に カリカリを渡したよ");save();renderBag();tutAdvance("feed_give");}
+ else if(action==="incub"&&step==="incub"){S.karikari.pink=(S.karikari.pink||0)+2;toast(" チュートリアル用に カリカリを渡したよ");save();renderBag();tutAdvance("feed_give");}
  else if(action==="convert"&&step==="feed_convert"){tutAdvance("feed_give");}
  else if(action==="feed"&&step==="feed_give"){finishTutorial();}}
 function tutReplayNext(){const order=["egg","reveal","fav","cum","incub","feed_give"];const i=order.indexOf(S.tutStep);if(i<0||i>=order.length-1){S.tutReplay=false;S.tutStep="done";save();renderTut();toast("チュートリアルの再演はおわりです");return;}S.tutStep=order[i+1];save();renderTut();}
@@ -1660,17 +1842,17 @@ function renderTut(){const ov=$("tutOverlay"),bn=$("tutBanner");if(!ov||!bn||!S)
  const skipBtn='<button class="ghost sm" onclick="skipTutorial()">スキップ</button>';
  const nextBtn=replay?'<div style="margin-top:10px"><button onclick="tutReplayNext()">つぎへ</button></div>':'';
  if(step==="egg"){bn.classList.remove("on");ov.classList.add("on");
-  ov.innerHTML='<div class="tutCard"><h3 style="margin-top:0">🌈 ようこそ おさんぽ日和へ！</h3><div class="sub" style="font-size:13px;line-height:1.8">虹色の卵を見つけたよ。<br>タップしてみてね。</div><div class="rainbowEgg" onclick="tutEggTap()">'+rainbowEggSVG(140)+'</div><div style="margin-top:8px">'+(replay?'<button onclick="tutReplayNext()">つぎへ</button> ':'')+skipBtn+'</div></div>';return;}
+  ov.innerHTML='<div class="tutCard"><h3 style="margin-top:0"> ようこそ おさんぽ日和へ！</h3><div class="sub" style="font-size:13px;line-height:1.8">虹色の卵を見つけたよ。<br>タップしてみてね。</div><div class="rainbowEgg" onclick="tutEggTap()">'+rainbowEggSVG(140)+'</div><div style="margin-top:8px">'+(replay?'<button onclick="tutReplayNext()">つぎへ</button> ':'')+skipBtn+'</div></div>';return;}
  ov.classList.remove("on");
  if(step==="reveal"){bn.classList.remove("on");ov.classList.add("on");
-  ov.innerHTML='<div class="tutCard"><h3 style="margin-top:0">🐣 ねこが生まれたよ！</h3>'+(st?catSVG(st.coat,st.design,110):"")+'<div style="font-size:14px;margin-top:6px">'+(st?coatById(st.coat).name+" のねこ":"")+'</div><div class="sub" style="font-size:13px;line-height:1.8">この子が最初のパートナーです。このまま あなたの ねこ として登録されました。</div><div style="margin-top:10px">'+(replay?'<button onclick="tutReplayNext()">つぎへ</button>':'<button onclick="tutAdvance(\'fav\')">つぎへ</button>')+' '+skipBtn+'</div></div>';return;}
+  ov.innerHTML='<div class="tutCard"><h3 style="margin-top:0"> ねこが生まれたよ！</h3>'+(st?catSVG(st.coat,st.design,110):"")+'<div style="font-size:14px;margin-top:6px">'+(st?coatById(st.coat).name+" のねこ":"")+'</div><div class="sub" style="font-size:13px;line-height:1.8">この子が最初のパートナーです。このまま あなたの ねこ として登録されました。</div><div style="margin-top:10px">'+(replay?'<button onclick="tutReplayNext()">つぎへ</button>':'<button onclick="tutAdvance(\'fav\')">つぎへ</button>')+' '+skipBtn+'</div></div>';return;}
  ov.innerHTML="";bn.classList.add("on");
  const msgs={
   fav:'<b>① お気に入りに登録しよう</b><br><span class="sub">「ねこ」画面で 最初のねこの ☆ お気に入り を押すと、その子が <b>いっしょに歩くねこ</b> になります（最大5匹）。</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'cats\')">ねこ画面を開く</button> '+skipBtn+'</div>',
   cum:'<b>② 累計ミッションの報酬を受け取ろう</b><br><span class="sub">「ログイン日数 1日」が達成されました！「ミッション」画面の <b>累計ミッション</b> で「受け取る」を押して、卵をもらおう。</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'mission\')">ミッション画面を開く</button> '+skipBtn+'</div>',
   incub:'<b>③ 卵をふか器にセットしよう</b><br><span class="sub">「もちもの」画面で、もらった卵の「ふか器にセット」を押してね。ホームのふか器をタップすると、残り歩数や卵の詳細が見られます。</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'bag\')">もちもの画面を開く</button> '+skipBtn+'</div>',
   feed_convert:'<b>④ カリカリをあげよう</b><br><span class="sub">カリカリを渡しました。</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'cats\')">ねこ画面を開く</button> '+skipBtn+'</div>',
-  feed_give:'<b>⑤ カリカリをねこにあげよう</b><br><span class="sub">「ねこ」画面の「カリカリをあげる」で、色を選んでねこを押してあげてね。これでチュートリアルはおわりです！</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'cats\')">ねこ画面を開く</button> '+skipBtn+'</div>'};
+  feed_give:'<b>⑤ カリカリをねこにあげよう</b><br><span class="sub">「ねこ」画面の「ご飯をあげる」で、草・カリカリ・肉から選んでねこを押してあげてね。これでチュートリアルはおわりです！</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'cats\')">ねこ画面を開く</button> '+skipBtn+'</div>'};
  bn.innerHTML=(msgs[step]||"")+nextBtn;}
 function tutEggTap(){if(S.tutReplay){tutReplayNext();return;}tutAdvance("reveal");}
 function maybeStartTutorial(){if(!S)return;if(isFreshSave&&!S.tutorialDone){startTutorial(false);}else{renderTut();}}
@@ -1681,12 +1863,12 @@ function bearingDeg(a,b,c,d){const t=Math.PI/180;const y=Math.sin((d-b)*t)*Math.
 function updateDestIndicator(){const el=$("destArrow");if(!el)return;if(!S||!S.destination||!S.lastPos){el.style.display="none";return;}
  const dist=hav(S.lastPos.lat,S.lastPos.lng,S.destination.lat,S.destination.lng);const brg=bearingDeg(S.lastPos.lat,S.lastPos.lng,S.destination.lat,S.destination.lng);
  const arrows=["↑","↗","→","↘","↓","↙","←","↖"];const ar=arrows[Math.round(brg/45)%8];
- el.style.display="block";el.innerHTML="🚩 目的地 "+ar+" 約"+Math.round(dist)+"m";}
-function openSpotList(){let h='<h3 style="margin-top:0">📍 スポットを見る</h3>';
- if(S.destination){const dist=S.lastPos?Math.round(hav(S.lastPos.lat,S.lastPos.lng,S.destination.lat,S.destination.lng)):0;h+='<div class="shopRow"><div style="font-size:24px">🚩</div><div class="grow"><b>'+S.destination.name+'</b><div class="sub">約'+dist+'m</div></div><button class="sm" onclick="closeSheet();goTab(\'map\');setTimeout(function(){flyTo('+S.destination.lat+','+S.destination.lng+');},200)">地図で見る</button></div>';}
- if((S.huntSpots||[]).length){h+='<b style="font-size:13px">🏹 狩り場</b>'+S.huntSpots.map(function(sp){const dist=S.lastPos?Math.round(hav(S.lastPos.lat,S.lastPos.lng,sp.lat,sp.lng)):sp.dist;return '<div class="shopRow"><div style="font-size:22px">🏹</div><div class="grow">'+huntSizeById(sp.size).name+'<div class="sub">約'+dist+'m ・ '+coatById(sp.color).name+'色</div></div><button class="sm ghost" onclick="closeSheet();goTab(\'map\');setTimeout(function(){flyTo('+sp.lat+','+sp.lng+');},200)">地図で見る</button><button class="sm" onclick="closeSheet();openPicker(\'hunt\',\''+sp.id+'\')">狩りに行く</button></div>';}).join("");}
- if((S.discoveries||[]).length){h+='<b style="font-size:13px">🧺 見つけたもの</b>'+S.discoveries.map(function(d){return '<div class="shopRow"><div>'+discIcon(d)+'</div><div class="grow">'+discTitle(d)+'<div class="sub">約'+Math.round(d.dist)+'m</div></div><button class="sm ghost" onclick="closeSheet();goTab(\'map\');setTimeout(function(){flyTo('+d.lat+','+d.lng+');},200)">地図で見る</button><button class="sm" onclick="closeSheet();openPicker(\'errand\',\''+d.id+'\')">おつかい</button></div>';}).join("");}
- if((S.spots||[]).length){h+='<b style="font-size:13px">📍 スポット</b>'+S.spots.slice(0,40).map(function(sp){const dist=S.lastPos?Math.round(hav(S.lastPos.lat,S.lastPos.lng,sp.lat,sp.lng)):(sp.dist||0);return '<div class="shopRow"><div>'+pinSVG(sp.design,30)+'</div><div class="grow">'+sp.name+'<div class="sub">'+designById(sp.design).name+' ・ 約'+dist+'m</div></div><button class="sm" onclick="S.spotPinId=\''+sp.id+'\';save();drawMapPins();closeSheet();goTab(\'map\');setTimeout(function(){flyTo('+sp.lat+','+sp.lng+');},200)">ここへ行く</button></div>';}).join("");}
+ el.style.display="block";el.innerHTML=" 目的地 "+ar+" 約"+Math.round(dist)+"m";}
+function openSpotList(){let h='<h3 style="margin-top:0"> スポットを見る</h3>';
+ if(S.destination){const dist=S.lastPos?Math.round(hav(S.lastPos.lat,S.lastPos.lng,S.destination.lat,S.destination.lng)):0;h+='<div class="shopRow"><div>'+illuSVG("pin",24)+'</div><div class="grow"><b>'+S.destination.name+'</b><div class="sub">約'+dist+'m</div></div><button class="sm" onclick="closeSheet();goTab(\'map\');setTimeout(function(){flyTo('+S.destination.lat+','+S.destination.lng+');},200)">地図で見る</button></div>';}
+ if((S.huntSpots||[]).length){h+='<b style="font-size:13px">狩り場</b>'+S.huntSpots.map(function(sp){const dist=S.lastPos?Math.round(hav(S.lastPos.lat,S.lastPos.lng,sp.lat,sp.lng)):sp.dist;return '<div class="shopRow"><div>'+illuSVG("hunt",22)+'</div><div class="grow">'+huntSizeById(sp.size).name+'<div class="sub">約'+dist+'m ・ '+coatById(sp.color).name+'色</div></div><button class="sm ghost" onclick="closeSheet();goTab(\'map\');setTimeout(function(){flyTo('+sp.lat+','+sp.lng+');},200)">地図で見る</button><button class="sm" onclick="closeSheet();openPicker(\'hunt\',\''+sp.id+'\')">狩りに行く</button></div>';}).join("");}
+ if((S.discoveries||[]).length){h+='<b style="font-size:13px"> 見つけたもの</b>'+S.discoveries.map(function(d){return '<div class="shopRow"><div>'+discIcon(d)+'</div><div class="grow">'+discTitle(d)+'<div class="sub">約'+Math.round(d.dist)+'m</div></div><button class="sm ghost" onclick="closeSheet();goTab(\'map\');setTimeout(function(){flyTo('+d.lat+','+d.lng+');},200)">地図で見る</button><button class="sm" onclick="closeSheet();openPicker(\'errand\',\''+d.id+'\')">おつかい</button></div>';}).join("");}
+ if((S.spots||[]).length){h+='<b style="font-size:13px"> スポット</b>'+S.spots.slice(0,40).map(function(sp){const dist=S.lastPos?Math.round(hav(S.lastPos.lat,S.lastPos.lng,sp.lat,sp.lng)):(sp.dist||0);return '<div class="shopRow"><div>'+pinSVG(sp.design,30)+'</div><div class="grow">'+sp.name+'<div class="sub">'+designById(sp.design).name+' ・ 約'+dist+'m</div></div><button class="sm" onclick="S.spotPinId=\''+sp.id+'\';save();drawMapPins();closeSheet();goTab(\'map\');setTimeout(function(){flyTo('+sp.lat+','+sp.lng+');},200)">ここへ行く</button></div>';}).join("");}
  if(!(S.spots||[]).length&&!(S.discoveries||[]).length)h+='<div class="sub">まだ何もありません。</div>';
  h+='<div style="margin-top:10px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>';showSheet(h);}
 
