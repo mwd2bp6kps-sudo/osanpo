@@ -44,7 +44,8 @@ nav a span{display:block;font-size:20px}
 .pill{display:inline-block;background:var(--pink3);border-radius:999px;padding:3px 10px;font-size:12px;margin:2px}
 .bar{height:12px;background:#ffe3ee;border-radius:7px;overflow:hidden}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,#ff8fb8,#ffc2d9)}
-select,input[type=text]{font-family:inherit;font-size:14px;padding:8px;border:2px solid var(--pink2);border-radius:10px;background:#fff;color:var(--text)}
+select,input[type=text],input[type=number]{font-family:inherit;font-size:14px;padding:8px;border:2px solid var(--pink2);border-radius:10px;background:#fff;color:var(--text)}
+.editStepsBtn{background:#fff!important;color:#e5639a;border:2px solid var(--pink2);width:32px;height:32px;padding:0;font-size:14px;line-height:1;border-radius:50%;vertical-align:middle;margin-left:8px}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:900;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -6px 30px rgba(0,0,0,.2);padding:18px 18px calc(18px + env(safe-area-inset-bottom));max-height:78vh;overflow:auto;display:none}
 .sheet.on{display:block}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:100px;z-index:999;background:#5a3d4a;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;display:none;max-width:88vw;text-align:center}
@@ -84,6 +85,21 @@ button{background:linear-gradient(135deg,#ff8fb8,#ffa8c8)}
 .menuBtn{display:block;width:100%;margin:8px 0;text-align:left}
 .helpSec{margin-bottom:14px}.helpSec b{color:#e5639a}
 .pin{font-size:26px;text-align:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
+.fxWrap{position:relative;display:inline-block;line-height:0}
+.fxWrap svg{display:block}
+.fxS::before,.fxS::after{content:"✨";position:absolute;font-size:15px;line-height:1;animation:fxfloat 1.6s ease-in-out infinite;pointer-events:none}
+.fxS::before{top:-4px;left:-8px}.fxS::after{bottom:2px;right:-8px;animation-delay:.7s}
+.fxH::before,.fxH::after{content:"💗";position:absolute;font-size:15px;line-height:1;animation:fxfloat 1.6s ease-in-out infinite;pointer-events:none}
+.fxH::before{top:-6px;left:-9px}.fxH::after{top:34%;right:-10px;content:"💕";animation-delay:.7s}
+@keyframes fxfloat{0%,100%{transform:translateY(0) scale(1);opacity:.85}50%{transform:translateY(-4px) scale(1.18);opacity:1}}
+.catTile{background:#fff0f6;border-radius:14px;padding:8px 4px 6px;width:88px;text-align:center;font-size:11px;line-height:1.3;cursor:pointer}
+.catTile svg{display:block;margin:0 auto}
+.bagRow{display:flex;align-items:center;gap:10px;margin-bottom:8px;background:#fff;border-radius:14px;padding:6px 8px;box-shadow:0 2px 8px rgba(255,143,184,.12)}
+.bagRow .grow{flex:1}
+.lvBadge{display:inline-block;background:#b48ce0;color:#fff;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:800;vertical-align:2px}
+.incRow{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.feedTab{margin:2px}
+.kariIcon{display:inline-block;line-height:0}
 </style>
 </head>
 <body>
@@ -94,34 +110,30 @@ button{background:linear-gradient(135deg,#ff8fb8,#ffa8c8)}
 <main>
 <section id="tab-home" class="tab on">
 <div class="card"><h2>きょうのおさんぽ</h2>
-<div class="row"><div class="grow"><div class="big"><span id="todaySteps">0</span><span style="font-size:16px"> 歩</span></div>
+<div class="row"><div class="grow"><div class="big"><span id="todaySteps">0</span><span style="font-size:16px"> 歩</span><button class="editStepsBtn" onclick="openStepEditor()" aria-label="歩数を編集" title="歩数を編集">✏️</button></div>
 <div class="sub">GPS推定 ・ 距離 <span id="todayDist">0</span> m ・ 累計 <span id="totalSteps">0</span> 歩</div></div>
 <div id="homeCat"></div></div>
 <div class="sub" id="gpsState">位置情報をまっています…「おさんぽ」タブで許可してね</div></div>
-<div class="card incTap" onclick="openIncubator()"><h2>🥚 ふか器</h2><div id="incubator"></div><div class="sub" style="margin-top:6px">タップで ふか器を大きく見る ／ 卵をタップで詳細</div></div>
-<div class="card"><h2>⭐ お気に入り ＝ いっしょに歩くねこ（最大5匹）</h2><div class="sub" style="margin-bottom:8px">お気に入りに登録したねこが、そのまま いっしょに歩くねこです。いっしょに歩くと なかよし度が上がります（上がり方はだんだんゆるやかになります）。</div><div id="partyRow"></div></div>
+<div class="card incTap" onclick="openIncubator()"><h2>🥚 ふか器</h2><div id="incubator"></div></div>
+<div class="card"><h2>⭐ いっしょに歩くねこ</h2><div id="partyRow"></div></div>
 <div class="card"><h2>📅 こんしゅうのカレンダー</h2><div class="cal" id="weekCal"></div>
 <div class="sub" style="margin-top:8px">きろくは端末の中（このiPhone）に保存されます</div></div>
-<div class="card"><h2>ℹ️ ヘルプ</h2><div class="sub" style="font-size:13px;line-height:1.7">
-Webアプリのため、開いている間のみ記録されます。スマホを閉じた間の歩数・位置の反映と、iPhoneの歩数計（ヘルスケア）との連動はできません。散歩のときはアプリを開いたまま歩いてね。車や電車での移動は歩数に数えません（時速20kmを超える速さの区間は、歩数・距離・XP・お花には入りません）。ただし速い移動の距離は別に数えて、20km進むごとに卵が1つ見つかります（その間に通った道の近くのスポットのデザイン、無ければノーマル）。今いる都道府県の「ご当地ねこ」の卵が出ることもあります。<br>
-フレンド・ランキングなどの対人要素はありません。一人でずっと遊べます。</div></div>
 </section>
 <section id="tab-map" class="tab">
 <div id="map"></div>
 <div class="card" style="margin-top:12px"><h2>🐱 現在地のねこの色</h2><div class="sub" style="margin-bottom:8px">地図に出る小さなねこの毛色を5種類から選べます</div><div id="playerCoatBox"></div></div>
 <div id="eggNotice"></div><div id="fastInfo"></div>
 <div class="card" style="margin-top:12px"><h2>📍 目的地</h2><div id="destCard"></div></div>
-<div class="card"><h2>🗺️ 地図の見かた</h2><div class="sub" style="font-size:13px;line-height:1.7">
-地図上の猫があなたと一緒に動きます。歩いた道には小さなお花が咲いていくよ（今日の分は保存されます）。スポットのピンを押すと、徒歩の目安が見られます。3000歩あるくごとに、卵が1つ必ず見つかり、おつかいで取りに行けます。通った道の近く（30m以内）にスポットがあったときは、そのスポットのデザインの中からランダムで1つ見つかります。スポットが1つもなかったときは、ノーマル（みちばた）の卵が現在地の近くに見つかります。見つけた卵やフルーツのピンを押すと、おつかいの時間が見られます。車・電車など速い移動（時速20km超）は歩数に入りませんが、20kmごとに卵が1つ見つかります。今いる都道府県のご当地ねこの卵が出ることもあるよ（ねこずかんの「ご当地」ページで確認できます）。</div></div>
 </section>
 <section id="tab-errand" class="tab">
 <div class="card"><h2>🔭 探索機（1日1回）</h2><div id="detectorBox"></div>
-<div class="sub">使った場所の近くのスポットの卵（1〜2種類）と、フルーツ（2〜3種類）が見つかります。近くにないスポットの卵は出ません。</div></div>
+<div class="sub">使った場所の近くのスポットの卵と、フルーツが見つかります。</div></div>
 <div class="card"><h2>🧺 見つけたもの</h2><div id="discList"></div></div>
 <div class="card"><h2>🐾 おつかい中・帰ってきた猫</h2><div id="errandList"></div></div>
 </section>
 <section id="tab-cats" class="tab">
 <div class="card"><h2>🐱 うちのねこ</h2><div id="catSortBox"></div><div id="catList"></div></div>
+<div class="card"><h2>🍚 カリカリをあげる</h2><div id="feedBox"></div></div>
 <div class="card"><h2>📖 ねこずかん</h2><div id="zukan"></div></div>
 </section>
 <section id="tab-bag" class="tab">
@@ -130,8 +142,7 @@ Webアプリのため、開いている間のみ記録されます。スマホ�
 <section id="tab-mission" class="tab">
 <div class="card"><h2>⭐ デイリーミッション</h2><div id="dailyM"></div></div>
 <div class="card"><h2>🌙 ウィークリーミッション</h2><div id="weeklyM"></div></div>
-<div class="card"><h2>🏆 累計ミッション（期限なし）</h2><div class="sub" style="margin-bottom:8px">アプリを使い始めてからの累計で集計します。期限はありません。達成したら「受け取る」を押してね。</div><div id="cumMissions"></div></div>
-<div class="sub">ミッション報酬の卵は、まだ持っていないデザインから優先して出ます（近所にないカテゴリも出ます）。</div>
+<div class="card"><h2>🏆 累計ミッション</h2><div id="cumMissions"></div></div>
 </section>
 </main>
 <div class="sheet" id="sheet"></div>
@@ -415,15 +426,18 @@ function xpNeed(lv){return Math.round(80*Math.pow(lv,1.6));}
 const KEY="osanpoBiyoriV2";
 let S=null;
 let isFreshSave=false;
-function v11Migrate(isExisting){if(!S)return;if(!S.cumClaimed)S.cumClaimed={};if(!Array.isArray(S.loginDays))S.loginDays=[];if(!S.stats||typeof S.stats!=="object")S.stats={hatch:0,errands:0,dest:0};if(typeof S.stats.hatch!=="number")S.stats.hatch=Math.max(0,(S.cats||[]).length-1);if(typeof S.stats.errands!=="number")S.stats.errands=0;if(typeof S.stats.dest!=="number")S.stats.dest=0;if(typeof S.tutorialDone==="undefined"){S.tutorialDone=isExisting?true:false;S.tutStep=isExisting?"done":"egg";}if(!S.tutStep)S.tutStep=S.tutorialDone?"done":"egg";if(typeof S.tutReplay!=="boolean")S.tutReplay=false;if(typeof S.fastProg!=="number")S.fastProg=0;if(typeof S.fastTotal!=="number")S.fastTotal=0;if(!Array.isArray(S.fastTrailSpots))S.fastTrailSpots=[];if(!Array.isArray(S.fastPath))S.fastPath=[];if(typeof S.prefId!=="string")S.prefId="";if(typeof S.prefName!=="string")S.prefName="";if(typeof S.prefCell!=="string")S.prefCell="";recordLoginDay();}
+function syncIncubators(){if(!S)return;if(!Array.isArray(S.incubators)){S.incubators=[S.incubating||null,null,null];}while(S.incubators.length<3)S.incubators.push(null);S.incubators=S.incubators.slice(0,3);S.incubating=S.incubators[0]||null;}
+function incFreeSlot(){syncIncubators();return S.incubators.findIndex(function(e){return !e;});}
+function incEggs(){syncIncubators();return S.incubators.filter(function(e){return !!e;});}
+function v11Migrate(isExisting){if(!S)return;syncIncubators();(S.cats||[]).forEach(function(c){if(typeof c.walkSteps!=="number")c.walkSteps=0;if(!c.foundPlace)c.foundPlace="おうちの近く";});if(!S.cumClaimed)S.cumClaimed={};if(!Array.isArray(S.loginDays))S.loginDays=[];if(!S.stats||typeof S.stats!=="object")S.stats={hatch:0,errands:0,dest:0};if(typeof S.stats.hatch!=="number")S.stats.hatch=Math.max(0,(S.cats||[]).length-1);if(typeof S.stats.errands!=="number")S.stats.errands=0;if(typeof S.stats.dest!=="number")S.stats.dest=0;if(typeof S.tutorialDone==="undefined"){S.tutorialDone=isExisting?true:false;S.tutStep=isExisting?"done":"egg";}if(!S.tutStep)S.tutStep=S.tutorialDone?"done":"egg";if(typeof S.tutReplay!=="boolean")S.tutReplay=false;if(typeof S.fastProg!=="number")S.fastProg=0;if(typeof S.fastTotal!=="number")S.fastTotal=0;if(!Array.isArray(S.fastTrailSpots))S.fastTrailSpots=[];if(!Array.isArray(S.fastPath))S.fastPath=[];if(typeof S.prefId!=="string")S.prefId="";if(typeof S.prefName!=="string")S.prefName="";if(typeof S.prefCell!=="string")S.prefCell="";recordLoginDay();}
 function recordLoginDay(){if(!S)return;if(!Array.isArray(S.loginDays))S.loginDays=[];const tk=todayKey();if(S.loginDays.indexOf(tk)<0)S.loginDays.push(tk);}
 function defaultState(){
  const starterCoat=pick(COATS).id;
- const cat={id:uid(),coat:starterCoat,design:"normal",name:"",fp:0,feeds:0,feedDay:"",seq:1,fav:true,foundAt:Date.now()};
+ const cat={id:uid(),coat:starterCoat,design:"normal",name:"",fp:0,feeds:0,feedDay:"",seq:1,fav:true,foundAt:Date.now(),walkSteps:0,foundPlace:"おうちの近く"};
  return {v:2,level:1,xp:0,xpCarrySteps:0,totalSteps:0,totalDist:0,
  today:{key:todayKey(),steps:0,dist:0,errands:0,feeds:0,dest:0,detector:0,hatch:0,spot:0},
  week:{key:weekKey(),steps:0,dist:0,errands:0,feeds:0,dest:0,hatch:0,spot:0},
- cats:[cat],party:[cat.id],eggs:[],incubating:null,
+ cats:[cat],party:[cat.id],eggs:[],incubating:null,incubators:[null,null,null],
  karikari:{pink:0,purple:0,orange:0,yellow:0,green:0},fruits:{},
  discoveries:[],errands:[],destination:null,detectorDay:"",flowers:[],flowerDay:"",
  dailyM:null,weeklyM:null,log:{},lastPos:null,path:[],spots:[],
@@ -459,7 +473,7 @@ function grantEgg(egg,why){if(!egg.coat)egg.coat=pick(COATS).id;S.eggs.push(egg)
 function rollDestRewards(){const items=[];if(Math.random()<0.5){const egg=(Math.random()<0.5?unownedDesignEgg():normalEgg());if(S.prefId&&Math.random()<0.25){egg.design="gotochi_"+S.prefId;egg.need=3000;}items.push({kind:"egg",design:egg.design,coat:egg.coat,need:egg.need});}else{for(let i=0;i<2;i++){const f=pick(FRUITS);items.push({kind:"fruit",fruit:f.id});}}return {xp:20,items:items};}
 function ensureDestRewards(){if(!S||!S.destination)return null;const r=S.destination.rewards;if(!r||!Array.isArray(r.items)||!r.items.length){S.destination.rewards=rollDestRewards();}else{r.items.forEach(function(it){if(it.kind==="egg"){if(!it.coat)it.coat=pick(COATS).id;if(!it.design)it.design="normal";if(!it.need)it.need=it.design==="normal"?1000:3000;}});if(typeof r.xp!=="number")r.xp=20;}return S.destination.rewards;}
 function destRewardRowsHTML(rw){if(!rw)return "";let h=rw.items.map(function(it){if(it.kind==="egg")return '<div class="row" style="margin-bottom:6px"><div>'+eggSVG(it.design,it.coat,36)+'</div><div class="grow">'+eggColorName(it.coat)+'</div></div>';const f=fruitById(it.fruit);return '<div class="row" style="margin-bottom:6px"><div>'+fruitSVG(it.fruit,36)+'</div><div class="grow">'+(f?f.name:it.fruit)+'</div></div>';}).join("");if(rw.xp)h+='<div class="row" style="margin-bottom:6px"><div style="width:36px;text-align:center;font-size:20px">⭐</div><div class="grow">XP +' + rw.xp + '</div></div>';return h;}
-function migrateEggs(){if(!S)return;const ensure=function(o){if(o&&!o.coat)o.coat=pick(COATS).id;};(S.eggs||[]).forEach(ensure);if(S.incubating)ensure(S.incubating);(S.discoveries||[]).forEach(function(d){if(d.type==="egg")ensure(d);});(S.errands||[]).forEach(function(d){if(d.type==="egg")ensure(d);});if(S.destination)ensureDestRewards();}
+function migrateEggs(){if(!S)return;const ensure=function(o){if(o&&!o.coat)o.coat=pick(COATS).id;};(S.eggs||[]).forEach(ensure);if(S.incubating)ensure(S.incubating);syncIncubators();(S.incubators||[]).forEach(ensure);(S.discoveries||[]).forEach(function(d){if(d.type==="egg")ensure(d);});(S.errands||[]).forEach(function(d){if(d.type==="egg")ensure(d);});if(S.destination)ensureDestRewards();}
 const DAILY_POOL=[
 {k:"steps",t:"今日 {n} 歩あるく",n:1000,xp:30,rw:"egg"},
 {k:"steps",t:"今日 {n} 歩あるく",n:2000,xp:40,rw:"eggFruit"},
@@ -495,23 +509,38 @@ function renderMissions(){ensureMissions();
   +'<div class="bar" style="margin:5px 0"><i style="width:'+(p/m.n*100)+'%"></i></div>'
   +'<div class="sub">'+p.toLocaleString()+" / "+m.n.toLocaleString()+" ・ 報酬："+rewardLabel(m.rw)+" ・ XP+"+m.xp+'</div></div>'
   +(m.claimed?'<span class="pill">受取済み✓</span>':done?'<button class="sm" onclick="claimMission(\''+scope+'\','+i+')">受け取る</button>':'<span class="pill">進行中</span>')+'</div>';}).join("");
- $("dailyM").innerHTML=html(S.dailyM,"today");$("weeklyM").innerHTML=html(S.weeklyM,"week");if(typeof renderCumulative==="function")renderCumulative();}
+ const allBtn='<div style="margin-bottom:10px"><button class="sm" onclick="claimAllMissions()">まとめて受け取る</button></div>';
+ $("dailyM").innerHTML=allBtn+html(S.dailyM,"today");$("weeklyM").innerHTML=allBtn+html(S.weeklyM,"week");if(typeof renderCumulative==="function")renderCumulative();}
+function claimAllMissions(){let n=0;
+ [["today",S.dailyM],["week",S.weeklyM]].forEach(function(pair){(pair[1]||[]).forEach(function(m){if(!m.claimed&&missionProgress(m)>=m.n){m.claimed=true;m.done=true;giveRewardSilent(m.rw);gainXP(m.xp);n++;}});});
+ if(!S.cumClaimed)S.cumClaimed={};
+ cumDefs().forEach(function(d){if(!S.cumClaimed[d.id]&&cumValue(d.metric)>=d.target){S.cumClaimed[d.id]=true;for(let i=0;i<d.eggs;i++)S.eggs.push(unownedComboEgg(true));for(let i=0;i<d.fruits;i++){const f=pick(FRUITS);S.fruits[f.id]=(S.fruits[f.id]||0)+1;}if(d.xp)gainXP(d.xp);n++;}});
+ if(n>0)toast("🎁 "+n+"件の報酬を受け取ったよ");else toast("受け取れる報酬はまだないよ");
+ save();renderMissions();renderBag();renderHome();}
+function giveRewardSilent(rw){const eggsN={egg:1,eggFruit:1,eggFruit2:1,egg2:2}[rw]||0;const frN={fruit:2,eggFruit:2,eggFruit2:4}[rw]||0;
+ for(let i=0;i<eggsN;i++)S.eggs.push(unownedComboEgg(true));
+ for(let i=0;i<frN;i++){const f=pick(FRUITS);S.fruits[f.id]=(S.fruits[f.id]||0)+1;}}
 function renderHome(){rollDay();
  $("todaySteps").textContent=S.today.steps.toLocaleString();
  $("todayDist").textContent=Math.round(S.today.dist).toLocaleString();
  $("totalSteps").textContent=S.totalSteps.toLocaleString();
  const compIds=companionIds();const lead=S.cats.find(c=>c.id===compIds[0])||S.cats[0];
  $("homeCat").innerHTML=lead?catSVG(lead.coat,lead.design,76):"";
- $("partyRow").innerHTML=compIds.length?'<div class="partyGrid">'+compIds.map(id=>{const c=S.cats.find(x=>x.id===id);return c?'<div class="partyCat">'+catSVG(c.coat,c.design,64)+'<div>'+(c.name||coatById(c.coat).name)+'<br><span class="sub">'+designById(c.design).name+'</span></div></div>':"";}).join("")+'</div>':'<span class="sub">「ねこ」タブで ⭐ お気に入りに登録すると、いっしょに歩くねこになります（最大5匹）</span>';
- if(S.incubating){const e=S.incubating;const pct=Math.min(100,e.prog/e.need*100);
-  $("incubator").innerHTML='<div class="row"><div>'+eggSVG(e.design,e.coat,60)+'</div><div class="grow"><div>'+eggTitle(e)+'</div><div class="sub">中は '+coatById(e.coat||"white").name+' のねこだよ</div><div class="bar" style="margin:6px 0"><i style="width:'+pct+'%"></i></div><div class="sub">あと '+(e.need-e.prog)+' 歩でふか（'+e.prog+" / "+e.need+' 歩）</div></div></div>';}
- else $("incubator").innerHTML='<div class="sub">卵は「もちもの」から ふか器にセットできるよ。ノーマル卵は1000歩、デザイン卵は3000歩でふかします。</div>';
+ $("partyRow").innerHTML=compIds.length?'<div class="partyGrid">'+compIds.map(id=>{const c=S.cats.find(x=>x.id===id);return c?'<div class="partyCat" style="cursor:pointer" onclick="openCatPop(\''+c.id+'\')">'+catFxSVG(c,64)+'<div>'+(c.name||coatById(c.coat).name)+'<br><span class="sub">'+designById(c.design).name+'</span></div></div>':"";}).join("")+'</div>':'<span class="sub">「ねこ」タブで ⭐ お気に入りに登録してね</span>';
+ syncIncubators();const incs=incEggs();
+ if(incs.length){$("incubator").innerHTML='<div class="incRow">'+S.incubators.map(function(e){return e?'<div style="text-align:center;width:96px">'+eggSVG(e.design,e.coat,52)+'<div class="sub">あと '+(e.need-e.prog)+' 歩</div></div>':'<div style="text-align:center;width:96px;opacity:.55">'+incubatorBaseSVG(84)+'</div>';}).join("")+'</div>';}
+ else $("incubator").innerHTML='<div class="incRow">'+[0,1,2].map(function(){return '<div style="opacity:.55">'+incubatorBaseSVG(84)+'</div>';}).join("")+'</div>';
  const days=["日","月","火","水","木","金","土"];const now=new Date();
  let cal="";for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);
   const k=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();const log=S.log[k];
   cal+='<div class="'+(i===0?"today":"")+'">'+days[d.getDay()]+'<br>'+(d.getMonth()+1)+"/"+d.getDate()+'<br>'+(log?log.steps.toLocaleString()+"歩":"-")+'</div>';}
  $("weekCal").innerHTML=cal;}
-function hearts(fp){const n=Math.min(10,Math.floor(fp/10));return "♥".repeat(Math.max(1,n))||"♡";}
+function hearts(fp){const n=Math.max(0,Math.min(10,Math.floor((fp||0)/10)));return "♥".repeat(n)+"♡".repeat(10-n);}
+function heartsHTML(fp){const n=Math.max(0,Math.min(10,Math.floor((fp||0)/10)));let h="";for(let i=0;i<10;i++)h+='<span style="color:'+(i<n?"#ff5c93":"#e8ccd6")+'">♥</span>';return h;}
+function feedCountToday(c){return c&&c.feedDay===todayKey()?(c.feeds||0):0;}
+function fxClass(c){const n=feedCountToday(c);return n>=2?"fxH":n===1?"fxS":"";}
+function catFxSVG(c,size){return '<span class="fxWrap '+fxClass(c)+'">'+catSVG(c.coat,c.design,size)+'</span>';}
+function karikariSVG(col,size){const s=size||40;return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 48 48"><path d="M6 26 L42 26 L38 40 Q24 45 10 40 Z" fill="#ffd9e8" stroke="#ff8fb8" stroke-width="2"/><circle cx="16" cy="21" r="5" fill="'+KARIDOT[col]+'"/><circle cx="25" cy="18" r="5.5" fill="'+KARIDOT[col]+'"/><circle cx="33" cy="21" r="5" fill="'+KARIDOT[col]+'"/><circle cx="21" cy="24" r="4.5" fill="'+KARIDOT[col]+'"/><circle cx="29" cy="24" r="4.5" fill="'+KARIDOT[col]+'"/></svg>';}
 let zukanMode="coat",zukanSel=null;
 let catSortKey="found",catSortAsc=false,catFilterCoat=null;
 function ownsCombo(coat,design){return S.cats.some(function(c){return c.coat===coat&&c.design===design;});}
@@ -523,12 +552,12 @@ function renderZukan(){
  if(zukanMode==="gotochi"){
   if(zukanSel){const g=gotochiById(zukanSel);if(g){const did="gotochi_"+g.id;const ownedN=COATS.filter(function(c){return ownsCombo(c.id,did);}).length;
    h+='<div class="row" style="margin-bottom:8px"><button class="sm ghost" onclick="zukanSel=null;renderZukan()">← もどる</button><b>'+g.pref+"・"+g.motif+"のねこ（"+ownedN+"/5）</b></div>";
-   h+='<div class="sub" style="margin-bottom:8px">'+g.pref+'にいる間に見つかる卵から生まれる ご当地ねこです。持っている毛色だけカラーで表示されます。</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">';
+   h+='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">';
    COATS.forEach(function(co){const own=ownsCombo(co.id,did);h+='<div class="zcell" style="padding:6px 2px"><div class="'+(own?"":"sil")+'">'+catSVG(co.id,did,44)+'</div><div>'+co.name+'</div><div class="sub">'+(own?"ゲット済み ✓":"まだ")+'</div></div>';});
    h+='</div>';$("zukan").innerHTML=h;return;}}
   const totalOwned=S.cats.filter(function(c){return isGotochiId(c.design);}).length;
   const curG=S.prefId?gotochiById(S.prefId):null;
-  h+='<div class="sub" style="margin-bottom:8px">都道府県ごとに名物のねこがいます（全47県 × 5毛色）。その県にいる間に見つかる卵の一部が、その土地のご当地デザインになります。'+(curG?(" 現在地："+S.prefName+"（"+curG.short+"・"+curG.motif+"）"):" 現在地の都道府県はまだ分かっていません。")+'<br>ご当地ゲット数：'+totalOwned+' 匹 ・ 都道府県を押すと5毛色が見られます。5毛色そろうとカラーになります。</div>';
+  h+='<div class="sub" style="margin-bottom:8px">ご当地ゲット数：'+totalOwned+' 匹</div>';
   GOTOCHI_REGIONS.forEach(function(rg){h+='<h3 style="margin:12px 0 6px;font-size:14px">'+rg+'</h3><div class="grid">';
    GOTOCHI.filter(function(g){return g.region===rg;}).forEach(function(g){const did="gotochi_"+g.id;const comp=designComplete(did);const ownedCats=S.cats.filter(function(c){return c.design===did;});const repCoat=ownedCats.length?ownedCats[0].coat:"white";const ownedN=COATS.filter(function(c){return ownsCombo(c.id,did);}).length;
     h+='<div class="zcell" style="cursor:pointer" onclick="zukanSel=\''+g.id+'\';renderZukan()"><div class="'+(comp?"":"sil")+'">'+catSVG(repCoat,did,54)+'</div><div>'+g.short+"・"+g.motif+'</div><div class="sub">'+ownedN+"/5"+(comp?" コンプリート ✓":"")+"</div></div>";});
@@ -550,12 +579,12 @@ function renderZukan(){
      h+='<div class="zcell" style="padding:6px 2px"><div class="'+(own?"":"sil")+'">'+catSVG(co.id,d.id,44)+'</div><div>'+co.name+'</div><div class="sub">'+(own?"ゲット済み ✓":"まだ")+'</div></div>';});
    h+='</div>';
  } else if(zukanMode==="coat"){
-   h+='<div class="sub" style="margin-bottom:8px">毛色を押すと、その毛色で持っているデザインが見られます。全部集めるとカラーになります。</div><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">';
+   h+='<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">';
    COATS.forEach(function(co){const comp=coatComplete(co.id);const ownedN=DESIGNS.filter(function(d){return ownsCombo(co.id,d.id);}).length;
      h+='<div class="zcell" style="padding:6px 2px;cursor:pointer" onclick="zukanSel=\''+co.id+'\';renderZukan()"><div class="'+(comp?"":"sil")+'">'+catSVG(co.id,"normal",44)+'</div><div>'+co.name+'</div><div class="sub">'+ownedN+'/'+DESIGNS.length+(comp?" コンプリート ✓":"")+'</div></div>';});
    h+='</div>';
  } else {
-   h+='<div class="sub" style="margin-bottom:8px">デザインを押すと、そのデザインのねこ5種類が見られます。5種類全部集めるとカラーになります。</div><div class="grid">';
+   h+='<div class="grid">';
    DESIGNS.forEach(function(d){const comp=designComplete(d.id);const ownedCats=S.cats.filter(function(c){return c.design===d.id;});const repCoat=ownedCats.length?ownedCats[0].coat:"white";const ownedN=COATS.filter(function(c){return ownsCombo(c.id,d.id);}).length;
      h+='<div class="zcell" style="cursor:pointer" onclick="zukanSel=\''+d.id+'\';renderZukan()"><div class="'+(comp?"":"sil")+'">'+catSVG(repCoat,d.id,60)+'</div><div>'+d.name+'</div><div class="sub">'+ownedN+'/5'+(comp?" コンプリート ✓":"")+'</div></div>';});
    h+='</div>';
@@ -568,7 +597,6 @@ function renderCatSortBox(){
  let h='<div class="row" style="flex-wrap:wrap;gap:6px;margin-bottom:8px"><select id="catSortSel" onchange="catSortKey=this.value;renderCats()">';
  keys.forEach(function(k){h+='<option value="'+k[0]+'"'+(catSortKey===k[0]?" selected":"")+'>'+k[1]+'</option>';});
  h+='</select><button class="sm ghost" onclick="catSortAsc=!catSortAsc;renderCats()">'+(catSortAsc?"↑ 昇順":"↓ 降順")+'</button></div>';
- h+='<div class="sub" style="margin-bottom:8px">⭐ お気に入り（最大5匹）＝いっしょに歩くねこです。並び順にかかわらず常に一番上に表示され、いっしょに歩くと なかよし度が上がります。</div>';
  h+='<div class="row" style="flex-wrap:wrap;gap:6px;margin-bottom:10px"><span class="sub">毛色でしぼる：</span>';
  COATS.forEach(function(co){const on=catFilterCoat===co.id;const dot=co.id==="white"?"#ffffff":co.id==="black"?"#4a4048":co.id==="mike"?"#e8862e":co.id==="chatora"?"#f2a54a":"#aab3bd";
    h+='<button class="sm '+(on?"":"ghost")+'" style="padding:4px 10px" onclick="catFilterCoat=(catFilterCoat===\''+co.id+'\'?null:\''+co.id+'\');renderCats()"><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+dot+';border:2px solid #e0b3c4;vertical-align:-2px"></span> '+co.name+'</button>';});
@@ -599,16 +627,29 @@ function renderCats(){
  renderCatSortBox();
  const list=sortedCats();
  if(!list.length)$("catList").innerHTML='<div class="sub">この毛色のねこはまだいません。</div>';
- else $("catList").innerHTML=list.map(c=>{const inParty=c.fav;const busy=S.errands.some(e=>e.catIds.includes(c.id)&&!e.collected);
-  return '<div class="row" style="margin-bottom:12px"><div>'+catSVG(c.coat,c.design,64)+'</div><div class="grow">'
-  +'<input type="text" placeholder="'+coatById(c.coat).name+"（"+designById(c.design).name+'）" value="'+(c.name||"").replace(/"/g,"&quot;")+'" onchange="renameCat(\''+c.id+'\',this.value)" style="width:150px">'
-  +' <button class="sm ghost" onclick="toggleFav(\''+c.id+'\')" title="お気に入り（いっしょに歩くねこ）">'+(c.fav?"⭐ お気に入り・同行中":"☆ お気に入り")+'</button>'
-  +'<div class="sub">'+coatById(c.coat).name+" ・ "+designById(c.design).name+' ・ なかよし <span class="heart">'+hearts(c.fp)+'</span> '+Math.floor(c.fp)
-  +(busy?" ・ おつかい中":"")+'</div>'
-  +'<div style="margin-top:5px">'+(inParty?'<span class="pill">🐾 いっしょに歩いています</span> ':'<span class="sub">お気に入りにすると いっしょに歩きます</span> ')+''
-  +Object.keys(KARINAME).map(col=>'<button class="sm ghost" onclick="feedCat(\''+c.id+'\',\''+col+'\')" '+(S.karikari[col]>0?"":"disabled")+'>● '+col+'</button>').join(" ")
-  +'<div class="sub">カリカリをあげる（1匹1日2回まで）今日 '+(c.feedDay===todayKey()?c.feeds:0)+' / 2回</div></div></div></div>';}).join("");
+ else $("catList").innerHTML='<div class="partyGrid">'+list.map(c=>{const busy=S.errands.some(e=>e.catIds.includes(c.id)&&!e.collected);
+  return '<div class="catTile" onclick="openCatPop(\''+c.id+'\')">'+catFxSVG(c,64)+'<div>'+(c.name||coatById(c.coat).name)+(c.fav?' ⭐':'')+'</div><div style="font-size:10px;letter-spacing:-1px">'+heartsHTML(c.fp)+'</div>'+(busy?'<div class="sub">おつかい中</div>':'')+'</div>';}).join("")+'</div>';
+ renderFeedBox();
  renderZukan();}
+let feedColorSel="pink";
+function setFeedColor(col){feedColorSel=col;renderFeedBox();}
+function renderFeedBox(){const box=$("feedBox");if(!box||!S)return;
+ let h='<div class="row" style="flex-wrap:wrap;gap:4px;margin-bottom:10px">'+Object.keys(KARINAME).map(function(col){return '<button class="sm feedTab '+(feedColorSel===col?"":"ghost")+'" onclick="setFeedColor(\''+col+'\')"><span style="color:'+KARIDOT[col]+'">●</span> '+KARINAME[col].replace("のカリカリ","")+' ×'+S.karikari[col]+'</button>';}).join("")+'</div>';
+ if(!S.cats.length)h+='<div class="sub">ねこはまだいません。</div>';
+ else h+='<div class="partyGrid">'+S.cats.map(function(c){const n=feedCountToday(c);return '<div class="catTile" onclick="feedCat(\''+c.id+'\',feedColorSel)">'+catFxSVG(c,64)+'<div>'+(c.name||coatById(c.coat).name)+'</div><div class="sub">今日 '+n+' / 2</div></div>';}).join("")+'</div>';
+ box.innerHTML=h;}
+function openCatPop(id){const c=S.cats.find(function(x){return x.id===id;});if(!c)return;const n=feedCountToday(c);
+ showSheet('<div style="text-align:center;cursor:pointer" onclick="openCatDetail(\''+c.id+'\')">'+catFxSVG(c,130)+'<div style="font-size:17px;font-weight:800;margin-top:4px">'+(c.name||coatById(c.coat).name)+'</div><div style="font-size:15px;letter-spacing:1px;margin-top:2px">'+heartsHTML(c.fp)+'</div><div class="sub" style="margin-top:4px">今日のカリカリ '+n+' / 2</div></div><div style="margin-top:12px;text-align:center"><button class="sm" onclick="openCatDetail(\''+c.id+'\')">詳細を見る</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+function openCatDetail(id){const c=S.cats.find(function(x){return x.id===id;});if(!c)return;const n=feedCountToday(c);
+ const fd=c.foundAt?new Date(c.foundAt):null;const fds=fd?(fd.getFullYear()+"/"+(fd.getMonth()+1)+"/"+fd.getDate()):"―";
+ showSheet('<h3 style="margin-top:0;text-align:center">ねこの詳細</h3><div style="text-align:center">'+catFxSVG(c,110)+'</div>'
+ +'<div style="font-size:13px;line-height:2;margin-top:8px">名前：<input type="text" value="'+(c.name||"").replace(/"/g,"&quot;")+'" placeholder="'+coatById(c.coat).name+'" onchange="renameCat(\''+c.id+'\',this.value)" style="width:140px"><br>'
+ +'なかよし度：<span style="letter-spacing:1px">'+heartsHTML(c.fp)+'</span><br>'
+ +'今日のカリカリ：'+n+' / 2<br>'
+ +'いっしょに歩いた歩数：'+(c.walkSteps||0).toLocaleString()+' 歩<br>'
+ +'見つけた日：'+fds+'<br>見つけた場所：'+(c.foundPlace||"おうちの近く")+'<br>'
+ +'デザイン：'+designById(c.design).name+'<br>毛色：'+coatById(c.coat).name+'</div>'
+ +'<div style="margin-top:12px;text-align:center"><button class="sm '+(c.fav?"ghost":"")+'" onclick="toggleFav(\''+c.id+'\');openCatDetail(\''+c.id+'\')">'+(c.fav?"⭐ お気に入りを解除":"☆ お気に入りに登録")+'</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 function renameCat(id,v){const c=S.cats.find(x=>x.id===id);if(c){c.name=v.trim();save();toast("名前をつけたよ");}}
 function toggleParty(id){toggleFav(id);}
 function feedCat(id,col){const c=S.cats.find(x=>x.id===id);if(!c)return;
@@ -617,23 +658,30 @@ function feedCat(id,col){const c=S.cats.find(x=>x.id===id);if(!c)return;
  if(S.karikari[col]<=0){toast(KARINAME[col]+"がないよ");return;}
  S.karikari[col]--;c.feeds++;c.fp+=friendGain(c,6);S.today.feeds++;S.week.feeds++;
  toast("😋 "+(c.name||coatById(c.coat).name)+" が "+KARINAME[col]+" を食べた！ なかよしアップ");
- gainXP(3);save();renderCats();renderBag();tutAfter("feed");}
-function renderBag(){
- const eggCount=S.eggs.length+(S.incubating?1:0);
- let h='<div class="row" style="flex-wrap:wrap">'+Object.keys(KARINAME).map(col=>'<span class="pill"><span style="color:'+KARIDOT[col]+'">●</span> '+KARINAME[col]+" × "+S.karikari[col]+'</span>').join("")+'<span class="pill">🥚 卵 × '+eggCount+'</span></div>';
+ gainXP(3);save();renderCats();renderBag();renderHome();tutAfter("feed");}
+function renderBag(){syncIncubators();
+ let h='<h3 style="margin:4px 0 6px">カリカリ</h3>';
+ h+=Object.keys(KARINAME).map(function(col){return '<div class="bagRow"><div>'+karikariSVG(col,40)+'</div><div class="grow">'+KARINAME[col]+'</div><b>× '+S.karikari[col]+'</b></div>';}).join("");
  h+='<h3 style="margin:14px 0 6px">🥚 卵</h3>';
- h+=S.eggs.length?S.eggs.map(e=>'<div class="row" style="margin-bottom:8px"><div onclick="openBagEggDetail(\''+e.id+'\')" style="cursor:pointer">'+eggSVG(e.design,e.coat,44)+'</div><div class="grow" onclick="openBagEggDetail(\''+e.id+'\')" style="cursor:pointer">'+eggTitle(e)+'<div class="sub">中は '+coatById(e.coat||"white").name+' のねこ ・ ふかまで '+e.need+' 歩 ・ タップで詳細</div></div>'+(S.incubating?'<span class="sub">ふか器は使用中</span>':'<button class="sm" onclick="setIncubator(\''+e.id+'\')">ふか器にセット</button>')+'</div>').join(""):'<div class="sub">卵はまだありません。歩いたり、探索機やミッションで見つかるよ。</div>';
- if(S.incubating)h+='<div class="sub">ふか器の中： '+eggTitle(S.incubating)+'（'+S.incubating.prog+" / "+S.incubating.need+' 歩）</div>';
- h+='<h3 style="margin:14px 0 6px">🍓 フルーツ（カリカリに変換）</h3>';
+ h+='<div class="bagRow" style="cursor:pointer" onclick="openIncubator()"><div>'+incubatorBaseSVG(72)+'</div><div class="grow">ふか器</div><b>'+incEggs().length+' / 3</b></div>';
+ const groups={};
+ S.eggs.forEach(function(e){const k="bag_"+e.design+"_"+(e.coat||"white")+"_"+(e.hidden?1:0);if(!groups[k])groups[k]={e:e,n:0,bag:true};groups[k].n++;});
+ S.incubators.forEach(function(e,i){if(!e)return;const k="inc_"+e.design+"_"+(e.coat||"white")+"_"+(e.hidden?1:0);if(!groups[k])groups[k]={e:e,n:0,bag:false,idx:i};groups[k].n++;});
+ const gkeys=Object.keys(groups);
+ if(!gkeys.length)h+='<div class="sub">卵はまだありません</div>';
+ else h+=gkeys.map(function(k){const g=groups[k];const e=g.e;
+   if(g.bag)return '<div class="bagRow"><div style="cursor:pointer" onclick="openBagEggDetail(\''+e.id+'\')">'+eggSVG(e.design,e.coat,44)+'</div><div class="grow" style="cursor:pointer" onclick="openBagEggDetail(\''+e.id+'\')">'+eggColorName(e.coat||"white")+'<div class="sub">'+(eggIsHidden(e)?"":designById(e.design).name+" ・ ")+'ふかまで '+e.need+' 歩</div></div><b>× '+g.n+'</b>'+(incFreeSlot()>=0?'<button class="sm" onclick="setIncubator(\''+e.id+'\')">ふか器にセット</button>':'')+'</div>';
+   return '<div class="bagRow"><div style="cursor:pointer" onclick="openIncubator()">'+eggSVG(e.design,e.coat,44)+'</div><div class="grow" style="cursor:pointer" onclick="openIncubator()">'+eggColorName(e.coat||"white")+'<div class="sub">ふか器の中 ・ あと '+(e.need-e.prog)+' 歩</div></div><b>× '+g.n+'</b></div>';}).join("");
+ h+='<h3 style="margin:14px 0 6px">🍓 フルーツ</h3>';
  const fids=Object.keys(S.fruits).filter(id=>S.fruits[id]>0);
- h+=fids.length?fids.map(id=>{const f=fruitById(id);return '<div class="row" style="margin-bottom:8px"><div>'+fruitSVG(f.id,38)+'</div><div class="grow">'+f.name+' × '+S.fruits[id]+'<div class="sub">'+KARINAME[f.color]+" "+f.kari+' 個に変換できる</div></div><button class="sm" onclick="convertFruit(\''+id+'\')">変換する</button></div>';}).join(""):'<div class="sub">フルーツはまだありません。おつかいで持って帰ってこられるよ。</div>';
+ h+=fids.length?fids.map(id=>{const f=fruitById(id);return '<div class="bagRow"><div>'+fruitSVG(f.id,38)+'</div><div class="grow">'+f.name+'<div class="sub">'+KARINAME[f.color]+" "+f.kari+' 個に変換できる</div></div><b>× '+S.fruits[id]+'</b><button class="sm" onclick="convertFruit(\''+id+'\')">変換する</button></div>';}).join(""):'<div class="sub">フルーツはまだありません</div>';
  $("bagBox").innerHTML=h;}
-function setIncubator(id){if(S.incubating)return;const i=S.eggs.findIndex(e=>e.id===id);if(i<0)return;
- const e=S.eggs.splice(i,1)[0];S.incubating={design:e.design,need:e.need,prog:0,coat:e.coat||pick(COATS).id,hidden:!!e.hidden,id:e.id};save();renderBag();renderHome();toast("🥚 ふか器にセット！ 歩いてあたためよう");tutAfter("incub");}
+function setIncubator(id){syncIncubators();const slot=incFreeSlot();if(slot<0){toast("ふか器はいっぱいだよ");return;}const i=S.eggs.findIndex(e=>e.id===id);if(i<0)return;
+ const e=S.eggs.splice(i,1)[0];S.incubators[slot]={design:e.design,need:e.need,prog:0,coat:e.coat||pick(COATS).id,hidden:!!e.hidden,id:e.id};S.incubating=S.incubators[0]||null;save();renderBag();renderHome();toast("🥚 ふか器にセット！ 歩いてあたためよう");tutAfter("incub");}
 function convertFruit(id){const f=fruitById(id);if(!f||!S.fruits[id])return;
  S.fruits[id]--;S.karikari[f.color]+=f.kari;toast(f.name+" → "+KARINAME[f.color]+" ×"+f.kari);save();renderBag();tutAfter("convert");}
-function hatchEgg(){const e=S.incubating;S.incubating=null;
- const coat=e.coat||pick(COATS).id;const maxSeq=S.cats.reduce(function(m,c){return Math.max(m,c.seq||0);},0);const cat={id:uid(),coat,design:e.design,name:"",fp:0,feeds:0,feedDay:"",seq:maxSeq+1,fav:false,foundAt:Date.now()};
+function hatchEgg(slot){syncIncubators();const e=S.incubators[slot];if(!e)return;S.incubators[slot]=null;S.incubating=S.incubators[0]||null;
+ const coat=e.coat||pick(COATS).id;const maxSeq=S.cats.reduce(function(m,c){return Math.max(m,c.seq||0);},0);const cat={id:uid(),coat,design:e.design,name:"",fp:0,feeds:0,feedDay:"",seq:maxSeq+1,fav:false,foundAt:Date.now(),walkSteps:0,foundPlace:(S.prefName||"おうちの近く")};
  S.cats.push(cat);S.today.hatch++;S.week.hatch++;if(!S.stats)S.stats={hatch:0,errands:0,dest:0};S.stats.hatch++;gainXP(25);
  toast("🐣 ふか！ "+coatById(coat).name+"（"+designById(e.design).name+"）が生まれたよ");save();}
 function discW(d){return d.type==="egg"?(d.design==="normal"?2:4):fruitById(d.fruit).kari;}
@@ -818,7 +866,6 @@ function spotCatZukanHTML(designId){const d=designById(designId);const cats=(S&&
  const ownedCount=COATS.filter(has).length;
  let h='<div style="margin-top:14px;border-top:2px solid #fff0f6;padding-top:10px">'
  +'<b style="font-size:14px">'+d.name+'のねこ（'+ownedCount+'/5）</b>'
- +'<div class="sub" style="margin-top:2px">このスポットのデザインねこです。ゲット済みはカラー、まだのねこはモノクロ（形が分かるグレー）で表示されます。</div>'
  +'<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px">';
  COATS.forEach(function(co){const own=has(co);
   h+='<div class="zcell" style="padding:6px 2px"><div class="'+(own?"":"sil")+'">'+catSVG(co.id,d.id,44)+'</div><div>'+co.name+'</div><div class="sub">'+(own?"ゲット済み ✓":"まだ")+'</div></div>';});
@@ -829,7 +876,7 @@ function openSpotSheet(sp){const d=designById(sp.design);const dist=S.lastPos?ha
  +'<div style="margin-top:10px"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 function openDestSheet(){if(!S.destination){toast("目的地はまだ決まっていません");return;}
  const rw=ensureDestRewards();const dt=S.destination;const dist=S.lastPos?hav(S.lastPos.lat,S.lastPos.lng,dt.lat,dt.lng):(dt.dist||0);const mins=Math.max(1,Math.round(dist/80));const can=dist<=DEST_RANGE;const left=Math.max(1,Math.round(dist-DEST_RANGE));
- showSheet('<h3 style="margin-top:0"><span style="display:inline-block;vertical-align:-14px;margin-right:6px">'+destPinSVG(30)+'</span>'+dt.name+'</h3><div class="sub" style="font-size:13px;line-height:1.8">距離 約'+Math.round(dist)+'m ・ 徒歩約'+mins+'分<br>到着は、目的地の隣の道まで来たら（約'+DEST_RANGE+'m以内）で自動判定されます</div><div style="margin-top:10px"><b>行ったらもらえるもの（全部）</b><div style="margin-top:6px">'+destRewardRowsHTML(rw)+'</div></div>'
+ showSheet('<h3 style="margin-top:0"><span style="display:inline-block;vertical-align:-14px;margin-right:6px">'+destPinSVG(30)+'</span>'+dt.name+'</h3><div class="sub" style="font-size:13px;line-height:1.8">距離 約'+Math.round(dist)+'m ・ 徒歩約'+mins+'分<br>到着は、目的地の隣の道まで来たら（約'+DEST_RANGE+'m以内）で自動判定されます</div><div style="margin-top:10px"><b>行ったらもらえるもの</b><div style="margin-top:6px">'+destRewardRowsHTML(rw)+'</div></div>'
  +(can?'<div class="sub" style="margin-top:6px">もうすぐ！ 範囲内に入ると自動で受け取れます。</div>':'<div class="sub" style="margin-top:6px">あと約'+left+'m 近づくと受け取れます。</div>')
  +'<div style="margin-top:10px"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 const OSM_MAP=[["cafe","cafe"],["cafe","cafe"],["restaurant","restaurant"],["fast_food","restaurant"],["ice_cream","sweets"],["confectionery","sweets"],["cinema","cinema"],["pharmacy","pharmacy"],["zoo","zoo"],["aquarium","aquarium"],["post_office","post"],["gallery","art"],["museum","museum"],["aerodrome","airport"],["station","station"],["halt","station"],["beach","beach"],["convenience","convenience"],["supermarket","supermarket"],["bakery","bakery"],["hairdresser","salon"],["clothes","fashion"],["library","library"],["books","library"],["place_of_worship","shrine"],["hotel","hotel"],["electronics","electronics"],["doityourself","homecenter"],["school","school"],["laundry","laundry"],["dry_cleaning","laundry"],["bus_station","busstop"],["stadium","stadium"],["park","park"]];
@@ -859,9 +906,9 @@ function renderDest(){const box=$("destCard");if(!box)return;
  const rw=ensureDestRewards();
  box.innerHTML='<div class="row"><div onclick="openDestSheet()" style="cursor:pointer">'+destPinSVG(38)+'</div><div class="grow"><b>'+dt.name+'</b><div class="sub">距離 約'+Math.round(dist)+'m ・ 徒歩約'+mins+'分 ・ '+DEST_RANGE+'m以内に着くと報酬がもらえます。旗を押すと詳細が見られます</div></div>'
  +'<button class="sm ghost" onclick="newDestination(S.lastPos)">更新</button></div>'
- +'<div style="margin-top:8px"><b style="font-size:13px">行ったらもらえるもの（全部）</b><div style="margin-top:6px">'+destRewardRowsHTML(rw)+'</div></div>'
+ +'<div style="margin-top:8px"><b style="font-size:13px">行ったらもらえるもの</b><div style="margin-top:6px">'+destRewardRowsHTML(rw)+'</div></div>'
  +'<div style="margin-top:6px"><button class="sm ghost" onclick="openDestSheet()">詳細を見る</button></div>'
- +'<div class="sub" style="margin-top:6px">更新を押すと、いま居る地点から500〜800mの範囲で引き直します（報酬も引き直されます）。行きたくない方面のとき使ってね。</div>';}
+;}
 function arriveDestination(){const rw=ensureDestRewards();S.today.dest++;S.week.dest++;if(!S.stats)S.stats={hatch:0,errands:0,dest:0};S.stats.dest++;
  const msgs=[];(rw?rw.items:[]).forEach(function(it){if(it.kind==="egg"){S.eggs.push({id:uid(),design:it.design,coat:it.coat||pick(COATS).id,need:it.need||(it.design==="normal"?1000:3000),hidden:true});msgs.push(eggColorName(it.coat||"white"));}else{const f=fruitById(it.fruit);if(f){S.fruits[f.id]=(S.fruits[f.id]||0)+1;msgs.push(f.name);}}});
  toast("🎁 目的地とうちゃく！ "+(msgs.length?msgs.join("・"):"")+" ゲット");
@@ -1019,10 +1066,22 @@ case "kakigori":return '<path d="M8 24 L40 24 L35 38 Q24 42 13 38 Z" fill="#7ec8
 default:return '<circle cx="24" cy="26" r="13" fill="'+col+'"/><path d="M24 13 Q30 7 36 10 Q31 16 24 13 Z" fill="#57a85f"/>';
 }
 }
-function gotochiCostumeSVG(designId){const g=gotochiById(String(designId).slice(8));if(!g)return "";const gl=gotochiGlyph(g.type,g.color);
- return '<g transform="translate(31,-3) scale(0.79)">'+gl+'</g>'
- +'<circle cx="21" cy="97" r="13.5" fill="#ffffff" stroke="'+g.color+'" stroke-width="2"/>'
- +'<g transform="translate(8.5,84.5) scale(0.52)">'+gl+'</g>';}
+function gotochiCostumeSVG(designId){const g=gotochiById(String(designId).slice(8));if(!g)return "";const gl=gotochiGlyph(g.type,g.color);const col=g.color;
+ const pats={cow:'<ellipse cx="34" cy="82" rx="9" ry="7" fill="#4a4048" opacity=".55"/><ellipse cx="64" cy="100" rx="10" ry="8" fill="#4a4048" opacity=".55"/><ellipse cx="52" cy="112" rx="7" ry="5" fill="#4a4048" opacity=".45"/>',
+ stripes:'<path d="M28 84 Q50 90 72 84 M27 98 Q50 104 73 98 M30 110 Q50 116 70 110" stroke="#ffffff" stroke-width="4" fill="none" opacity=".5"/>',
+ dots:'<circle cx="34" cy="84" r="3.4" fill="#ffffff" opacity=".55"/><circle cx="64" cy="90" r="3" fill="#ffffff" opacity=".55"/><circle cx="42" cy="106" r="3.4" fill="#ffffff" opacity=".5"/><circle cx="60" cy="112" r="2.6" fill="#ffffff" opacity=".5"/>',
+ wave:'<path d="M28 88 Q39 80 50 88 Q61 96 72 88 M28 104 Q39 96 50 104 Q61 112 72 104" stroke="#ffffff" stroke-width="3.4" fill="none" opacity=".55"/>',
+ check:'<path d="M36 66 L36 118 M50 64 L50 120 M64 66 L64 118 M26 84 L74 84 M25 100 L75 100" stroke="#ffffff" stroke-width="2.4" opacity=".4"/>'};
+ const patKey={cow:"cow",fugu:"stripes",fish:"wave",lake:"wave",dune:"dots",shachi:"check",beko:"dots",dog:"dots",deer:"dots"}[g.type]||"dots";
+ const pat=pats[patKey]||pats.dots;
+ return '<ellipse cx="50" cy="92" rx="27" ry="29" fill="'+col+'" opacity=".30"/>'
+ +pat
+ +'<circle cx="50" cy="94" r="19" fill="#ffffff" opacity=".88" stroke="'+col+'" stroke-width="2"/>'
+ +'<g transform="translate(26,70) scale(1.0)">'+gl+'</g>'
+ +'<path d="M27 32 L20 6 L45 17 Z" fill="'+col+'" opacity=".45"/>'
+ +'<path d="M73 32 L80 6 L55 17 Z" fill="'+col+'" opacity=".45"/>'
+ +'<circle cx="50" cy="16" r="4.4" fill="'+col+'" opacity=".8"/>'
+ +'<path d="M30 120 Q50 112 70 120" stroke="'+col+'" stroke-width="3" fill="none" opacity=".6" stroke-linecap="round"/>';}
 function eggGotoBadge(designId){if(!isGotochiId(designId))return "";const g=gotochiById(designId.slice(8));const col=designColor(designId);
  return '<circle cx="70" cy="84" r="12.5" fill="#ffffff" stroke="'+col+'" stroke-width="2"/><g transform="translate(58,72) scale(0.5)">'+gotochiGlyph(g.type,g.color)+'</g>';}
 function segDistM(plat,plng,alat,alng,blat,blng){const kx=111000*Math.cos(plat*Math.PI/180),ky=111000;const ax=(alng-plng)*kx,ay=(alat-plat)*ky,bx=(blng-plng)*kx,by=(blat-plat)*ky;const dx=bx-ax,dy=by-ay;const L2=dx*dx+dy*dy;let tt=L2?((0-ax)*dx+(0-ay)*dy)/L2:0;tt=Math.max(0,Math.min(1,tt));const px=ax+tt*dx,py=ay+tt*dy;return Math.sqrt(px*px+py*py);}
@@ -1061,7 +1120,7 @@ function maybeFetchPref(lat,lng){if(!S||typeof fetch!=="function")return;const c
 function renderFastInfo(){const box=$("fastInfo");if(!box||!S)return;const prog=(S.fastProg||0);const remain=Math.max(0,20000-prog);const pct=Math.min(100,Math.round(prog/20000*100));
  const g=S.prefId?gotochiById(S.prefId):null;
  box.innerHTML='<div class="card" style="margin-top:12px"><h2>🚗 速い移動と ご当地</h2>'
- +'<div class="sub" style="font-size:13px;line-height:1.8">速い移動（時速20km超）は歩数には入りませんが、距離を別に数えています。あと <b>'+(remain/1000).toFixed(1)+' km</b> 速い移動をすると卵が1つ見つかります。</div>'
+ +'<div class="sub" style="font-size:13px;line-height:1.8">あと <b>'+(remain/1000).toFixed(1)+' km</b> 速い移動をすると卵が1つ見つかります。</div>'
  +'<div class="bar" style="margin:8px 0 4px"><i style="width:'+pct+'%"></i></div><div class="sub">'+(prog/1000).toFixed(1)+' / 20.0 km（速い移動の累計 '+(Math.round((S.fastTotal||0)/100)/10).toLocaleString()+' km）</div>'
  +'<div class="sub" style="font-size:13px;margin-top:8px">'+(g?("🗾 現在地："+S.prefName+" ・ ご当地ねこは「"+g.short+"・"+g.motif+"」だよ。歩行・速い移動・探索機などの卵の一部が ご当地デザインになります。"):"🗾 現在地の都道府県はまだ分かっていません（位置情報が取れると自動で判定します）。")+'</div></div>';}
 function clearEggNotice(){S.lastEggNotice="";save();renderEggNotice();}
@@ -1091,8 +1150,8 @@ function addWalk(distM){const steps=Math.max(1,Math.round(distM/0.65));
  S.today.steps+=steps;S.week.steps+=steps;S.totalSteps+=steps;
  S.today.dist+=distM;S.week.dist+=distM;S.totalDist+=distM;
  S.xpCarrySteps+=steps;const xpAdd=Math.floor(S.xpCarrySteps/100);if(xpAdd>0){S.xpCarrySteps-=xpAdd*100;gainXP(xpAdd);}
- companionIds().forEach(id=>{const c=S.cats.find(x=>x.id===id);if(c)c.fp+=friendGain(c,distM*0.004);});
- if(S.incubating){S.incubating.prog+=steps;if(S.incubating.prog>=S.incubating.need)hatchEgg();}
+ companionIds().forEach(id=>{const c=S.cats.find(x=>x.id===id);if(c){c.fp+=friendGain(c,distM*0.004);c.walkSteps=(c.walkSteps||0)+steps;}});
+ syncIncubators();for(let _slot=0;_slot<3;_slot++){const _e=S.incubators[_slot];if(_e){_e.prog+=steps;if(_e.prog>=_e.need)hatchEgg(_slot);}}S.incubating=S.incubators[0]||null;
  const mile=Math.floor(S.totalSteps/3000);
  if(mile>S.lastMile){S.lastMile=mile;spawnWalkEgg();}
  const fmile=Math.floor(S.totalSteps/1000);
@@ -1101,28 +1160,64 @@ function addWalk(distM){const steps=Math.max(1,Math.round(distM/0.65));
    S.discoveries.push({id:uid(),type:"fruit",fruit:f.id,lat:S.lastPos.lat+Math.cos(a)*dist/111000,lng:S.lastPos.lng+Math.sin(a)*dist/(111000*Math.cos(S.lastPos.lat*Math.PI/180)),dist,found:todayKey()});
    toast(f.name+" を見つけた！ おつかいで持って帰れるよ");drawMapPins();}}
  rollDay();save();renderHome();}
+/* ===== step manual edit ===== */
+function openStepEditor(){rollDay();
+ showSheet('<h3 style="margin-top:0;text-align:center">歩数を編集</h3>'
+ +'<div style="text-align:center"><input type="number" id="stepEditInput" inputmode="numeric" min="0" step="1" value="'+(S.today.steps||0)+'" style="width:170px;text-align:center;font-size:20px;padding:10px"> <span style="font-size:16px">歩</span></div>'
+ +'<div class="sub" style="text-align:center;margin-top:8px">今日の歩数</div>'
+ +'<div style="margin-top:14px;text-align:center"><button class="sm" onclick="applyStepEdit()">変更する</button> <button class="ghost sm" onclick="closeSheet()">キャンセル</button></div>');
+ setTimeout(function(){const el=$("stepEditInput");if(el){el.focus();el.select();}},60);}
+function spawnManualEgg(){const before=(S.discoveries||[]).length;S.trailSpots=[];spawnWalkEgg();
+ if((S.discoveries||[]).length===before){const eg=normalEgg();S.eggs.push(eg);S.lastEggNotice="🥚 卵が見つかったよ！ もちものに入ったよ（"+eggColorName(eg.coat)+"）";toast(S.lastEggNotice);if(typeof renderEggNotice==="function")renderEggNotice();}}
+function applyStepEdit(){const el=$("stepEditInput");if(!el)return;
+ const raw=String(el.value||"").trim();const v=Math.floor(Number(raw));
+ if(raw===""||!isFinite(v)){toast("数字を入れてね");return;}
+ rollDay();
+ const target=Math.max(0,v);
+ const oldToday=S.today.steps||0;
+ const delta=target-oldToday;
+ if(delta===0){closeSheet();return;}
+ const newDist=Math.round(target*0.65);
+ const dDist=newDist-(S.today.dist||0);
+ S.today.steps=target;
+ S.week.steps=Math.max(0,(S.week.steps||0)+delta);
+ S.totalSteps=Math.max(0,(S.totalSteps||0)+delta);
+ S.today.dist=newDist;
+ S.week.dist=Math.max(0,(S.week.dist||0)+dDist);
+ S.totalDist=Math.max(0,(S.totalDist||0)+dDist);
+ syncIncubators();
+ if(delta>0){for(let s=0;s<3;s++){const e=S.incubators[s];if(e){e.prog+=delta;if(e.prog>=e.need)hatchEgg(s);}}}
+ else{const cut=-delta;for(let s=0;s<3;s++){const e=S.incubators[s];if(e)e.prog=Math.max(0,e.prog-cut);}}
+ S.incubating=S.incubators[0]||null;
+ if(delta>0){const mile=Math.floor((S.totalSteps||0)/3000);if(mile>(S.lastMile||0)){const n=mile-(S.lastMile||0);S.lastMile=mile;for(let i=0;i<n;i++)spawnManualEgg();}}
+ rollDay();save();closeSheet();renderAll();toast("歩数を "+target.toLocaleString()+" 歩に変更したよ");}
 /* ===== v11: incubator view / cumulative missions / tutorial / menu ===== */
 function rainbowEggSVG(size){const s=size||130,h=Math.round(s*1.15);
  return '<svg width="'+s+'" height="'+h+'" viewBox="0 0 100 115"><defs><linearGradient id="rbG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8fb8"/><stop offset=".25" stop-color="#ffb35c"/><stop offset=".5" stop-color="#ffdf6b"/><stop offset=".7" stop-color="#7ed492"/><stop offset=".88" stop-color="#6fc3ec"/><stop offset="1" stop-color="#b48ce0"/></linearGradient></defs><ellipse cx="50" cy="60" rx="34" ry="43" fill="url(#rbG)" stroke="#ffffff" stroke-width="3.5"/><ellipse cx="36" cy="36" rx="10" ry="7" fill="#ffffff" opacity=".75"/><circle cx="66" cy="82" r="4" fill="#ffffff" opacity=".8"/><path d="M22 62 Q36 52 50 62 Q64 72 78 62 L78 74 Q64 84 50 74 Q36 64 22 74 Z" fill="#ffffff" opacity=".35"/></svg>';}
 function incubatorBaseSVG(w){const h=Math.round(w*0.52);
  return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 220 115"><ellipse cx="110" cy="102" rx="96" ry="10" fill="rgba(90,61,74,.14)"/><path d="M28 62 Q110 34 192 62 L182 96 Q110 112 38 96 Z" fill="#ffd9e8" stroke="#ff8fb8" stroke-width="3"/><path d="M28 62 Q110 34 192 62" fill="none" stroke="#ff8fb8" stroke-width="5"/><g stroke="#e8a84e" stroke-width="3" stroke-linecap="round"><path d="M52 84 L86 74 M74 90 L108 78 M102 90 L136 78 M130 88 L162 76 M44 74 L62 88 M168 74 L152 88"/></g><g fill="#ff8fb8"><circle cx="52" cy="58" r="4"/><circle cx="168" cy="58" r="4"/><circle cx="110" cy="48" r="4"/></g><path d="M86 100 Q110 108 134 100" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/></svg>';}
-function incubatorStageHTML(e,big){
- const eggHtml=e?'<div class="incEggPos" '+(big?'onclick="openIncEggDetail()"':'onclick="openIncubator()"')+' title="卵の詳細">'+eggSVG(e.design,e.coat,big?96:72)+'</div>':'';
- return '<div class="incStage" style="'+(big?'':'transform:scale(.82);margin:-14px auto')+'">'+eggHtml+'<div class="incBase">'+incubatorBaseSVG(220)+'</div></div>';}
-function openIncubator(){const e=S.incubating;
- if(!e){showSheet('<h3 style="margin-top:0;text-align:center">🥚 ふか器</h3>'+incubatorStageHTML(null,true)+'<div class="sub" style="text-align:center;font-size:13px;line-height:1.8">ふか器は空っぽです。<br>卵は「もちもの」からセットできます。ノーマル卵は1000歩、デザイン卵は3000歩でふかします。</div><div style="margin-top:12px;text-align:center"><button class="ghost sm" onclick="closeSheet();goTab(\'bag\')">もちものを見る</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');return;}
- const remain=Math.max(0,e.need-e.prog);const pct=Math.min(100,Math.round(e.prog/e.need*100));
- showSheet('<h3 style="margin-top:0;text-align:center">🥚 ふか器</h3>'+incubatorStageHTML(e,true)+'<div style="text-align:center"><b>'+eggTitle(e)+'</b><div class="sub" style="margin-top:4px">中は '+coatById(e.coat||"white").name+' のねこだよ</div><div class="bar" style="margin:10px 0 6px"><i style="width:'+pct+'%"></i></div><div style="font-size:15px"><b>あと '+remain.toLocaleString()+' 歩</b> でふか</div><div class="sub">'+e.prog.toLocaleString()+' / '+e.need.toLocaleString()+' 歩</div><div class="sub" style="margin-top:6px">卵をタップすると詳細が見られます</div></div><div style="margin-top:12px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+function incubatorStageHTML(e,big,idx){
+ const eggHtml=e?'<div class="incEggPos" onclick="openIncEggDetail('+(typeof idx==="number"?idx:0)+')">'+eggSVG(e.design,e.coat,big?84:60)+'</div>':'';
+ return '<div class="incStage" style="'+(big?'width:150px;height:132px':'transform:scale(.62);margin:-26px -26px')+'">'+eggHtml+'<div class="incBase">'+incubatorBaseSVG(big?150:150)+'</div></div>';}
+function openIncubator(){syncIncubators();
+ let stages='<div class="incRow">';
+ for(let i=0;i<3;i++){const e=S.incubators[i];
+  stages+='<div style="text-align:center;width:150px">'+incubatorStageHTML(e,true,i);
+  if(e){const remain=Math.max(0,e.need-e.prog);stages+='<div style="font-size:12px"><b>あと '+remain.toLocaleString()+' 歩</b></div><div class="bar" style="margin:4px 6px"><i style="width:'+Math.min(100,Math.round(e.prog/e.need*100))+'%"></i></div>';}
+  else stages+='<div style="margin-top:4px"><button class="sm ghost" onclick="closeSheet();goTab(\'bag\')">卵をえらぶ</button></div>';
+  stages+='</div>';}
+ stages+='</div>';
+ showSheet('<h3 style="margin-top:0;text-align:center">🥚 ふか器</h3>'+stages+'<div style="margin-top:12px;text-align:center"><button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 function eggDetailHTML(e,prog){
  let h='<div style="text-align:center">'+eggSVG(e.design,e.coat,84)+'</div>';
  if(eggIsHidden(e)){h+='<div class="sub" style="font-size:13px;line-height:1.9;margin-top:8px">種類：'+eggColorName(e.coat||"white")+'<br>毛色：'+coatById(e.coat||"white").name+'<br>ふかまで：'+e.need.toLocaleString()+' 歩';}
  else{h+='<div class="sub" style="font-size:13px;line-height:1.9;margin-top:8px">デザイン：'+designById(e.design).name+'<br>毛色：'+coatById(e.coat||"white").name+'<br>ふかまで：'+e.need.toLocaleString()+' 歩';}
  if(typeof prog==="number"){const remain=Math.max(0,e.need-prog);h+='<br>進みぐあい：'+prog.toLocaleString()+' 歩 ・ <b>あと '+remain.toLocaleString()+' 歩</b> でふか';}
  h+='</div>';return h;}
-function openIncEggDetail(){const e=S.incubating;if(!e)return;
+function openIncEggDetail(idx){syncIncubators();const e=S.incubators[idx||0];if(!e)return;
  showSheet('<h3 style="margin-top:0;text-align:center">卵の詳細</h3>'+eggDetailHTML(e,e.prog)+'<div style="margin-top:12px;text-align:center"><button class="ghost sm" onclick="openIncubator()">← ふか器にもどる</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 function openBagEggDetail(id){const e=(S.eggs||[]).find(x=>x.id===id);if(!e)return;
- showSheet('<h3 style="margin-top:0;text-align:center">卵の詳細</h3>'+eggDetailHTML(e,null)+'<div class="sub" style="text-align:center;margin-top:6px">ふか器にセットして歩くと、あたたまってふかします。</div><div style="margin-top:12px;text-align:center">'+(S.incubating?'':'<button class="sm" onclick="closeSheet();setIncubator(\''+e.id+'\')">ふか器にセット</button> ')+'<button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
+ showSheet('<h3 style="margin-top:0;text-align:center">卵の詳細</h3>'+eggDetailHTML(e,null)+'<div class="sub" style="text-align:center;margin-top:6px">ふか器にセットして歩くと、あたたまってふかします。</div><div style="margin-top:12px;text-align:center">'+(incFreeSlot()>=0?'<button class="sm" onclick="closeSheet();setIncubator(\''+e.id+'\')">ふか器にセット</button> ':'')+'<button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 /* ---- cumulative missions ---- */
 const CUM_TABLE={
  login:{label:"ログイン日数",unit:"日",rows:[[1,1,0,10],[3,0,2,20],[7,0,2,30],[14,1,0,40],[30,1,2,60],[60,1,2,80],[100,2,2,120]]},
@@ -1134,12 +1229,17 @@ const CUM_TABLE={
 function cumDefs(){const out=[];Object.keys(CUM_TABLE).forEach(function(mk){CUM_TABLE[mk].rows.forEach(function(r){out.push({id:mk+"_"+r[0],metric:mk,target:r[0],eggs:r[1],fruits:r[2],xp:r[3]});});});return out;}
 function cumValue(mk){if(mk==="login")return (S.loginDays||[]).length;if(mk==="steps")return S.totalSteps||0;if(mk==="cats")return (S.cats||[]).length;if(mk==="hatch")return (S.stats&&S.stats.hatch)||0;if(mk==="errands")return (S.stats&&S.stats.errands)||0;if(mk==="dest")return (S.stats&&S.stats.dest)||0;return 0;}
 function cumRewardLabel(d){const parts=[];if(d.eggs)parts.push("卵×"+d.eggs+"（まだ持っていないデザイン×毛色からランダム）");if(d.fruits)parts.push("フルーツ×"+d.fruits);if(d.xp)parts.push("XP+"+d.xp);return parts.join("＋");}
-function renderCumulative(){const box=$("cumMissions");if(!box||!S)return;const defs=cumDefs();
- let h="";Object.keys(CUM_TABLE).forEach(function(mk){const meta=CUM_TABLE[mk];const val=cumValue(mk);
-  h+='<h3 style="margin:14px 0 6px;font-size:14px">'+meta.label+' <span class="sub">現在 '+val.toLocaleString()+' '+meta.unit+'</span></h3>';
-  defs.filter(d=>d.metric===mk).forEach(function(d){const p=Math.min(val,d.target);const done=val>=d.target;const claimed=!!(S.cumClaimed&&S.cumClaimed[d.id]);
-   h+='<div class="row" style="margin-bottom:8px"><div class="grow"><div style="font-size:13px">'+meta.label+' '+d.target.toLocaleString()+' '+meta.unit+'</div><div class="bar" style="margin:4px 0"><i style="width:'+(p/d.target*100)+'%"></i></div><div class="sub">'+p.toLocaleString()+" / "+d.target.toLocaleString()+" ・ 報酬："+cumRewardLabel(d)+'</div></div>'
-   +(claimed?'<span class="pill">受取済み✓</span>':done?'<button class="sm" onclick="claimCum(\''+d.id+'\')">受け取る</button>':'<span class="pill">進行中</span>')+'</div>';});});
+function renderCumulative(){const box=$("cumMissions");if(!box||!S)return;
+ let h='<div style="margin-bottom:10px"><button class="sm" onclick="claimAllMissions()">まとめて受け取る</button></div>';
+ Object.keys(CUM_TABLE).forEach(function(mk){const meta=CUM_TABLE[mk];const val=cumValue(mk);
+  const rows=meta.rows;const claimedN=rows.filter(function(r){return S.cumClaimed&&S.cumClaimed[mk+"_"+r[0]];}).length;
+  const curIdx=rows.findIndex(function(r){return !(S.cumClaimed&&S.cumClaimed[mk+"_"+r[0]]);});
+  h+='<div class="row" style="margin-bottom:12px"><div style="font-size:26px">🏆</div><div class="grow"><div><b>'+meta.label+'</b> <span class="lvBadge">Lv'+claimedN+'</span></div>';
+  if(curIdx<0){h+='<div class="sub">全て達成しました ✓</div>';}
+  else{const r=rows[curIdx];const d={id:mk+"_"+r[0],metric:mk,target:r[0],eggs:r[1],fruits:r[2],xp:r[3]};const p=Math.min(val,r[0]);const done=val>=r[0];
+   h+='<div style="font-size:13px;margin-top:2px">'+p.toLocaleString()+' <span class="sub">/ '+r[0].toLocaleString()+' '+meta.unit+'</span></div><div class="bar" style="margin:4px 0"><i style="width:'+(p/r[0]*100)+'%"></i></div><div class="sub">報酬：'+cumRewardLabel(d)+'</div></div>'
+   +(done?'<button class="sm" onclick="claimCum(\''+d.id+'\')">受け取る</button>':'<span class="pill">進行中</span>')+'</div>';return;}
+  h+='</div></div>';});
  box.innerHTML=h;}
 function claimCum(id){const d=cumDefs().find(x=>x.id===id);if(!d)return;if(!S.cumClaimed)S.cumClaimed={};if(S.cumClaimed[id])return;if(cumValue(d.metric)<d.target){toast("まだ達成していません");return;}
  S.cumClaimed[id]=true;for(let i=0;i<d.eggs;i++)S.eggs.push(unownedComboEgg(true));for(let i=0;i<d.fruits;i++){const f=pick(FRUITS);S.fruits[f.id]=(S.fruits[f.id]||0)+1;}
@@ -1150,11 +1250,14 @@ function openMenu(){showSheet('<h3 style="margin-top:0">☰ メニュー</h3><bu
 function openHelp(){showSheet('<h3 style="margin-top:0">📖 詳しい説明</h3><div style="font-size:13px;line-height:1.8">'
 +'<div class="helpSec"><b>🐾 遊び方</b><br>アプリを開いたまま歩くと、GPSで距離と歩数（推定）が記録され、歩いた道にお花が咲きます。一緒に歩くねこ（お気に入り、最大5匹）は なかよし度が上がります。フレンド・ランキングなどの対人要素はありません。</div>'
 +'<div class="helpSec"><b>🥚 卵の出方</b><br>3000歩あるくごとに卵が1つ必ず見つかり、「おつかい」で取りに行けます。その間に通った道の近く（30m以内）にスポットがあったときは、そのスポットのデザインからランダム、なかったときはノーマルの卵が現在地の近くに出ます。探索機やミッション、目的地、累計ミッションでも卵がもらえます。卵の色・柄は、中のねこの毛色を表しています。</div>'
-+'<div class="helpSec"><b>🐣 ふか器</b><br>ホームのふか器をタップすると大きく見られます。卵は「もちもの」からセットでき、ノーマル卵は1000歩、デザイン卵は3000歩歩くとふかします。ふか器の中の卵をタップすると、デザイン・毛色・残り歩数などの詳細が見られます。</div>'
++'<div class="helpSec"><b>🐣 ふか器</b><br>ふか器は3台あり、同時に3個までセットできます。ホームのふか器をタップすると3台並んで大きく見られます（空の台はふか器だけの絵です）。卵は「もちもの」からセットでき、ノーマル卵は1000歩、デザイン卵は3000歩歩くとふかします。ふか器の中の卵をタップすると、デザイン・毛色・残り歩数などの詳細が見られます。もちもの画面の卵の欄にあるふか器の絵をタップしても、ふか器の画面に飛べます。ふか器に入っている卵も、卵の所持数に数えます。</div>'
++'<div class="helpSec"><b>🗺️ 地図の見かた</b><br>地図上の猫があなたと一緒に動きます。歩いた道には小さなお花が咲いていくよ（今日の分は保存されます）。スポットのピンを押すと、徒歩の目安が見られます。3000歩あるくごとに、卵が1つ必ず見つかり、おつかいで取りに行けます。通った道の近く（30m以内）にスポットがあったときは、そのスポットのデザインの中からランダムで1つ見つかります。スポットが1つもなかったときは、ノーマル（みちばた）の卵が現在地の近くに見つかります。見つけた卵やフルーツのピンを押すと、おつかいの時間が見られます。車・電車など速い移動（時速20km超）は歩数に入りませんが、20kmごとに卵が1つ見つかります。今いる都道府県のご当地ねこの卵が出ることもあるよ（ねこずかんの「ご当地」ページで確認できます）。</div>'
++'<div class="helpSec"><b>🐱 ねこの詳細</b><br>「うちのねこ」やホームの「いっしょに歩くねこ」でねこの絵を押すと、ねこの絵と名前、なかよし度（ハート）が大きく出ます。そこをもう一度押すと詳細が見られ、名前の変更、なかよし度、いっしょに歩いた歩数、見つけた日と場所、お気に入りの登録・解除、デザインの種類が確認できます。なかよし度は数字ではなくハートで表示され、たまった分だけハートに色がつきます。その日にカリカリを1個あげたねこにはキラキラ、2個（上限）あげたねこにはハートのエフェクトがつきます。</div>'
 +'<div class="helpSec"><b>🧺 おつかい・探索機</b><br>見つけた卵やフルーツは、ねこをおつかいに行かせて持って帰ってきます。行かせる匹数が多いほど速く帰ります。探索機は1日1回、その場所の近くのスポットの卵（1〜2種類）とフルーツ（2〜3種類）が見つかります。</div>'
 +'<div class="helpSec"><b>📍 目的地</b><br>現在地から500〜800mの範囲に出ます。旗をタップすると、もらえるものが全部（1個ずつ）見られます。約30m以内まで近づくと自動で報酬がもらえ、次の目的地が出ます。「更新」で引き直せます。</div>'
-+'<div class="helpSec"><b>🍓 フルーツとカリカリ</b><br>フルーツは「もちもの」で色ごとのカリカリに変換できます。カリカリは「ねこ」画面で1匹につき1日2回まであげられ、なかよし度が上がります。</div>'
-+'<div class="helpSec"><b>🏆 累計ミッション</b><br>期限なしで、アプリを使い始めてからの累計（ログイン日数・累計歩数・ねこゲット数・ふか回数・おつかい回数・目的地到着回数）で達成します。報酬は卵・フルーツ・XPで、歩数など難しいものほど大きくなります。卵は まだ持っていないデザイン×毛色からランダムで優先して出ます。</div>'
++'<div class="helpSec"><b>🍓 フルーツとカリカリ</b><br>フルーツは「もちもの」で色ごとのカリカリに変換できます。カリカリは「ねこ」画面の「カリカリをあげる」欄で、色（種類）を切り替えて、ねこを選んであげられます（1匹につき1日2回まで）。あげるとなかよし度が上がります。</div>'
++'<div class="helpSec"><b>👣 歩数の編集</b><br>ホームの「きょうのおさんぽ」の歩数の横にある ✏️ から、今日の歩数を直接変更できます。変更すると累計歩数・距離・ふか器の進みぐあいにも反映されます（減らすこともできます）。増えた分でも、3000歩ごとの卵の判定をします。</div>'
++'<div class="helpSec"><b>🏆 累計ミッション</b><br>期限なしで、アプリを使い始めてからの累計（ログイン日数・累計歩数・ねこゲット数・ふか回数・おつかい回数・目的地到着回数）で達成します。カテゴリごとに今の段階だけが表示され、達成して受け取ると次の段階に切り替わります。クリアした段階数は「Lv」で分かります（例：ログイン1日目クリアでLv1）。報酬は卵・フルーツ・XPで、歩数など難しいものほど大きくなります。卵は まだ持っていないデザイン×毛色からランダムで優先して出ます。デイリー・ウィークリー・累計は「まとめて受け取る」で一括受け取りできます。</div>'
 +'<div class="helpSec"><b>🚗 速い移動の卵</b><br>車や電車など時速20kmを超える速い移動は歩数には数えませんが、その距離は別に数えています。20km進むごとに卵が1つ見つかり、「おつかい」で取りに行けます。その20kmの間に通った道の近く（軌跡から30m以内）にあったスポットのデザインからランダムで決まり、スポットが無かった区間はノーマルの卵が軌跡上の点に出ます。20km未満の端数は次回に持ち越します。</div>'+'<div class="helpSec"><b>🗾 ご当地ねこ</b><br>47都道府県ごとに名物のねこがいます（例：大阪＝たこ焼き、山口＝ふぐ、愛知＝金のシャチホコ、京都＝寺、北海道＝乳牛、沖縄＝シーサー）。今いる都道府県はGPSから自動で判定します。その県にいる間に見つかる卵（3000歩の卵・速い移動の卵・探索機の卵など）の一部が、その土地のご当地デザインになります。集めたご当地ねこは、ねこずかんの「ご当地」ページで地方ごとに確認できます（通常の図鑑のコンプリートには含めません）。</div>'+'<div class="helpSec"><b>ℹ️ 注意</b><br>Webアプリのため、開いている間のみ記録されます。スマホを閉じた間の歩数・位置の反映と、iPhoneの歩数計（ヘルスケア）との連動はできません。記録は端末の中（このiPhone）に保存されます。車や電車での移動は歩数に数えません（時速20kmを超える速さの区間は、歩数・距離・XP・お花には入りません）。ただし速い移動の距離は別に数えて、20km進むごとに卵が1つ見つかります（その間に通った道の近くのスポットのデザイン、無ければノーマル）。今いる都道府県の「ご当地ねこ」の卵が出ることもあります。</div>'
 +'</div><div style="margin-top:10px"><button class="ghost sm" onclick="openMenu()">← メニューにもどる</button> <button class="ghost sm" onclick="closeSheet()">閉じる</button></div>');}
 /* ---- tutorial ---- */
@@ -1189,7 +1292,7 @@ function renderTut(){const ov=$("tutOverlay"),bn=$("tutBanner");if(!ov||!bn||!S)
   cum:'<b>② 累計ミッションの報酬を受け取ろう</b><br><span class="sub">「ログイン日数 1日」が達成されました！「ミッション」画面の <b>累計ミッション</b> で「受け取る」を押して、卵をもらおう。</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'mission\')">ミッション画面を開く</button> '+skipBtn+'</div>',
   incub:'<b>③ 卵をふか器にセットしよう</b><br><span class="sub">「もちもの」画面で、もらった卵の「ふか器にセット」を押してね。ホームのふか器をタップすると、残り歩数や卵の詳細が見られます。</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'bag\')">もちもの画面を開く</button> '+skipBtn+'</div>',
   feed_convert:'<b>④ フルーツをカリカリに変えよう</b><br><span class="sub">フルーツを1つ渡しました。「もちもの」画面で フルーツの「変換する」を押すと、カリカリになります。</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'bag\')">もちもの画面を開く</button> '+skipBtn+'</div>',
-  feed_give:'<b>⑤ カリカリをねこにあげよう</b><br><span class="sub">「ねこ」画面で、ねこの下のカリカリのボタンを押してあげてね。なかよし度が上がります。これでチュートリアルはおわりです！</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'cats\')">ねこ画面を開く</button> '+skipBtn+'</div>'};
+  feed_give:'<b>⑤ カリカリをねこにあげよう</b><br><span class="sub">「ねこ」画面の「カリカリをあげる」で、色を選んでねこを押してあげてね。これでチュートリアルはおわりです！</span><div style="margin-top:8px"><button class="sm" onclick="goTab(\'cats\')">ねこ画面を開く</button> '+skipBtn+'</div>'};
  bn.innerHTML=(msgs[step]||"")+nextBtn;}
 function tutEggTap(){if(S.tutReplay){tutReplayNext();return;}tutAdvance("reveal");}
 function maybeStartTutorial(){if(!S)return;if(isFreshSave&&!S.tutorialDone){startTutorial(false);}else{renderTut();}}
