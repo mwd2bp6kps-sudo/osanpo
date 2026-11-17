@@ -1711,7 +1711,11 @@ function applyStepEdit(){const el=$("stepEditInput");if(!el)return;
  if(delta>0){const mile=Math.floor((S.totalSteps||0)/3000);if(mile>(S.lastMile||0)){const n=mile-(S.lastMile||0);S.lastMile=mile;for(let i=0;i<n;i++)spawnManualEgg();}}
  if(delta>0)processCoinPickups();else resyncCoinCountersDown();
  rollDay();save();closeSheet();renderAll();toast("歩数を "+target.toLocaleString()+" 歩に変更したよ");}
-/* ===== audio: BGM (MP3 files) + cute WebAudio sound effects ===== */
+/* ===== audio: BGM + SE all via <audio> so the phone silent switch is honoured =====
+   iPhone Safari note: sound played through a live Web Audio AudioContext ignores
+   the hardware silent (manner) switch, while HTMLAudioElement (<audio>) playback
+   follows it. BGM is already an MP3 played with new Audio(). Sound effects are
+   rendered once offline to WAV (see SE section below) and played with <audio>. */
 const BGM_TRACKS=[
 {id:"early",file:"bgm-early.mp3",cat:"早朝",title:"夏が終わる前に"},
 {id:"morning",file:"bgm-morning.mp3",cat:"朝",title:"ソーダの気持ち"},
@@ -1791,7 +1795,7 @@ function bgmInit(){ensureAudioSettings();
    bgmFailed[bgmCur]=true;const bad=bgmCur;bgmCur=null;
    try{bgmEl.pause();}catch(e){}
    if(bgmDesiredId()&&bgmDesiredId()!==bad)bgmApply();});}
- const unlock=function(){if(!bgmUnlocked){bgmUnlocked=true;seEnsureCtx();bgmApply();}};
+ const unlock=function(){if(!bgmUnlocked){bgmUnlocked=true;sePreRender();bgmApply();}};
  document.addEventListener("pointerdown",unlock);
  document.addEventListener("click",unlock);
  setInterval(function(){bgmApply();},60000);
@@ -1803,60 +1807,68 @@ function bgmInit(){ensureAudioSettings();
 
 /* v13: stop BGM in background / when closed so it does not linger in Control Center */
 var bgmWasPlayingBeforeHide=false;
-function bgmPauseForHide(){if(!bgmEl)return;bgmWasPlayingBeforeHide=!!(bgmCur&&!bgmEl.paused);try{bgmEl.pause();}catch(e){}if(seCtx&&seCtx.state==="running"){try{seCtx.suspend();}catch(e){}}}
-function bgmResumeAfterShow(){if(document.hidden)return;if(seCtx&&seCtx.state==="suspended"&&S&&S.audio&&S.audio.seOn){try{seCtx.resume();}catch(e){}}if(!bgmWasPlayingBeforeHide)return;bgmWasPlayingBeforeHide=false;if(S&&S.audio&&S.audio.bgmOn)bgmApply();}
+function bgmPauseForHide(){bgmWasPlayingBeforeHide=!!(bgmEl&&bgmCur&&!bgmEl.paused);if(bgmEl){try{bgmEl.pause();}catch(e){}}sePauseAll();}
+function bgmResumeAfterShow(){if(document.hidden)return;if(!bgmWasPlayingBeforeHide)return;bgmWasPlayingBeforeHide=false;if(S&&S.audio&&S.audio.bgmOn)bgmApply();}
 document.addEventListener("visibilitychange",function(){if(document.hidden)bgmPauseForHide();else bgmResumeAfterShow();});
 window.addEventListener("pagehide",function(){bgmPauseForHide();if(bgmEl){try{bgmEl.pause();bgmEl.removeAttribute("src");bgmEl.load();}catch(e){}}});
 window.addEventListener("pageshow",function(){bgmResumeAfterShow();});
-var seCtx=null,seMaster=null,seLastSpecific=0;
-function seEnsureCtx(){if(!S||!S.audio||!S.audio.seOn)return null;
- if(!seCtx){try{const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
-   seCtx=new AC();seMaster=seCtx.createGain();
-   seMaster.gain.value=(typeof S.audio.seVol==="number"?S.audio.seVol:0.9);
-   seMaster.connect(seCtx.destination);}catch(e){return null;}}
- if(seCtx.state==="suspended"){const pr=seCtx.resume();if(pr&&pr.catch)pr.catch(function(){});}
- return seCtx;}
-function seTone(o){const ctx=seCtx;if(!ctx||!seMaster)return;
- const t0=ctx.currentTime+(o.at||0);
- const osc=ctx.createOscillator(),g=ctx.createGain();
- osc.type=o.type||"sine";
- osc.frequency.setValueAtTime(o.f0,t0);
- if(o.f1)osc.frequency.exponentialRampToValueAtTime(Math.max(30,o.f1),t0+o.dur);
- g.gain.setValueAtTime(0.0001,t0);
- g.gain.exponentialRampToValueAtTime(o.vol||0.4,t0+0.015);
- g.gain.exponentialRampToValueAtTime(0.0001,t0+o.dur);
- osc.connect(g);g.connect(seMaster);
- osc.start(t0);osc.stop(t0+o.dur+0.05);}
+var seLastSpecific=0;
+/* SE definitions: exactly the tones the old live WebAudio version played.
+   Each kind is rendered once with OfflineAudioContext into a WAV Blob URL,
+   then every play uses a fresh <audio> element with that cached URL, so the
+   phone silent switch mutes SE just like BGM. No live AudioContext is used. */
+var SE_TONES={
+ tap:[{f0:620,f1:240,dur:0.16,vol:0.35},{f0:900,f1:1180,at:0.07,dur:0.1,vol:0.14}],
+ decide:[{f0:1046,dur:0.14,type:"triangle",vol:0.4},{f0:1318,at:0.07,dur:0.14,type:"triangle",vol:0.4},{f0:1568,at:0.14,dur:0.24,type:"triangle",vol:0.42},{f0:2093,at:0.15,dur:0.2,vol:0.12}],
+ hatch:[{f0:523,at:0,dur:0.22,type:"triangle",vol:0.38},{f0:659,at:0.08,dur:0.22,type:"triangle",vol:0.38},{f0:784,at:0.16,dur:0.22,type:"triangle",vol:0.38},{f0:1046,at:0.24,dur:0.22,type:"triangle",vol:0.38},{f0:1318,at:0.32,dur:0.22,type:"triangle",vol:0.38},{f0:2093,at:0.42,dur:0.3,vol:0.13},{f0:2637,at:0.5,dur:0.34,vol:0.1}],
+ pickup:[{f0:340,f1:940,dur:0.12,vol:0.38},{f0:1180,at:0.1,dur:0.09,vol:0.16}],
+ coin:[{f0:1568,dur:0.08,vol:0.36},{f0:2093,at:0.06,dur:0.22,vol:0.36},{f0:2637,at:0.06,dur:0.14,vol:0.1}],
+ feed:[{f0:560,f1:220,dur:0.15,vol:0.32},{f0:1318,at:0.12,dur:0.4,vol:0.3},{f0:1975,at:0.12,dur:0.26,vol:0.1}]};
+var seCache={},sePending={},seActive=[];
+function seBufferToWav(buf){const ch=buf.getChannelData(0),sr=buf.sampleRate,n=ch.length;
+ const ab=new ArrayBuffer(44+n*2),v=new DataView(ab);
+ function ws(off,s){for(let i=0;i<s.length;i++)v.setUint8(off+i,s.charCodeAt(i));}
+ ws(0,"RIFF");v.setUint32(4,36+n*2,true);ws(8,"WAVE");ws(12,"fmt ");
+ v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+ v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);
+ ws(36,"data");v.setUint32(40,n*2,true);
+ for(let i=0;i<n;i++){const s=Math.max(-1,Math.min(1,ch[i]));v.setInt16(44+i*2,s<0?s*0x8000:s*0x7FFF,true);}
+ return new Blob([ab],{type:"audio/wav"});}
+function seRender(kind){if(seCache[kind])return Promise.resolve(seCache[kind]);
+ if(sePending[kind])return sePending[kind];
+ const tones=SE_TONES[kind];if(!tones)return Promise.resolve(null);
+ const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+ if(!OC||!window.Blob||!window.URL||!URL.createObjectURL)return Promise.resolve(null);
+ let dur=0;tones.forEach(function(o){dur=Math.max(dur,(o.at||0)+o.dur);});dur+=0.12;
+ let ctx;try{ctx=new OC(1,Math.max(1,Math.ceil(44100*dur)),44100);}catch(e){return Promise.resolve(null);}
+ tones.forEach(function(o){const t0=(o.at||0);
+  const osc=ctx.createOscillator(),g=ctx.createGain();
+  osc.type=o.type||"sine";
+  osc.frequency.setValueAtTime(o.f0,t0);
+  if(o.f1)osc.frequency.exponentialRampToValueAtTime(Math.max(30,o.f1),t0+o.dur);
+  g.gain.setValueAtTime(0.0001,t0);
+  g.gain.exponentialRampToValueAtTime(o.vol||0.4,t0+0.015);
+  g.gain.exponentialRampToValueAtTime(0.0001,t0+o.dur);
+  osc.connect(g);g.connect(ctx.destination);
+  osc.start(t0);osc.stop(t0+o.dur+0.05);});
+ const pr=ctx.startRendering().then(function(buf){const url=URL.createObjectURL(seBufferToWav(buf));seCache[kind]=url;delete sePending[kind];return url;}).catch(function(){delete sePending[kind];return null;});
+ sePending[kind]=pr;return pr;}
+function sePreRender(){Object.keys(SE_TONES).forEach(function(k){seRender(k);});}
+function sePlayUrl(url){if(!url)return;
+ let a;try{a=new Audio(url);}catch(e){return;}
+ try{a.volume=Math.max(0,Math.min(1,(S&&S.audio&&typeof S.audio.seVol==="number")?S.audio.seVol:0.9));}catch(e){}
+ seActive.push(a);
+ const done=function(){const i=seActive.indexOf(a);if(i>=0)seActive.splice(i,1);};
+ a.addEventListener("ended",done);a.addEventListener("error",done);
+ const pr=a.play();if(pr&&pr.catch)pr.catch(done);}
+function sePauseAll(){seActive.slice().forEach(function(a){try{a.pause();}catch(e){}});seActive=[];}
 function sePlay(kind){if(!S||!S.audio)return;ensureAudioSettings();
  if(!S.audio.seOn)return;
+ if(!SE_TONES[kind])return;
  if(kind==="tap"&&Date.now()-seLastSpecific<180)return;
  if(kind!=="tap")seLastSpecific=Date.now();
- if(!seEnsureCtx())return;
- if(seMaster)seMaster.gain.value=S.audio.seVol;
- if(kind==="tap"){ /* poyon */
-  seTone({f0:620,f1:240,dur:0.16,vol:0.35});
-  seTone({f0:900,f1:1180,at:0.07,dur:0.1,vol:0.14});}
- else if(kind==="decide"){ /* kirakira 3 notes */
-  seTone({f0:1046,dur:0.14,type:"triangle",vol:0.4});
-  seTone({f0:1318,at:0.07,dur:0.14,type:"triangle",vol:0.4});
-  seTone({f0:1568,at:0.14,dur:0.24,type:"triangle",vol:0.42});
-  seTone({f0:2093,at:0.15,dur:0.2,vol:0.12});}
- else if(kind==="hatch"){ /* rising arpeggio + sparkle */
-  const ns=[523,659,784,1046,1318];
-  ns.forEach(function(f,i){seTone({f0:f,at:i*0.08,dur:0.22,type:"triangle",vol:0.38});});
-  seTone({f0:2093,at:0.42,dur:0.3,vol:0.13});
-  seTone({f0:2637,at:0.5,dur:0.34,vol:0.1});}
- else if(kind==="pickup"){ /* pyokon */
-  seTone({f0:340,f1:940,dur:0.12,vol:0.38});
-  seTone({f0:1180,at:0.1,dur:0.09,vol:0.16});}
- else if(kind==="coin"){ /* charin */
-  seTone({f0:1568,dur:0.08,vol:0.36});
-  seTone({f0:2093,at:0.06,dur:0.22,vol:0.36});
-  seTone({f0:2637,at:0.06,dur:0.14,vol:0.1});}
- else if(kind==="feed"){ /* poyon + bell */
-  seTone({f0:560,f1:220,dur:0.15,vol:0.32});
-  seTone({f0:1318,at:0.12,dur:0.4,vol:0.3});
-  seTone({f0:1975,at:0.12,dur:0.26,vol:0.1});}}
+ if(seCache[kind]){sePlayUrl(seCache[kind]);return;}
+ seRender(kind).then(function(url){if(url&&S&&S.audio&&S.audio.seOn)sePlayUrl(url);});}
 function setBgmOn(v){ensureAudioSettings();S.audio.bgmOn=!!v;save();bgmApply();openAudioSettings();}
 function setSeOn(v){ensureAudioSettings();S.audio.seOn=!!v;save();openAudioSettings();if(v)sePlay("decide");}
 function setBgmMode(m){ensureAudioSettings();S.audio.mode=(m==="manual"?"manual":"auto");save();bgmForcePlay();openAudioSettings();}
@@ -1865,13 +1877,14 @@ function setBgmVol(v){ensureAudioSettings();S.audio.bgmVol=Math.max(0,Math.min(1
  if(bgmEl&&bgmCur&&!bgmFadeTimer)bgmEl.volume=bgmTargetVol();
  const el=$("bgmVolVal");if(el)el.textContent=Math.round(S.audio.bgmVol*100)+"%";}
 function setSeVol(v){ensureAudioSettings();S.audio.seVol=Math.max(0,Math.min(1,(Number(v)||0)/100));save();
- if(seMaster)seMaster.gain.value=S.audio.seVol;
+ seActive.forEach(function(a){try{a.volume=S.audio.seVol;}catch(e){}});
  const el=$("seVolVal");if(el)el.textContent=Math.round(S.audio.seVol*100)+"%";}
 function openAudioSettings(){ensureAudioSettings();const a=S.audio;
  const want=bgmDesiredId();const wantT=want?bgmTrackById(want):null;
  let h='<h3 style="margin-top:0"> BGM・効果音</h3>';
  h+='<div class="sub" style="margin-bottom:8px">いまのBGM：'+(a.bgmOn?(wantT?bgmTrackLabel(wantT):"（ファイルが見つかりません）"):"オフ")+(a.bgmOn&&a.mode==="auto"?" ・ 自動":"")+'</div>';
  h+='<div class="shopRow"><div class="grow"><b>BGM</b></div><button class="sm '+(a.bgmOn?"":"ghost")+'" onclick="setBgmOn(true)">オン</button><button class="sm '+(a.bgmOn?"ghost":"")+'" onclick="setBgmOn(false)">オフ</button></div>';
+ h+='<div class="sub" style="margin-bottom:8px">スマホが消音（マナー）モードの間は、BGMも効果音も鳴りません。</div>';
  h+='<div class="shopRow"><div class="grow"><b>効果音</b></div><button class="sm '+(a.seOn?"":"ghost")+'" onclick="setSeOn(true)">オン</button><button class="sm '+(a.seOn?"ghost":"")+'" onclick="setSeOn(false)">オフ</button></div>';
  h+='<div style="margin:10px 0 2px"><b style="font-size:13px">BGMの音量</b> <span class="sub" id="bgmVolVal">'+Math.round(a.bgmVol*100)+'%</span></div>';
  h+='<input type="range" min="0" max="100" value="'+Math.round(a.bgmVol*100)+'" oninput="setBgmVol(this.value)" style="width:100%">';
@@ -1971,7 +1984,7 @@ function openHelp(){showSheet('<h3 style="margin-top:0"> 詳しい説明</h3><di
 +'<div class="helpSec"><b> ふか器</b><br>ふか器は3台あり、同時に3個までセットできます。ホームのふか器をタップすると3台並んで大きく見られます（空の台はふか器だけの絵です）。卵は「もちもの」からセットでき、ノーマル卵は1000歩、デザイン卵は3000歩歩くとふかします。ふか器の中の卵をタップすると、デザイン・毛色・残り歩数などの詳細が見られます。もちもの画面の卵の欄にあるふか器の絵をタップしても、ふか器の画面に飛べます。ふか器に入っている卵も、卵の所持数に数えます。</div>'
 +'<div class="helpSec"><b> 地図の見かた</b><br>地図上の猫があなたと一緒に動きます。歩いた道には小さなお花が咲いていくよ（今日の分は保存されます）。スポットのピンを押すと、徒歩の目安が見られます。3000歩あるくごとに、卵が1つ必ず見つかり、おつかいで取りに行けます。通った道の近く（30m以内）にスポットがあったときは、そのスポットのデザインの中からランダムで1つ見つかります。スポットが1つもなかったときは、ノーマル（みちばた）の卵が現在地の近くに見つかります。見つけた卵やフルーツのピンを押すと、おつかいの時間が見られます。車・電車など速い移動（時速20km超）は歩数に入りませんが、20kmごとに卵が1つ見つかります。今いる都道府県のご当地ねこの卵が出ることもあるよ（ねこずかんの「ご当地」ページで確認できます）。</div>'
 +'<div class="helpSec"><b> 天気</b><br>地図の左上に現在地の天気と気温が出ます。雨のときは「雨の日」、雪のときは「雪の日」、風が強いときは「風の日」デザインの卵が出ることがあります。季節のデザインと、イベントの前後の週だけ出るイベントデザインもあります。</div>'
-+'<div class="helpSec"><b> BGM・効果音</b><br>☰ メニューの「BGM・効果音」から設定できます。自動では、水辺の近く→雨・雪・強風→季節（夏）→時間帯（早朝・朝・昼・夕方・夜・深夜）の順で曲が切り替わります。手動で固定すると、好きな曲をずっと流せます（雨の日の曲を晴れの日にも聞けます）。BGMと効果音のオン／オフと音量も変えられます。曲のファイル（bgmフォルダ）は index.html と一緒にアップロードしてください。音は、画面を最初にタップしたあとから流れます。</div>'
++'<div class="helpSec"><b> BGM・効果音</b><br>☰ メニューの「BGM・効果音」から設定できます。自動では、水辺の近く→雨・雪・強風→季節（夏）→時間帯（早朝・朝・昼・夕方・夜・深夜）の順で曲が切り替わります。手動で固定すると、好きな曲をずっと流せます（雨の日の曲を晴れの日にも聞けます）。BGMと効果音のオン／オフと音量も変えられます。曲のファイル（bgmフォルダ）は index.html と一緒にアップロードしてください。音は、画面を最初にタップしたあとから流れます。スマホが消音（マナー）モードの間は、BGMも効果音も鳴りません。</div>'
 +'<div class="helpSec"><b> ねこの詳細</b><br>「うちのねこ」やホームの「いっしょに歩くねこ」でねこの絵を押すと、ねこの絵と名前、なかよし度（ハート）が大きく出ます。そこをもう一度押すと詳細が見られ、名前の変更、なかよし度、いっしょに歩いた歩数、見つけた日と場所、お気に入りの登録・解除、デザインの種類が確認できます。なかよし度は数字ではなくハートで表示され、たまった分だけハートに色がつきます。その日にカリカリを1個あげたねこにはキラキラ、2個（上限）あげたねこにはハートのエフェクトがつきます。</div>'
 +'<div class="helpSec"><b> おつかい・探索機</b><br>見つけた卵やフルーツは、ねこをおつかいに行かせて持って帰ってきます。行かせる匹数が多いほど速く帰ります。探索機は1日1回、その場所の近くのスポットの卵（1〜2種類）とフルーツ（2〜3種類）が見つかります。</div>'
 +'<div class="helpSec"><b> 目的地</b><br>現在地から500〜800mの範囲に出ます。旗をタップすると、もらえるものが全部（1個ずつ）見られます。約30m以内まで近づくと自動で報酬がもらえ、次の目的地が出ます。「更新」で引き直せます。</div>'
