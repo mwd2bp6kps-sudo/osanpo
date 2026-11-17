@@ -80,8 +80,9 @@ button{background:linear-gradient(135deg,#ff8fb8,#ffa8c8)}
 .tutBanner b{color:#e5639a}
 .rainbowEgg{cursor:pointer;animation:catbob 1.4s ease-in-out infinite;display:inline-block}
 .incStage{position:relative;width:220px;height:190px;margin:6px auto}
-.incBase{position:absolute;left:50%;transform:translateX(-50%);bottom:0}
-.incEggPos{position:absolute;left:50%;transform:translateX(-50%);bottom:34px;cursor:pointer}
+.incBase{position:absolute;left:50%;transform:translateX(-50%);bottom:0;z-index:1}
+.incEggPos{position:absolute;left:50%;transform:translateX(-50%);bottom:34px;cursor:pointer;z-index:2;line-height:0}
+.incEggPos svg{display:block}
 .menuBtn{display:block;width:100%;margin:8px 0;text-align:left}
 .helpSec{margin-bottom:14px}.helpSec b{color:#e5639a}
 .pin{font-size:26px;text-align:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
@@ -528,8 +529,8 @@ function renderHome(){rollDay();
  $("homeCat").innerHTML=lead?catSVG(lead.coat,lead.design,76):"";
  $("partyRow").innerHTML=compIds.length?'<div class="partyGrid">'+compIds.map(id=>{const c=S.cats.find(x=>x.id===id);return c?'<div class="partyCat" style="cursor:pointer" onclick="openCatPop(\''+c.id+'\')">'+catFxSVG(c,64)+'<div>'+(c.name||coatById(c.coat).name)+'<br><span class="sub">'+designById(c.design).name+'</span></div></div>':"";}).join("")+'</div>':'<span class="sub">「ねこ」タブで ⭐ お気に入りに登録してね</span>';
  syncIncubators();const incs=incEggs();
- if(incs.length){$("incubator").innerHTML='<div class="incRow">'+S.incubators.map(function(e){return e?'<div style="text-align:center;width:96px">'+eggSVG(e.design,e.coat,52)+'<div class="sub">あと '+(e.need-e.prog)+' 歩</div></div>':'<div style="text-align:center;width:96px;opacity:.55">'+incubatorBaseSVG(84)+'</div>';}).join("")+'</div>';}
- else $("incubator").innerHTML='<div class="incRow">'+[0,1,2].map(function(){return '<div style="opacity:.55">'+incubatorBaseSVG(84)+'</div>';}).join("")+'</div>';
+ if(incs.length){$("incubator").innerHTML='<div class="incRow">'+S.incubators.map(function(e,i){return e?'<div style="text-align:center;width:96px">'+incubatorStageHTML(e,false,i)+'<div class="sub">あと '+(e.need-e.prog)+' 歩</div></div>':'<div style="text-align:center;width:96px;opacity:.55">'+incubatorBaseSVG(92)+'</div>';}).join("")+'</div>';}
+ else $("incubator").innerHTML='<div class="incRow">'+[0,1,2].map(function(){return '<div style="opacity:.55">'+incubatorBaseSVG(92)+'</div>';}).join("")+'</div>';
  const days=["日","月","火","水","木","金","土"];const now=new Date();
  let cal="";for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);
   const k=d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();const log=S.log[k];
@@ -1197,8 +1198,12 @@ function rainbowEggSVG(size){const s=size||130,h=Math.round(s*1.15);
 function incubatorBaseSVG(w){const h=Math.round(w*0.52);
  return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 220 115"><ellipse cx="110" cy="102" rx="96" ry="10" fill="rgba(90,61,74,.14)"/><path d="M28 62 Q110 34 192 62 L182 96 Q110 112 38 96 Z" fill="#ffd9e8" stroke="#ff8fb8" stroke-width="3"/><path d="M28 62 Q110 34 192 62" fill="none" stroke="#ff8fb8" stroke-width="5"/><g stroke="#e8a84e" stroke-width="3" stroke-linecap="round"><path d="M52 84 L86 74 M74 90 L108 78 M102 90 L136 78 M130 88 L162 76 M44 74 L62 88 M168 74 L152 88"/></g><g fill="#ff8fb8"><circle cx="52" cy="58" r="4"/><circle cx="168" cy="58" r="4"/><circle cx="110" cy="48" r="4"/></g><path d="M86 100 Q110 108 134 100" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/></svg>';}
 function incubatorStageHTML(e,big,idx){
- const eggHtml=e?'<div class="incEggPos" onclick="openIncEggDetail('+(typeof idx==="number"?idx:0)+')">'+eggSVG(e.design,e.coat,big?84:60)+'</div>':'';
- return '<div class="incStage" style="'+(big?'width:150px;height:132px':'transform:scale(.62);margin:-26px -26px')+'">'+eggHtml+'<div class="incBase">'+incubatorBaseSVG(big?150:150)+'</div></div>';}
+ const baseW=big?150:92,eggSize=big?84:52;
+ const baseH=Math.round(baseW*0.52),eggH=Math.round(eggSize*1.15);
+ const overlap=Math.round(eggH*0.15);
+ const stageH=big?(baseH+eggH-overlap):(e?(baseH+eggH-overlap):baseH);
+ const eggHtml=e?'<div class="incEggPos" style="bottom:'+(baseH-overlap)+'px" onclick="event.stopPropagation();openIncEggDetail('+(typeof idx==="number"?idx:0)+')">'+eggSVG(e.design,e.coat,eggSize)+'</div>':'';
+ return '<div class="incStage" style="width:'+baseW+'px;height:'+stageH+'px;margin:0 auto">'+eggHtml+'<div class="incBase">'+incubatorBaseSVG(baseW)+'</div></div>';}
 function openIncubator(){syncIncubators();
  let stages='<div class="incRow">';
  for(let i=0;i<3;i++){const e=S.incubators[i];
