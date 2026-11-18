@@ -581,7 +581,7 @@ function defaultState(){
  karikari:{pink:0,purple:0,orange:0,yellow:0,green:0},fruits:{},
  discoveries:[],errands:[],destination:null,detectorDay:"",flowers:[],flowerDay:"",
  dailyM:null,weeklyM:null,log:{},lastPos:null,path:[],spots:[],
- lastMile:0,fruitMile:0,playerCoat:"white",trailSpots:[],v8EggInit:true,lastEggNotice:"",started:new Date().toISOString(),audio:{bgmOn:true,seOn:true,bgmVol:0.7,seVol:0.9,mode:"auto",track:"day"},tutorialDone:false,tutStep:"egg",tutReplay:false,cumClaimed:{},loginDays:[todayKey()],stats:{hatch:0,errands:0,dest:0}};}
+ lastMile:0,fruitMile:0,playerCoat:"white",trailSpots:[],v8EggInit:true,lastEggNotice:"",started:new Date().toISOString(),audio:{bgmOn:true,seOn:true,allMute:false,bgmVol:0.7,seVol:0.9,mode:"auto",track:"day"},tutorialDone:false,tutStep:"egg",tutReplay:false,cumClaimed:{},loginDays:[todayKey()],stats:{hatch:0,errands:0,dest:0}};}
 function looksLikeSave(o){return !!o&&typeof o==="object"&&(o.v===2||Array.isArray(o.cats)||typeof o.totalSteps==="number");}
 function rescueRaw(raw,why){try{if(!raw)return;var prev=null;try{prev=localStorage.getItem(RESCUE_KEY);}catch(e){}if(prev!==raw){try{localStorage.setItem(RESCUE_KEY,raw);}catch(e){}try{localStorage.setItem(RESCUE_KEY+"_"+Date.now(),raw);}catch(e){}}}catch(e){}try{console.warn("osanpo: save load failed ("+why+"); raw save rescued to "+RESCUE_KEY);}catch(e){}}
 function tryStep(fn){try{fn();}catch(e){try{console.warn("osanpo: migrate step failed:",e);}catch(_){}}}
@@ -1711,11 +1711,33 @@ function applyStepEdit(){const el=$("stepEditInput");if(!el)return;
  if(delta>0){const mile=Math.floor((S.totalSteps||0)/3000);if(mile>(S.lastMile||0)){const n=mile-(S.lastMile||0);S.lastMile=mile;for(let i=0;i<n;i++)spawnManualEgg();}}
  if(delta>0)processCoinPickups();else resyncCoinCountersDown();
  rollDay();save();closeSheet();renderAll();toast("歩数を "+target.toLocaleString()+" 歩に変更したよ");}
-/* ===== audio: BGM + SE all via <audio> so the phone silent switch is honoured =====
-   iPhone Safari note: sound played through a live Web Audio AudioContext ignores
-   the hardware silent (manner) switch, while HTMLAudioElement (<audio>) playback
-   follows it. BGM is already an MP3 played with new Audio(). Sound effects are
-   rendered once offline to WAV (see SE section below) and played with <audio>. */
+/* ===== audio: BGM + SE all via <audio>, plus Web Audio Session = ambient =====
+   v1 (all <audio>) was not enough on the user's phone: in a Home-Screen
+   (standalone) web app, <audio> can keep playing with the silent switch ON.
+   v2: set navigator.audioSession.type = "ambient" (Web Audio Session API).
+   "ambient" follows the hardware silent switch for the WHOLE page, so iOS
+   mutes BGM and SE while the switch is ON. It is applied at startup, again
+   before any <audio> element is created/played, and the value is read back
+   into audioSessionState (shown in the BGM settings sheet) for verification.
+   Browsers without navigator.audioSession ignore this silently.
+   Fallback if it still plays on a device: the "すべての音を消す" all-mute
+   toggle at the top of the BGM settings sheet stops BGM and SE completely. */
+var audioSessionState={supported:false,requested:null,actual:null,ok:false};
+function applyAudioSessionAmbient(){
+ try{
+  if(!("audioSession" in navigator)||!navigator.audioSession){audioSessionState.supported=false;audioSessionState.actual=null;audioSessionState.ok=false;return audioSessionState;}
+  audioSessionState.supported=true;audioSessionState.requested="ambient";
+  try{navigator.audioSession.type="ambient";}catch(e){}
+  var cur=null;try{cur=navigator.audioSession.type;}catch(e){}
+  audioSessionState.actual=cur;audioSessionState.ok=(cur==="ambient");
+  try{console.info("[osanpo] audioSession type="+String(cur)+" (requested ambient, ok="+audioSessionState.ok+")");}catch(e){}
+ }catch(e){audioSessionState.supported=false;audioSessionState.ok=false;}
+ return audioSessionState;}
+function audioSessionStatusText(){
+ if(!audioSessionState.supported)return "消音スイッチへの自動対応は、この端末では確認できませんでした。";
+ if(audioSessionState.ok)return "消音スイッチ対応：オン（消音中は音が出ません）";
+ return "消音スイッチ対応を設定中です。";}
+applyAudioSessionAmbient();
 const BGM_TRACKS=[
 {id:"early",file:"bgm-early.mp3",cat:"早朝",title:"夏が終わる前に"},
 {id:"morning",file:"bgm-morning.mp3",cat:"朝",title:"ソーダの気持ち"},
@@ -1737,6 +1759,7 @@ function bgmTrackLabel(t){return (t.cat?t.cat+" ・ ":"")+t.title;}
 function ensureAudioSettings(){if(!S)return;if(!S.audio||typeof S.audio!=="object")S.audio={};
  if(typeof S.audio.bgmOn!=="boolean")S.audio.bgmOn=true;
  if(typeof S.audio.seOn!=="boolean")S.audio.seOn=true;
+ if(typeof S.audio.allMute!=="boolean")S.audio.allMute=false;
  if(typeof S.audio.bgmVol!=="number"||!isFinite(S.audio.bgmVol))S.audio.bgmVol=0.7;
  if(typeof S.audio.seVol!=="number"||!isFinite(S.audio.seVol))S.audio.seVol=0.9;
  S.audio.bgmVol=Math.max(0,Math.min(1,S.audio.bgmVol));S.audio.seVol=Math.max(0,Math.min(1,S.audio.seVol));
@@ -1760,7 +1783,7 @@ function bgmAutoId(){
  if(h>=16&&h<19)return "evening";
  if(h>=19)return "night";
  return "latenight";}
-function bgmDesiredId(){if(!S||!S.audio||!S.audio.bgmOn)return null;
+function bgmDesiredId(){if(!S||!S.audio||!S.audio.bgmOn||S.audio.allMute)return null;
  const id=S.audio.mode==="manual"?S.audio.track:bgmAutoId();
  if(bgmFailed[id])return null;
  return id;}
@@ -1774,7 +1797,7 @@ function bgmFadeTo(target,dur,done){if(!bgmEl){if(done)done();return;}
   try{bgmEl.volume=Math.max(0,Math.min(1,v));}catch(e){}
   if(i>=steps){clearInterval(bgmFadeTimer);bgmFadeTimer=null;if(done)done();}},40);}
 function bgmSrcFor(id,alt){const t=bgmTrackById(id);return alt?t.file:("bgm/"+t.file);}
-function bgmStartEl(id){if(!bgmEl)return;
+function bgmStartEl(id){applyAudioSessionAmbient();if(!bgmEl)return;
  bgmEl.src=bgmSrcFor(id,false);
  if(bgmUnlocked){const pr=bgmEl.play();if(pr&&pr.catch)pr.catch(function(){});}
  bgmFadeTo(bgmTargetVol(),600,null);}
@@ -1786,7 +1809,7 @@ function bgmApply(){if(!S)return;ensureAudioSettings();if(!bgmEl)return;
   return;}
  const prev=bgmCur;bgmCur=want;
  bgmStartEl(want);}
-function bgmInit(){ensureAudioSettings();
+function bgmInit(){applyAudioSessionAmbient();ensureAudioSettings();
  try{bgmEl=new Audio();}catch(e){bgmEl=null;}
  if(bgmEl){bgmEl.loop=true;bgmEl.preload="auto";bgmEl.volume=0;
   bgmEl.addEventListener("error",function(){if(!bgmCur)return;
@@ -1795,7 +1818,7 @@ function bgmInit(){ensureAudioSettings();
    bgmFailed[bgmCur]=true;const bad=bgmCur;bgmCur=null;
    try{bgmEl.pause();}catch(e){}
    if(bgmDesiredId()&&bgmDesiredId()!==bad)bgmApply();});}
- const unlock=function(){if(!bgmUnlocked){bgmUnlocked=true;sePreRender();bgmApply();}};
+ const unlock=function(){applyAudioSessionAmbient();if(!bgmUnlocked){bgmUnlocked=true;sePreRender();bgmApply();}};
  document.addEventListener("pointerdown",unlock);
  document.addEventListener("click",unlock);
  setInterval(function(){bgmApply();},60000);
@@ -1808,7 +1831,7 @@ function bgmInit(){ensureAudioSettings();
 /* v13: stop BGM in background / when closed so it does not linger in Control Center */
 var bgmWasPlayingBeforeHide=false;
 function bgmPauseForHide(){bgmWasPlayingBeforeHide=!!(bgmEl&&bgmCur&&!bgmEl.paused);if(bgmEl){try{bgmEl.pause();}catch(e){}}sePauseAll();}
-function bgmResumeAfterShow(){if(document.hidden)return;if(!bgmWasPlayingBeforeHide)return;bgmWasPlayingBeforeHide=false;if(S&&S.audio&&S.audio.bgmOn)bgmApply();}
+function bgmResumeAfterShow(){if(document.hidden)return;applyAudioSessionAmbient();if(!bgmWasPlayingBeforeHide)return;bgmWasPlayingBeforeHide=false;if(S&&S.audio&&S.audio.bgmOn&&!S.audio.allMute)bgmApply();}
 document.addEventListener("visibilitychange",function(){if(document.hidden)bgmPauseForHide();else bgmResumeAfterShow();});
 window.addEventListener("pagehide",function(){bgmPauseForHide();if(bgmEl){try{bgmEl.pause();bgmEl.removeAttribute("src");bgmEl.load();}catch(e){}}});
 window.addEventListener("pageshow",function(){bgmResumeAfterShow();});
@@ -1854,7 +1877,8 @@ function seRender(kind){if(seCache[kind])return Promise.resolve(seCache[kind]);
  const pr=ctx.startRendering().then(function(buf){const url=URL.createObjectURL(seBufferToWav(buf));seCache[kind]=url;delete sePending[kind];return url;}).catch(function(){delete sePending[kind];return null;});
  sePending[kind]=pr;return pr;}
 function sePreRender(){Object.keys(SE_TONES).forEach(function(k){seRender(k);});}
-function sePlayUrl(url){if(!url)return;
+function sePlayUrl(url){applyAudioSessionAmbient();if(!url)return;
+ if(S&&S.audio&&S.audio.allMute)return;
  let a;try{a=new Audio(url);}catch(e){return;}
  try{a.volume=Math.max(0,Math.min(1,(S&&S.audio&&typeof S.audio.seVol==="number")?S.audio.seVol:0.9));}catch(e){}
  seActive.push(a);
@@ -1863,12 +1887,18 @@ function sePlayUrl(url){if(!url)return;
  const pr=a.play();if(pr&&pr.catch)pr.catch(done);}
 function sePauseAll(){seActive.slice().forEach(function(a){try{a.pause();}catch(e){}});seActive=[];}
 function sePlay(kind){if(!S||!S.audio)return;ensureAudioSettings();
- if(!S.audio.seOn)return;
+ if(!S.audio.seOn||S.audio.allMute)return;
  if(!SE_TONES[kind])return;
  if(kind==="tap"&&Date.now()-seLastSpecific<180)return;
  if(kind!=="tap")seLastSpecific=Date.now();
  if(seCache[kind]){sePlayUrl(seCache[kind]);return;}
- seRender(kind).then(function(url){if(url&&S&&S.audio&&S.audio.seOn)sePlayUrl(url);});}
+ seRender(kind).then(function(url){if(url&&S&&S.audio&&S.audio.seOn&&!S.audio.allMute)sePlayUrl(url);});}
+function setAllMute(v){ensureAudioSettings();S.audio.allMute=!!v;save();
+ if(v){if(bgmFadeTimer){clearInterval(bgmFadeTimer);bgmFadeTimer=null;}
+  if(bgmEl){try{bgmEl.pause();bgmEl.volume=0;}catch(e){}}
+  bgmCur=null;sePauseAll();}
+ else{applyAudioSessionAmbient();bgmApply();}
+ openAudioSettings();}
 function setBgmOn(v){ensureAudioSettings();S.audio.bgmOn=!!v;save();bgmApply();openAudioSettings();}
 function setSeOn(v){ensureAudioSettings();S.audio.seOn=!!v;save();openAudioSettings();if(v)sePlay("decide");}
 function setBgmMode(m){ensureAudioSettings();S.audio.mode=(m==="manual"?"manual":"auto");save();bgmForcePlay();openAudioSettings();}
@@ -1883,8 +1913,9 @@ function openAudioSettings(){ensureAudioSettings();const a=S.audio;
  const want=bgmDesiredId();const wantT=want?bgmTrackById(want):null;
  let h='<h3 style="margin-top:0"> BGM・効果音</h3>';
  h+='<div class="sub" style="margin-bottom:8px">いまのBGM：'+(a.bgmOn?(wantT?bgmTrackLabel(wantT):"（ファイルが見つかりません）"):"オフ")+(a.bgmOn&&a.mode==="auto"?" ・ 自動":"")+'</div>';
+ h+='<div style="border:2px solid #ff8fb8;background:#fff0f6;border-radius:16px;padding:10px 12px;margin:0 0 10px">'+'<div class="row"><div class="grow"><b>すべての音を消す</b><div class="sub">BGMも効果音も、ぜんぶ止まります</div></div><button class="sm '+(a.allMute?"":"ghost")+'" onclick="setAllMute(true)">オン</button><button class="sm '+(a.allMute?"ghost":"")+'" onclick="setAllMute(false)">オフ</button></div>'+'<div class="sub" style="margin-top:6px">'+audioSessionStatusText()+'</div></div>';
  h+='<div class="shopRow"><div class="grow"><b>BGM</b></div><button class="sm '+(a.bgmOn?"":"ghost")+'" onclick="setBgmOn(true)">オン</button><button class="sm '+(a.bgmOn?"ghost":"")+'" onclick="setBgmOn(false)">オフ</button></div>';
- h+='<div class="sub" style="margin-bottom:8px">スマホが消音（マナー）モードの間は、BGMも効果音も鳴りません。</div>';
+ h+='<div class="sub" style="margin-bottom:8px">消音スイッチに合わせています。もし鳴るときは「すべての音を消す」をオンにしてね。</div>';
  h+='<div class="shopRow"><div class="grow"><b>効果音</b></div><button class="sm '+(a.seOn?"":"ghost")+'" onclick="setSeOn(true)">オン</button><button class="sm '+(a.seOn?"ghost":"")+'" onclick="setSeOn(false)">オフ</button></div>';
  h+='<div style="margin:10px 0 2px"><b style="font-size:13px">BGMの音量</b> <span class="sub" id="bgmVolVal">'+Math.round(a.bgmVol*100)+'%</span></div>';
  h+='<input type="range" min="0" max="100" value="'+Math.round(a.bgmVol*100)+'" oninput="setBgmVol(this.value)" style="width:100%">';
@@ -1984,7 +2015,7 @@ function openHelp(){showSheet('<h3 style="margin-top:0"> 詳しい説明</h3><di
 +'<div class="helpSec"><b> ふか器</b><br>ふか器は3台あり、同時に3個までセットできます。ホームのふか器をタップすると3台並んで大きく見られます（空の台はふか器だけの絵です）。卵は「もちもの」からセットでき、ノーマル卵は1000歩、デザイン卵は3000歩歩くとふかします。ふか器の中の卵をタップすると、デザイン・毛色・残り歩数などの詳細が見られます。もちもの画面の卵の欄にあるふか器の絵をタップしても、ふか器の画面に飛べます。ふか器に入っている卵も、卵の所持数に数えます。</div>'
 +'<div class="helpSec"><b> 地図の見かた</b><br>地図上の猫があなたと一緒に動きます。歩いた道には小さなお花が咲いていくよ（今日の分は保存されます）。スポットのピンを押すと、徒歩の目安が見られます。3000歩あるくごとに、卵が1つ必ず見つかり、おつかいで取りに行けます。通った道の近く（30m以内）にスポットがあったときは、そのスポットのデザインの中からランダムで1つ見つかります。スポットが1つもなかったときは、ノーマル（みちばた）の卵が現在地の近くに見つかります。見つけた卵やフルーツのピンを押すと、おつかいの時間が見られます。車・電車など速い移動（時速20km超）は歩数に入りませんが、20kmごとに卵が1つ見つかります。今いる都道府県のご当地ねこの卵が出ることもあるよ（ねこずかんの「ご当地」ページで確認できます）。</div>'
 +'<div class="helpSec"><b> 天気</b><br>地図の左上に現在地の天気と気温が出ます。雨のときは「雨の日」、雪のときは「雪の日」、風が強いときは「風の日」デザインの卵が出ることがあります。季節のデザインと、イベントの前後の週だけ出るイベントデザインもあります。</div>'
-+'<div class="helpSec"><b> BGM・効果音</b><br>☰ メニューの「BGM・効果音」から設定できます。自動では、水辺の近く→雨・雪・強風→季節（夏）→時間帯（早朝・朝・昼・夕方・夜・深夜）の順で曲が切り替わります。手動で固定すると、好きな曲をずっと流せます（雨の日の曲を晴れの日にも聞けます）。BGMと効果音のオン／オフと音量も変えられます。曲のファイル（bgmフォルダ）は index.html と一緒にアップロードしてください。音は、画面を最初にタップしたあとから流れます。スマホが消音（マナー）モードの間は、BGMも効果音も鳴りません。</div>'
++'<div class="helpSec"><b> BGM・効果音</b><br>☰ メニューの「BGM・効果音」から設定できます。自動では、水辺の近く→雨・雪・強風→季節（夏）→時間帯（早朝・朝・昼・夕方・夜・深夜）の順で曲が切り替わります。手動で固定すると、好きな曲をずっと流せます（雨の日の曲を晴れの日にも聞けます）。BGMと効果音のオン／オフと音量も変えられます。曲のファイル（bgmフォルダ）は index.html と一緒にアップロードしてください。音は、画面を最初にタップしたあとから流れます。消音スイッチに合わせていますが、もし鳴るときは「BGM・効果音」の「すべての音を消す」をオンにしてください。</div>'
 +'<div class="helpSec"><b> ねこの詳細</b><br>「うちのねこ」やホームの「いっしょに歩くねこ」でねこの絵を押すと、ねこの絵と名前、なかよし度（ハート）が大きく出ます。そこをもう一度押すと詳細が見られ、名前の変更、なかよし度、いっしょに歩いた歩数、見つけた日と場所、お気に入りの登録・解除、デザインの種類が確認できます。なかよし度は数字ではなくハートで表示され、たまった分だけハートに色がつきます。その日にカリカリを1個あげたねこにはキラキラ、2個（上限）あげたねこにはハートのエフェクトがつきます。</div>'
 +'<div class="helpSec"><b> おつかい・探索機</b><br>見つけた卵やフルーツは、ねこをおつかいに行かせて持って帰ってきます。行かせる匹数が多いほど速く帰ります。探索機は1日1回、その場所の近くのスポットの卵（1〜2種類）とフルーツ（2〜3種類）が見つかります。</div>'
 +'<div class="helpSec"><b> 目的地</b><br>現在地から500〜800mの範囲に出ます。旗をタップすると、もらえるものが全部（1個ずつ）見られます。約30m以内まで近づくと自動で報酬がもらえ、次の目的地が出ます。「更新」で引き直せます。</div>'
